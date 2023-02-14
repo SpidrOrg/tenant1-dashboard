@@ -1,47 +1,53 @@
 import { createRouter, createWebHashHistory } from "vue-router";
-import HomePage from "@/components/pages/HomePage.vue";
-import JobResultsPage from "@/components/pages/JobResultsPage.vue";
-import TeamsPage from "@/components/pages/TeamsPage.vue";
-import LocationPage from "@/components/pages/LocationPage.vue";
-import LifeAtBoboCareersPage from "@/components/pages/LifeAtBoboCareersPage.vue";
-import HowWeHirePage from "@/components/pages/HowWeHirePage.vue";
-import StudentsPage from "@/components/pages/StudentsPage.vue";
+import DemandPlanner from "@/components/pages/DemandPlanner/DemandPlanner.vue";
+import HeatMap from "@/components/pages/HeatMap/HeatMap.vue";
+import InternalCharts from "@/components/pages/InternalCharts/InternalCharts.vue";
+import ModelAccuracy from "@/components/pages/ModelAccuracy/ModelAccuracy.vue";
+import TheFaq from "@/components/pages/TheFAQ/TheFaq.vue";
+import TheSupport from "@/components/pages/TheSupport/TheSupport.vue";
 
 const routes = [
   {
     path: "/",
     name: "Home",
-    component: HomePage,
+    label: "Demand Planner",
+    component: DemandPlanner,
   },
   {
-    path: "/teams",
-    name: "Teams",
-    component: TeamsPage,
+    path: "/demand-planner",
+    name: "DemandPlanner",
+    label: "Demand Planner",
+    component: DemandPlanner,
   },
   {
-    path: "/location",
-    name: "Location",
-    component: LocationPage,
+    path: "/heatmap",
+    name: "HeatMap",
+    label: "Heat-map View",
+    component: HeatMap,
   },
   {
-    path: "/life",
-    name: "LifeAtBoboCareers",
-    component: LifeAtBoboCareersPage,
+    path: "/internal-charts",
+    name: "InternalCharts",
+    label: "Internal Charts",
+    component: InternalCharts,
   },
   {
-    path: "/howWeHire",
-    name: "HowWeHire",
-    component: HowWeHirePage,
+    path: "/model-accuracy",
+    name: "ModelAccuracy",
+    label: "Model Accuracy",
+    component: ModelAccuracy,
   },
   {
-    path: "/students",
-    name: "Students",
-    component: StudentsPage,
+    path: "/faqs",
+    name: "FAQs",
+    label: "FAQs",
+    component: TheFaq,
   },
   {
-    path: "/jobs/results",
-    name: "JobResults",
-    component: JobResultsPage,
+    path: "/support",
+    name: "HelpSupport",
+    label: "Help & Support",
+    component: TheSupport,
   },
 ];
 

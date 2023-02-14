@@ -1,11 +1,10 @@
 <script>
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
-import ActionButton from "@/components/ActionButton.vue";
 import TextInput from "@/components/TextInput.vue";
 
 export default {
   name: "JobSearchForm",
-  components: { FontAwesomeIcon, ActionButton, TextInput },
+  components: { FontAwesomeIcon, TextInput },
   data() {
     return {
       role: "",
@@ -29,6 +28,5 @@ export default {
         <TextInput v-model="location" placeholder="Los Angelese" />
       </div>
     </div>
-    <ActionButton label="Search" type="secondary" class="rounded-r-3xl" />
   </form>
 </template>

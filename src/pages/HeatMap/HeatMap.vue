@@ -1,6 +1,12 @@
 <script>
+import TheHeader from '@/components/HeatMap/TheHeader.vue'
+import TheBody from "@/components/HeatMap/TheBody.vue";
 export default {
-  name: "HeatMap"
+  name: "HeatMap",
+  components: {
+    TheHeader,
+    TheBody
+  }
 }
 </script>
 
@@ -10,13 +16,12 @@ export default {
       Heat-map View
     </div>
     <div class="tw-ml-auto tw-h-full tw-flex tw-items-center">
-      Last Refreshed
+      Last refreshed on
     </div>
   </div>
-  <div class="tw-flex tw-w-full tw-flex-auto tw-border-t tw-border-solid tw-border-brand-gray-2">
-
-  </div>
-  <div class="tw-flex tw-w-full tw-h-8 tw-border-t tw-border-solid tw-border-brand-gray-2">
-
+  <div class="tw-flex tw-w-full tw-flex-auto tw-border-t tw-border-solid tw-border-brand-gray-2" />
+  <div class="tw-flex tw-flex-col tw-h-full tw-py-4 tw-gap-4 tw-bg-brand-gray-1">
+    <TheHeader />
+    <TheBody />
   </div>
 </template>

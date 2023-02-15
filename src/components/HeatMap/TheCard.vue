@@ -1,5 +1,6 @@
 <script>
 import HEAT_MAP_DATA from './constants'
+import TooltipChart from "@/components/HeatMap/TooltipChart.vue";
 import {tr} from "vuetify/locale";
 export default {
   name: "TheCard",
@@ -9,9 +10,13 @@ export default {
       required: true
     }
   },
+  components: {
+    TooltipChart
+  },
   data() {
     return {
-      HEAT_MAP_DATA
+      HEAT_MAP_DATA,
+      dialog: false
     }
   },
   methods: {
@@ -34,8 +39,37 @@ export default {
     <div class="tw-grid tw-grid-cols-6 tw-gap-x-3 tw-w-full tw-h-full">
       <div v-for="column in HEAT_MAP_DATA" :key="column.label" class="tw-flex tw-flex-col tw-justify-evenly">
         <p class="tw-font-medium">{{column.label}}</p>
-        <div v-for="value in column.values" :key="value" :class="column.label !== 'Name' ? getCellStyling(value) : ''">
-          <p class="tw-font-medium tw-py-3">{{`${value}${column.label !== 'Name' ? '%': ''}`}}</p>
+
+<!--        <v-dialog-->
+<!--          v-model="dialog"-->
+<!--          width="auto"-->
+<!--        >-->
+<!--          <template v-slot:activator="{ props }">-->
+<!--            <v-btn-->
+<!--              color="primary"-->
+<!--              v-bind="props"-->
+<!--            >-->
+<!--              Open Dialog-->
+<!--            </v-btn>-->
+<!--          </template>-->
+
+<!--          <v-card>-->
+<!--            <v-card-text>-->
+<!--              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.-->
+<!--            </v-card-text>-->
+<!--            <v-card-actions>-->
+<!--              <v-btn color="primary" block @click="dialog = false">Close Dialog</v-btn>-->
+<!--            </v-card-actions>-->
+<!--          </v-card>-->
+<!--        </v-dialog>-->
+
+        <div v-for="value in column.values" :key="value" :class="`tw-cursor-pointer ${column.label !== 'Name' ? getCellStyling(value) : ''}`">
+          <v-menu>
+            <template v-slot:activator="{ props }">
+              <p v-bind="props" class="tw-font-medium tw-py-3">{{`${value}${column.label !== 'Name' ? '%': ''}`}}</p>
+            </template>
+            <TooltipChart />
+          </v-menu>
         </div>
       </div>
     </div>

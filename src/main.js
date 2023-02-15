@@ -1,22 +1,25 @@
-import { createApp } from "vue";
-import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
-import { library } from "@fortawesome/fontawesome-svg-core";
-import { faSearch } from "@fortawesome/free-solid-svg-icons";
-import App from "../../spidr/src/App.vue";
-import router from "@/router";
-// import "@/index.css";
-import 'vuetify/styles'
-import { createVuetify } from 'vuetify'
-import * as components from 'vuetify/components'
-import * as directives from 'vuetify/directives'
+/**
+ * main.js
+ *
+ * Bootstraps Vuetify and other plugins then mounts the App`
+ */
 
-const vuetify = createVuetify({
-  components,
-  directives,
-})
+// Components
+import App from './parent/App.vue'
 
+// Composables
+import { createApp } from 'vue'
 
-library.add(faSearch);
+// Plugins
+import { registerPlugins } from '@/plugins'
+import idpConfig from "@/idpConfig";
 
-createApp(App).use(router).use(vuetify).component("font-awesome-icon", FontAwesomeIcon).mount("#app");
+import OrgLogo from "@/images/orgLogo.png";
 
+import "./index.css"
+
+const app = createApp(App, {idpConfig, OrgLogo})
+
+registerPlugins(app)
+
+app.mount('#app')

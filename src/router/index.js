@@ -1,59 +1,80 @@
-import { createRouter, createWebHashHistory } from "vue-router";
-import DemandPlanner from "@/components/pages/DemandPlanner/DemandPlanner.vue";
-import HeatMap from "@/components/pages/HeatMap/HeatMap.vue";
-import InternalCharts from "@/components/pages/InternalCharts/InternalCharts.vue";
-import ModelAccuracy from "@/components/pages/ModelAccuracy/ModelAccuracy.vue";
-import TheFaq from "@/components/pages/TheFAQ/TheFaq.vue";
-import TheSupport from "@/components/pages/TheSupport/TheSupport.vue";
+// Composables
+import { createRouter, createWebHistory } from 'vue-router'
+import Default from "@/layouts/default/Default.vue";
+import DemandPlanner from "@/pages/DemandPlanner/DemandPlanner.vue";
+import HeatMap from "@/pages/HeatMap/HeatMap.vue";
+import InternalCharts from "@/pages/InternalCharts/InternalCharts.vue";
+import ModelAccuracy from "@/pages/ModelAccuracy/ModelAccuracy.vue";
+import TheFaq from "@/pages/TheFAQ/TheFaq.vue";
+import TheSupport from "@/pages/TheSupport/TheSupport.vue";
+import DemmandPlannerIcon from "@/images/demand-planner-icon.png";
+import HeatMapIcon from "@/images/heat-map-icon.png";
+import InternalChartsIcon from "@/images/internal-charts-icon.png";
+import ModelAccuracyIcon from "@/images/model-accuracy-icon.png";
+import FaqIcon from "@/images/faq-icon.png";
+import HelpSupportIcon from "@/images/help-support-icon.png";
 
 const routes = [
   {
-    path: "/",
-    name: "Home",
-    label: "Demand Planner",
-    component: DemandPlanner,
+    path: '/',
+    component: Default,
+    children: [
+      {
+        path: '',
+        name: 'landing',
+        label: "Demand Planner",
+        icon: DemmandPlannerIcon,
+        component: DemandPlanner,
+      },
+      {
+        path: '/demand-planner',
+        name: 'DemandPlanner',
+        label: "Demand Planner",
+        icon: DemmandPlannerIcon,
+        component: DemandPlanner,
+      },
+      {
+        path: "/heatmap",
+        name: "HeatMap",
+        label: "Heat-map View",
+        icon: HeatMapIcon,
+        component: HeatMap,
+      },
+      {
+        path: "/internal-charts",
+        name: "InternalCharts",
+        label: "Internal Charts",
+        icon: InternalChartsIcon,
+        component: InternalCharts,
+      },
+      {
+        path: "/model-accuracy",
+        name: "ModelAccuracy",
+        label: "Model Accuracy",
+        icon: ModelAccuracyIcon,
+        component: ModelAccuracy,
+      },
+      {
+        path: "/faqs",
+        name: "FAQs",
+        label: "FAQs",
+        icon: FaqIcon,
+        component: TheFaq,
+      },
+      {
+        path: "/support",
+        name: "HelpSupport",
+        label: "Help & Support",
+        icon: HelpSupportIcon,
+        component: TheSupport,
+      },
+    ],
   },
-  {
-    path: "/demand-planner",
-    name: "DemandPlanner",
-    label: "Demand Planner",
-    component: DemandPlanner,
-  },
-  {
-    path: "/heatmap",
-    name: "HeatMap",
-    label: "Heat-map View",
-    component: HeatMap,
-  },
-  {
-    path: "/internal-charts",
-    name: "InternalCharts",
-    label: "Internal Charts",
-    component: InternalCharts,
-  },
-  {
-    path: "/model-accuracy",
-    name: "ModelAccuracy",
-    label: "Model Accuracy",
-    component: ModelAccuracy,
-  },
-  {
-    path: "/faqs",
-    name: "FAQs",
-    label: "FAQs",
-    component: TheFaq,
-  },
-  {
-    path: "/support",
-    name: "HelpSupport",
-    label: "Help & Support",
-    component: TheSupport,
-  },
-];
+]
 
 const router = createRouter({
-  history: createWebHashHistory(),
+  history: createWebHistory(process.env.BASE_URL),
   routes,
-});
+})
 
-export default router;
+export default router

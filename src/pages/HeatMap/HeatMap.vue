@@ -1,11 +1,17 @@
 <script>
-import TheHeader from '@/components/HeatMap/TheHeader.vue'
-import TheBody from "@/components/HeatMap/TheBody.vue";
+import TheHeader from '@/pages/HeatMap/TheHeader.vue'
+import TheBody from "@/pages/HeatMap/TheBody.vue";
+import HEAT_MAP_DATA from './constants'
 export default {
   name: "HeatMap",
   components: {
     TheHeader,
     TheBody
+  },
+  data() {
+    return {
+      HEAT_MAP_DATA
+    }
   }
 }
 </script>
@@ -16,12 +22,16 @@ export default {
       Heat-map View
     </div>
     <div class="tw-ml-auto tw-h-full tw-flex tw-items-center">
-      Last refreshed on
+      Last refreshed on {{new Date().toLocaleString('en-GB',{
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    })}}
     </div>
   </div>
   <div class="tw-flex tw-w-full tw-flex-auto tw-border-t tw-border-solid tw-border-brand-gray-2" />
   <div class="tw-flex tw-flex-col tw-h-full tw-py-4 tw-gap-4 tw-bg-brand-gray-1">
     <TheHeader />
-    <TheBody />
+    <TheBody :data="HEAT_MAP_DATA"/>
   </div>
 </template>

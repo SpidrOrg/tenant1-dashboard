@@ -73,8 +73,7 @@ export default {
 }
 .content-container {
   display: flex;
-  padding-left: 1.5rem;
-  padding-right: 1.5rem;
+  padding: 1.5rem;
   flex-direction: column;
   --tw-bg-opacity: 1;
   background-color: rgb(245 245 245 / var(--tw-bg-opacity));

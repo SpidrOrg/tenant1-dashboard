@@ -12,6 +12,11 @@ export default {
     orgLogo: {
       type: String,
       required: true
+    },
+    userdata: {
+      type: Object,
+      required: false,
+      default: {}
     }
   }
 }
@@ -25,7 +30,7 @@ export default {
     <div class="main-area">
       <div class="control-container">
         <div class="control-section">
-          <TheHeader/>
+          <TheHeader :userdata="userdata"/>
         </div>
       </div>
       <div class="content-container">

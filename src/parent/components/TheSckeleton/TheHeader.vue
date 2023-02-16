@@ -2,6 +2,8 @@
 import AnyUser from "../../public/anyUser.png";
 import DownArrow from "../../public/downArrow.png"
 import {logout} from "../../idpUtils";
+import _ from 'lodash';
+
 export default {
   name: "TheHeader",
   data(){
@@ -11,13 +13,22 @@ export default {
       menuSelected: false //todo
     }
   },
+  props: {
+    userdata: {
+      type: Object,
+      required:true
+    }
+  },
   methods: {
     onMenuSelect(){
       //todo
       this.menuSelected = true;
       try {
-        document.getElementById('menu-actions').dispatchEvent(document.createEvent('MouseEvents').initMouseEvent('mousedown', true, true, window));
-      } catch (e){console.log("e")}
+        const event = document.createEvent('MouseEvents');
+        event.initMouseEvent('mousedown', true, true, window);
+        const element = document.getElementById('menu-actions');
+        element.dispatchEvent(event);
+      } catch (e){console.log(e)}
     },
     handleLougut(){
       //todo
@@ -44,7 +55,7 @@ export default {
       <div class="down-arrow">
         <img :src="DownArrow" @click="onMenuSelect" />
         <select v-if="menuSelected === true" id="menu-actions" class="menu-options" @change="handleLougut" @focusout="handleFocusOut">
-          <option :selected="true">Options</option>
+          <option :selected="true">{{userdata.userName}}{{userdata.isAdmin ? '(Admin)' : ''}}</option>
           <option :selected="false">Logout</option>
         </select>
       </div>

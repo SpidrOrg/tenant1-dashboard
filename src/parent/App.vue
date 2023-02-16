@@ -57,5 +57,5 @@ export default {
 
 <template>
   <LoginPage v-if="!isLoggedIn && !loading" />
-  <TheSckeleton v-if="isLoggedIn && !loading" :org-logo="OrgLogo" />
+  <TheSckeleton v-if="isLoggedIn && !loading" :org-logo="OrgLogo" :userdata="this.loggedInUserData"/>
 </template>

@@ -23,12 +23,12 @@ export default {
     onMenuSelect(){
       //todo
       this.menuSelected = true;
-      try {
-        const event = document.createEvent('MouseEvents');
-        event.initMouseEvent('mousedown', true, true, window);
-        const element = document.getElementById('menu-actions');
-        element.dispatchEvent(event);
-      } catch (e){console.log(e)}
+      // try {
+      //   const event = document.createEvent('MouseEvents');
+      //   event.initMouseEvent('mousedown', true, true, window);
+      //   const element = document.getElementById('menu-actions');
+      //   element.dispatchEvent(event);
+      // } catch (e){console.log(e)}
     },
     handleLougut(){
       //todo

@@ -53,7 +53,7 @@ async function authenticate(){
     const idToken = await session.getIdToken()
     const accessToken = await session.getAccessToken()
     return {
-      token: idToken.jwtToken, userPoolId: idpData.userPoolId, accessToken: accessToken
+      token: idToken.jwtToken, userPoolId: idpData.userPoolId, accessToken: accessToken.jwtToken
     }
   } else {
     return {}
@@ -99,14 +99,12 @@ export async function logout(){
 
 
 export async function invokeApi(apiName){
-  const {token, accessToken} = await getAuthDetails();
+  const {accessToken} = await getAuthDetails();
   const data = await fetch(`https://${idpData.apiPrefix}/${idpData.stage}/${apiName}`, {
     headers: {
-      Authorization: token,
-      scope: accessToken.payload.scope
+      Authorization: accessToken
     },
 
   }).then(d => d.json())
-  console.log(data);
   return data.body;
 }

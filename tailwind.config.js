@@ -13,6 +13,7 @@ module.exports = {
         "brand-gray-1": "#F5F5F5",
         "brand-gray-2": "#DBDBDB",
         "brand-gray-3": "#80868b",
+        "brand-gray-4": '#EDEDED',
         "brand-blue-1": "#1967d2",
         "brand-blue-2": "#4285f4",
         "brand-green-1": "#137333",

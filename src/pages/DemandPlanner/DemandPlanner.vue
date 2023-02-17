@@ -16,6 +16,7 @@ export default {
       apiData:{},
       chartDataLoaded:false,
       projectionMonth:'',
+      lag: '',
       barChartOptions:{
         legend: {position: 'bottom'},
         colors: ['#646F79']
@@ -61,10 +62,10 @@ export default {
     },
     colorBtnFunc(n) {
       if(Math.abs(n) >= 20) {
-        return '#FF3429B2';
+        return '#DC3545';
       }
       if(Math.abs(n) >= 6) {
-        return '#FFC107B2';
+        return '#FF9900';
       }
       return '#04BB46';
     }
@@ -77,6 +78,7 @@ export default {
       let currentCardHistorical = _.get(this.apiData, `${oldValue}.historical`);
       let historicalIdentifiers = currentCardHistorical.identifiers;
       this.projectionMonth = _.get(this.apiData, `${oldValue}.period`);
+      this.lag = _.get(this.apiData, `${oldValue}.lag`);
       this.barChartData= [
         ['X', 'Y'],
         ['Stock Market', currentCard['Stock market']],
@@ -130,77 +132,80 @@ export default {
   <div class="tw-py-5 tw-bg-brand-gray-1" v-if="chartDataLoaded">
     <TheHeader />
   </div>
+  <div class="tw-px-4">
   <div class="tw-flex tw-w-full tw-items-center tw-justify-end tw-border-b tw-border-solid tw-border-brand-gray-2" v-if="chartDataLoaded">
     <p>Show Projections for:</p>
     <div class="tw-flex">
         <v-checkbox
-          label="1-3 months (Default)"
+          label="Month1-Month3 "
           color="#7823DC"
           hide-details
           v-model="first_quarter"
           :disabled=true
         ></v-checkbox>
         <v-checkbox
-          label="4-6 months"
+          label="Month4-Month6"
           color="#7823DC"
           hide-details
           v-model="second_quarter"
         ></v-checkbox>
         <v-checkbox
-          label="6-9 months"
+          label="Month7-Month9"
           color="#7823DC"
           hide-details
           v-model="third_quarter"
         ></v-checkbox>
         <v-checkbox
-          label="10-12 months"
+          label="Month10-Month12"
           color="#7823DC"
           hide-details
           v-model="fourth_quarter"
         ></v-checkbox>
     </div>
-    <div class="tw-flex tw-pl-24 tw-pr-4">
-      <v-btn
-        :rounded="0"
-        color="#7823DC"
-      >
-        Switch to Fixed View
-      </v-btn>
+    <div class="tw-flex tw-pl-32 tw-pr-4">
+      <button class="tw-px-3 tw-py-1.5" style="background: #7823DC">
+        <p class="tw-text-white tw-text-sm">Switch to Fixed View</p>
+      </button>
     </div>
   </div>
-  <div class="tw-flex tw-w-full tw-flex-auto tw-py-5" v-if="chartDataLoaded">
-      <div class="tw-grid tw-grid-cols-4 tw-gap-2.5 tw-m-2" v-if="chartDataLoaded && apiData.length">
-        <v-card v-for="(data, index) in apiData" :key="data.period" @click="activeEl(index)" :style="(activeCard == index) ? 'border:1px solid #7823DC': '' ">
-          <v-container>
+    <div class="tw-grid tw-grid-cols-4 tw-gap-2.5 tw-w-full tw-py-5" v-if="chartDataLoaded && apiData.length">
+        <v-card v-for="(data, index) in apiData" :key="data.period"
+                @click="activeEl(index)"
+                class="tw-shadow-none"
+                :style="(activeCard == index) ? 'border:1px solid #7823DC': '' "
+        >
+          <div class="tw-w-full tw-p-4">
             <div class="tw-flex tw-flex-col tw-pb-2">
                 <p style="color: #9291A5;">Projected Period</p>
                 <div class="tw-flex tw-gap-x-4 tw-items-center tw-w-full">
                   <p class="tw-text-xl tw-font-medium">{{ data.period }}</p>
                   <div class="tw-bg-brand-gray-4 tw-rounded">
-                    <p class="tw-p-1">{{ data.lag }} Months Lag</p>
+                    <p class="tw-p-1 tw-text-sm">{{ data.lag }} Month Lag</p>
                   </div>
                 </div>
             </div>
             <div class="tw-w-full tw-border-t tw-border-solid tw-border-brand-gray-2" v-if="chartDataLoaded"/>
             <div class="tw-grid tw-grid-cols-2 tw-pt-2">
               <div>
-                <h4 class="tw-font-bold tw-text-sm">Projected Growth (%YoY)</h4>
-                <h2 class="tw-text-4xl tw-font-semibold" :style="{'color': colorBtnFunc(data.variance)}">{{ `${data.variance}%` }}</h2>
-                <span class="tw-text-l">Variance</span>
+                <p class="tw-font-medium tw-text-base tw-pb-1">Projected Growth (%YoY)</p>
+                <div class="tw-flex tw-flex-col tw-pb-3">
+                  <span class="tw-text-4xl tw-font-semibold" :style="{'color': colorBtnFunc(data.variance)}">{{ `${data.variance}%` }}</span>
+                  <span class="tw-text-sm">Variance</span>
+                </div>
                 <div class="tw-w-full tw-border-t tw-border-solid tw-border-brand-gray-2" v-if="chartDataLoaded"/>
-                <div class="tw-grid tw-grid-cols-2 tw-mt-3">
+                <div class="tw-grid tw-grid-cols-2 tw-pt-3">
                   <div>
                     <p class="tw-text-2xl tw-font-semibold">{{ `${data.marketSensing}%` }}</p>
-                    <span class="tw-text-xs">Market Sensing</span>
+                    <span class="tw-text-sm">Market Sensing</span>
                   </div>
                   <div>
                     <p class="tw-text-2xl tw-font-semibold">{{ `${data.internal}%` }}</p>
-                    <span class="tw-text-xs">Internal Forecast</span>
+                    <span class="tw-text-sm">Internal Forecast</span>
                   </div>
                 </div>
               </div>
               <div>
-                <h4 class="tw-font-bold tw-text-right" style="font-size: 15px">ML Model Accuracy</h4>
+                <p class="tw-font-medium tw-text-right tw-text-base tw-pb-1">ML Model Accuracy</p>
                 <GChart type="PieChart"
                         :data="[
                                 ['Effort', 'Percentage'],
@@ -208,10 +213,10 @@ export default {
                                 ['', 100-data.modelAccuracy.current]
                               ]"
                         :options="{
-                          pieHole: 0.6,
+                          pieHole: 0.7,
                           pieSliceTextStyle: {
-                            color: '#8C8C8C',
-                            fontSize: '15px'
+                            color: 'black',
+                            fontSize: '20px'
                           },
                           legend: 'none',
                           slices: {
@@ -219,8 +224,9 @@ export default {
                             1: {color: '#E6E6E6', textStyle: {color: 'transparent'}}
                           },
                           chartArea: {
-                            width: '100px',
-                            height: '75px'
+                            top: 20,
+                            width: '80%',
+                            height: '60%'
                           }}"/>
               </div>
             </div>
@@ -239,13 +245,18 @@ export default {
                 </v-btn>
               </div>
             </div>
-          </v-container>
+          </div>
         </v-card>
       </div>
-  </div>
-  <h3 class="tw-pt-4 tw-pb-2 tw-font-medium tw-text-2xl" v-if="chartDataLoaded">More details for {{projectionMonth}} </h3>
-  <div class="tw-py-4 tw-w-full tw-border-t tw-border-solid tw-border-brand-gray-2" v-if="chartDataLoaded">
-      <div class="tw-grid tw-grid-cols-4 tw-gap-3">
+    <div class="tw-py-5">
+      <div class="tw-flex tw-gap-x-4 tw-items-center tw-w-full tw-pt-4 tw-pb-2" v-if="chartDataLoaded">
+        <p class="tw-font-medium tw-text-2xl">More details for {{projectionMonth}}</p>
+        <div class="tw-bg-brand-gray-4 tw-rounded">
+          <p class="tw-p-1 tw-text-sm">{{lag}} Month Lag</p>
+        </div>
+      </div>
+      <div class="tw-py-4 tw-w-full tw-border-t tw-border-solid tw-border-brand-gray-2" v-if="chartDataLoaded">
+        <div class="tw-grid tw-grid-cols-4 tw-gap-3">
         <div class="tw-col-span-1">
           <v-card class="tw-shadow-none">
             <h1 class="tw-font-bold">Key Demand Drivers</h1>
@@ -276,7 +287,8 @@ export default {
             />
           </v-card>
         </div>
-
       </div>
+      </div>
+    </div>
   </div>
 </template>

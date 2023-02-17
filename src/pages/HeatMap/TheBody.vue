@@ -15,7 +15,7 @@ export default {
 </script>
 
 <template>
-  <div class="tw-grid tw-grid-cols-2 tw-gap-4 tw-w-full tw-h-full">
+  <div class="tw-grid tw-grid-cols-2 tw-gap-5 tw-w-full" style="height: 95%">
     <TheCard title="Jan 23 - Mar 23" :data="data[0]"/>
     <TheCard title="Apr 23 - Jun 23" :data="data[1]"/>
     <TheCard title="Jul 23 - Sep 23" :data="data[2]"/>

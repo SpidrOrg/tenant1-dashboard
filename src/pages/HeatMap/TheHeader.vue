@@ -27,9 +27,10 @@ export default {
       </div>
       <div class="tw-flex tw-items-center tw-gap-1.5">
         <p :class="`${!isByVolume ? 'tw-font-medium' : ''}`">Value (USD)</p>
-        <div class="tw-flex tw-pt-5">
-          <v-switch label="Volume" inset @click="isByVolume = !isByVolume"></v-switch>
-          </div>
+        <div class="tw-flex tw-pt-5" style="color: #7823DC;">
+          <v-switch inset @click="isByVolume = !isByVolume"></v-switch>
+        </div>
+        <p :class="`${isByVolume ? 'tw-font-medium' : ''}`">Volume</p>
       </div>
     </div>
     <div class="tw-flex tw-justify-evenly tw-w-6/12">

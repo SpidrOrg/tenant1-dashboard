@@ -18,7 +18,7 @@ export default {
 
 <template>
   <div class="tw-flex tw-w-full tw-h-8 tw-bg-brand-gray-1">
-    <div class="tw-flex tw-h-full tw-items-center tw-font-bold">
+    <div class="tw-flex tw-h-full tw-items-center tw-font-bold tw-text-lg">
       Heat-map View
     </div>
     <div class="tw-ml-auto tw-h-full tw-flex tw-items-center">
@@ -30,8 +30,10 @@ export default {
     </div>
   </div>
   <div class="tw-flex tw-w-full tw-flex-auto tw-border-t tw-border-solid tw-border-brand-gray-2" />
-  <div class="tw-flex tw-flex-col tw-h-full tw-py-4 tw-gap-4 tw-bg-brand-gray-1">
+  <div class="tw-py-5 tw-bg-brand-gray-1">
     <TheHeader />
+  </div>
+  <div class="tw-w-full tw-h-5/6 tw-bg-brand-gray-1">
     <TheBody :data="HEAT_MAP_DATA"/>
   </div>
 </template>

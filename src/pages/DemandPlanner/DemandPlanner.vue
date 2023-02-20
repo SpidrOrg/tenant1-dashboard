@@ -16,6 +16,7 @@ export default {
       apiData:{},
       chartDataLoaded:false,
       projectionMonth:'',
+      lag: '',
       barChartOptions:{
         legend: {position: 'bottom'},
         colors: ['#646F79']
@@ -61,10 +62,10 @@ export default {
     },
     colorBtnFunc(n) {
       if(Math.abs(n) >= 20) {
-        return '#FF3429B2';
+        return '#DC3545';
       }
       if(Math.abs(n) >= 6) {
-        return '#FFC107B2';
+        return '#FF9900';
       }
       return '#04BB46';
     }
@@ -77,6 +78,7 @@ export default {
       let currentCardHistorical = _.get(this.apiData, `${oldValue}.historical`);
       let historicalIdentifiers = currentCardHistorical.identifiers;
       this.projectionMonth = _.get(this.apiData, `${oldValue}.period`);
+      this.lag = _.get(this.apiData, `${oldValue}.lag`);
       this.barChartData= [
         ['X', 'Y'],
         ['Stock Market', currentCard['Stock market']],
@@ -135,32 +137,32 @@ export default {
     <p>Show Projections for:</p>
     <div class="tw-flex">
         <v-checkbox
-          label="1-3 months (Default)"
+          label="Month1-Month3 "
           color="#7823DC"
           hide-details
           v-model="first_quarter"
           :disabled=true
         ></v-checkbox>
         <v-checkbox
-          label="4-6 months"
+          label="Month4-Month6"
           color="#7823DC"
           hide-details
           v-model="second_quarter"
         ></v-checkbox>
         <v-checkbox
-          label="6-9 months"
+          label="Month7-Month9"
           color="#7823DC"
           hide-details
           v-model="third_quarter"
         ></v-checkbox>
         <v-checkbox
-          label="10-12 months"
+          label="Month10-Month12"
           color="#7823DC"
           hide-details
           v-model="fourth_quarter"
         ></v-checkbox>
     </div>
-    <div class="tw-flex tw-pl-24 tw-pr-4">
+    <div class="tw-flex tw-pl-32 tw-pr-4">
       <button class="tw-px-3 tw-py-1.5" style="background: #7823DC">
         <p class="tw-text-white tw-text-sm">Switch to Fixed View</p>
       </button>
@@ -178,7 +180,7 @@ export default {
                 <div class="tw-flex tw-gap-x-4 tw-items-center tw-w-full">
                   <p class="tw-text-xl tw-font-medium">{{ data.period }}</p>
                   <div class="tw-bg-brand-gray-4 tw-rounded">
-                    <p class="tw-p-1 tw-text-sm">{{ data.lag }} Months Lag</p>
+                    <p class="tw-p-1 tw-text-sm">{{ data.lag }} Month Lag</p>
                   </div>
                 </div>
             </div>
@@ -250,7 +252,7 @@ export default {
       <div class="tw-flex tw-gap-x-4 tw-items-center tw-w-full tw-pt-4 tw-pb-2" v-if="chartDataLoaded">
         <p class="tw-font-medium tw-text-2xl">More details for {{projectionMonth}}</p>
         <div class="tw-bg-brand-gray-4 tw-rounded">
-          <p class="tw-p-1 tw-text-sm">1 - 3 Months Lag</p>
+          <p class="tw-p-1 tw-text-sm">{{lag}} Month Lag</p>
         </div>
       </div>
       <div class="tw-py-4 tw-w-full tw-border-t tw-border-solid tw-border-brand-gray-2" v-if="chartDataLoaded">

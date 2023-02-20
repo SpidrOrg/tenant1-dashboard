@@ -42,7 +42,9 @@ export default {
             <template v-slot:activator="{ props }">
               <p v-bind="props" class="tw-font-medium tw-py-3">{{`${value}${column.label !== 'Name' ? '%': ''}`}}</p>
             </template>
-            <TooltipChart />
+            <div class="tw-border-2 tw-shadow-2xl tw-p-0">
+              <TooltipChart />
+            </div>
           </v-menu>
         </div>
       </div>

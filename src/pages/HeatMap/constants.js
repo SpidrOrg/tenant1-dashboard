@@ -5,7 +5,7 @@ const HEAT_MAP_DATA = [[
   },
   {
     label: "Shirts",
-    values: [7, 22, 94, 28]
+    values: [7, -22, 94, 28]
   },
   {
     label: "T-Shirts",

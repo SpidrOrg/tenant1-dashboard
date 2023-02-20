@@ -45,7 +45,7 @@ export default {
         const jwtDecoded = jwt_decode(token);
         this.loggedInUserData.deocdedJWT = jwtDecoded
         this.loggedInUserData.isAdmin = _.filter(_.get(jwtDecoded, "['cognito:groups']", []), v =>  v === 'admin').length > 0
-        this.loggedInUserData.userName = _.get(jwtDecoded, "email", "");
+        this.loggedInUserData.userName = _.get(jwtDecoded, "name", null) ?? _.get(jwtDecoded, "email", "---");
       } else {
         this.loggedInUserData.token = null
         this.loggedInUserData.userPoolId = null
@@ -57,5 +57,5 @@ export default {
 
 <template>
   <LoginPage v-if="!isLoggedIn && !loading" />
-  <TheSckeleton v-if="isLoggedIn && !loading" :org-logo="OrgLogo" />
+  <TheSckeleton v-if="isLoggedIn && !loading" :org-logo="OrgLogo" :userdata="this.loggedInUserData"/>
 </template>

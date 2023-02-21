@@ -22,11 +22,7 @@ export default {
       Heat-map View
     </div>
     <div class="tw-ml-auto tw-h-full tw-flex tw-items-center">
-      Last refreshed on {{new Date().toLocaleString('en-GB',{
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    })}}
+      Last refreshed on 01 Jan 2023
     </div>
   </div>
   <div class="tw-flex tw-w-full tw-flex-auto tw-border-t tw-border-solid tw-border-brand-gray-2" />

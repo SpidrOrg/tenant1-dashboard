@@ -125,7 +125,7 @@ export default {
       Demand Planner Dashboard as of Jan 2023
     </div>
     <div class="tw-ml-auto tw-h-full tw-flex tw-items-center">
-      Last Refreshed
+      Last refreshed on 01 Jan 2023
     </div>
   </div>
   <div class="tw-flex tw-w-full tw-flex-auto tw-border-t tw-border-solid tw-border-brand-gray-2" />
@@ -204,30 +204,32 @@ export default {
                   </div>
                 </div>
               </div>
-              <div>
-                <p class="tw-font-medium tw-text-right tw-text-base tw-pb-1">ML Model Accuracy</p>
-                <GChart type="PieChart"
-                        :data="[
+              <div class="tw-flex tw-flex-col tw-items-center">
+                <p class="tw-flex tw-font-medium tw-mb-10">ML Model Accuracy</p>
+                <div class="tw-relative tw-flex tw-items-center tw-w-32 tw-h-32">
+                  <div class="tw-absolute tw-z-10 tw-h-full tw-w-full tw-flex tw-items-center tw-justify-center tw-font-bold">{{Math.round(data.modelAccuracy.current, 0)}}%</div>
+                  <GChart type="PieChart"
+                          :data="[
                                 ['Effort', 'Percentage'],
                                 ['single', data.modelAccuracy.current],
                                 ['', 100-data.modelAccuracy.current]
                               ]"
-                        :options="{
+                          :options="{
                           pieHole: 0.7,
                           pieSliceTextStyle: {
                             color: 'black',
                             fontSize: '20px'
                           },
+                          theme: 'maximized',
                           legend: 'none',
                           slices: {
                             0: {color: '#8C8C8C', textStyle: {color: 'transparent'}},
                             1: {color: '#E6E6E6', textStyle: {color: 'transparent'}}
                           },
-                          chartArea: {
-                            top: 20,
-                            width: '80%',
-                            height: '60%'
-                          }}"/>
+                          height: 119,
+                          width:119
+                          }"/>
+                </div>
               </div>
             </div>
             <div class="tw-grid tw-grid-cols-2">

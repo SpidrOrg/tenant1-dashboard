@@ -13,7 +13,12 @@ export default {
       columnChartData:[['Period','Internal','Actual'],['Dec21 - Feb22',3.2,2.4],['Jan22 - Mar22',2.5,1.6],['Feb22 - Apr22',1.8,1.1],['Mar22 - May22',1.5,1.2],['Apr22 - Jun22',2.3,1.4],['May22 - Jul22',1.6,1.8],['Jun22 - Aug22',0.8,0.3],['Jul22 - Sept22',1.3,1.2],['Aug22 - Oct22',0.6,0.8],['Sept22 - Nov22',0.7,0.9],['Oct22 - Dec22',1.3,0.8],['Nov22 - Jan23',1.6,1.2]],
       columnChartOptions:{
         legend: {position: 'top'},
-        colors: ['#787878', '#B991EB']
+        colors: ['#787878', '#B991EB'],
+        hAxis : {
+          textStyle : {
+            fontSize: 10
+          }
+        }
       },
       lineChartData:[['Time Period', 'Market Sensing', 'Internal', 'Actual' ],
         ['Dec21 - Feb22', 29,26, 23],
@@ -35,6 +40,11 @@ export default {
         colors: ['#570EAA', '#787878', '#C8A5F0'],
         series: {
           1: {lineDashStyle: [4, 4]}
+        },
+        hAxis : {
+          textStyle : {
+            fontSize: 10
+          }
         }
       }
     }

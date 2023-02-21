@@ -104,7 +104,6 @@ export async function invokeApi(apiName){
     headers: {
       Authorization: accessToken
     },
-
   }).then(d => d.json())
   return data.body;
 }

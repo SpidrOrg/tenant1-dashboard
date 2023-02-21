@@ -10,10 +10,14 @@ export default {
     GChart,
     TheHeader
   },
-
   data(){
     return{
-      apiData:{},
+      apiData:[],
+      filters: {
+        categories: [],
+        customers: [],
+        isByVolume: false
+      },
       chartDataLoaded:false,
       projectionMonth:'',
       lag: '',
@@ -28,7 +32,7 @@ export default {
       impliedMarketChartData:{},
       barChartData:{},
       columnChartData:[],
-      activeCard: 1,
+      activeCard: null,
       impliedMarketChartOptions : {
         //chart: {
         //title: 'Implied Market Share',
@@ -49,16 +53,23 @@ export default {
       show_array:['show','hide','hide','hide']
     }
   },
+  computed: {
+    filteredData () {
+      // const result = this.apiData.filter((_, index) => this.show_array[index] === 'show')
+      // if(result.length === 1) this.activeCard = 0
+      // return result
+      return this.apiData.filter((_, index) => this.show_array[index] === 'show')
+    }
+  },
   async created(){
    this.apiData = await fetchMainDashboardData();
    console.log(this.apiData);
-   this.chartDataLoaded = true
-    this.activeCard = 0;
+   this.chartDataLoaded = true;
+   this.activeCard = 0;
   },
   methods:{
     activeEl(ind) {
       this.activeCard = ind
-      //alert(this.activeCard);
     },
     colorBtnFunc(n) {
       if(Math.abs(n) >= 20) {
@@ -68,17 +79,19 @@ export default {
         return '#FF9900';
       }
       return '#04BB46';
+    },
+    isCheckboxDisabled (isChecked) {
+      return isChecked && this.show_array.filter(el => el === 'show').length === 1
     }
   },
   watch:{
-    activeCard(oldValue, newValue){
-      //alert(oldValue);
-      let currentCard = _.get(this.apiData, `${oldValue}.externalKPIs`);
-      let currentCardPy = _.get(this.apiData, `${oldValue}.impliedMarketShare`);
-      let currentCardHistorical = _.get(this.apiData, `${oldValue}.historical`);
+    activeCard(newValue, oldValue){
+      let currentCard = _.get(this.filteredData, `${newValue}.externalKPIs`);
+      let currentCardPy = _.get(this.filteredData, `${newValue}.impliedMarketShare`);
+      let currentCardHistorical = _.get(this.filteredData, `${newValue}.historical`);
       let historicalIdentifiers = currentCardHistorical.identifiers;
-      this.projectionMonth = _.get(this.apiData, `${oldValue}.period`);
-      this.lag = _.get(this.apiData, `${oldValue}.lag`);
+      this.projectionMonth = _.get(this.filteredData, `${newValue}.period`);
+      this.lag = _.get(this.filteredData, `${newValue}.lag`);
       this.barChartData= [
         ['X', 'Y'],
         ['Stock Market', currentCard['Stock market']],
@@ -99,17 +112,17 @@ export default {
         v.columnChartData.push(data);
       })
     },
-    first_quarter(oldValue,newValue){
-      this.show_array[0] = (oldValue) ? 'show' : 'hide';
+    first_quarter(newValue){
+      this.show_array[0] = (newValue) ? 'show' : 'hide';
     },
-    second_quarter(oldValue,newValue){
-      this.show_array[1] = (oldValue) ? 'show' : 'hide';
+    second_quarter(newValue){
+      this.show_array[1] = (newValue) ? 'show' : 'hide';
     },
-    third_quarter(oldValue,newValue){
-      this.show_array[2] = (oldValue) ? 'show' : 'hide';
+    third_quarter(newValue){
+      this.show_array[2] = (newValue) ? 'show' : 'hide';
     },
-    fourth_quarter(oldValue,newValue){
-      this.show_array[3] = (oldValue) ? 'show' : 'hide';
+    fourth_quarter(newValue){
+      this.show_array[3] = (newValue) ? 'show' : 'hide';
     },
   }
 };
@@ -130,48 +143,64 @@ export default {
   </div>
   <div class="tw-flex tw-w-full tw-flex-auto tw-border-t tw-border-solid tw-border-brand-gray-2" />
   <div class="tw-py-5 tw-bg-brand-gray-1" v-if="chartDataLoaded">
-    <TheHeader />
+    <TheHeader :categories="filters.categories"
+               :customers="filters.customers"
+               :isByVolume="filters.isByVolume"
+    />
   </div>
   <div class="tw-px-4">
   <div class="tw-flex tw-w-full tw-items-center tw-justify-end tw-border-b tw-border-solid tw-border-brand-gray-2" v-if="chartDataLoaded">
     <p>Show Projections for:</p>
-    <div class="tw-flex">
+      <div class="tw-flex tw-items-center">
         <v-checkbox
-          label="Month1-Month3 "
+          id="first_quarter"
           color="#7823DC"
           hide-details
           v-model="first_quarter"
-          :disabled=true
-        ></v-checkbox>
+          :disabled="isCheckboxDisabled(first_quarter)"
+        />
+        <label for="first_quarter">Month1-Month3</label>
+      </div>
+      <div class="tw-flex tw-items-center">
         <v-checkbox
-          label="Month4-Month6"
+          id="second_quarter"
           color="#7823DC"
           hide-details
           v-model="second_quarter"
-        ></v-checkbox>
+          :disabled="isCheckboxDisabled(second_quarter)"
+        />
+        <label for="second_quarter">Month4-Month6</label>
+      </div>
+      <div class="tw-flex tw-items-center">
         <v-checkbox
-          label="Month7-Month9"
+          id="third_quarter"
           color="#7823DC"
           hide-details
           v-model="third_quarter"
-        ></v-checkbox>
+          :disabled="isCheckboxDisabled(third_quarter)"
+        />
+        <label for="third_quarter">Month7-Month9</label>
+      </div>
+      <div class="tw-flex tw-items-center">
         <v-checkbox
-          label="Month10-Month12"
+          id="fourth_quarter"
           color="#7823DC"
           hide-details
           v-model="fourth_quarter"
-        ></v-checkbox>
-    </div>
+          :disabled="isCheckboxDisabled(fourth_quarter)"
+        />
+        <label for="fourth_quarter">Month10-Month12</label>
+      </div>
     <div class="tw-flex tw-pl-32 tw-pr-4">
       <button class="tw-px-3 tw-py-1.5" style="background: #7823DC">
         <p class="tw-text-white tw-text-sm">Switch to Fixed View</p>
       </button>
     </div>
   </div>
-    <div class="tw-grid tw-grid-cols-4 tw-gap-2.5 tw-w-full tw-py-5" v-if="chartDataLoaded && apiData.length">
-        <v-card v-for="(data, index) in apiData" :key="data.period"
+    <div class="tw-flex tw-justify-center tw-gap-2.5 tw-w-full tw-py-5" v-if="chartDataLoaded && filteredData.length">
+        <v-card v-for="(data, index) in filteredData" :key="data.period"
                 @click="activeEl(index)"
-                class="tw-shadow-none"
+                class="tw-w-1/4 tw-shadow-none"
                 :style="(activeCard == index) ? 'border:1px solid #7823DC': '' "
         >
           <div class="tw-w-full tw-p-4">

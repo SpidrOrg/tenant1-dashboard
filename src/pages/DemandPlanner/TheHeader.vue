@@ -10,47 +10,85 @@ export default {
       type: Array,
       required: true
     },
-    // isByVolume: {
-    //   type: Boolean,
-    //   default: false
-    // }
-  },
-  data(){
-    return {
-      isByVolume: false,
+    isByVolume: {
+      type: Boolean,
+      default: false
     }
   },
+  emits: ['updateFilters'],
+  data(){
+    return {
+      availableCategories: ['All', 'Shirts', 'Pants', 'Jackets'], // to come from API
+      availableCustomers: ['All', 'Amazon', 'Walmart'] // to come from API
+    }
+  },
+  methods: {
+    filtersUpdateHandler (name, value) {
+      // if(value.includes('All')) {
+      //   let val = []
+      //   switch (name) {
+      //     case 'categories':
+      //       val = this.availableCategories.filter(item => item !== 'All')
+      //       break;
+      //     case 'customers':
+      //       val = this.availableCustomers.filter(item => item !== 'All')
+      //       break;
+      //     default:
+      //       break;
+      //   }
+      //   this.$emit('updateFilters', {
+      //     name,
+      //     value: val
+      //   })
+      //   return;
+      // }
+      this.$emit('updateFilters', {
+        name,
+        value
+      })
+    }
+  }
 }
 </script>
 
 <template>
-  <div class="tw-flex tw-gap-x-4 tw-w-full tw-bg-white tw-px-3">
-      <div class="tw-pt-5 tw-w-1/6">
+  <div class="tw-flex tw-gap-x-3 tw-w-full tw-bg-white tw-px-3">
+      <div class="tw-pt-3 tw-w-1/6 tw--mb-3">
         <v-select
           label="All Categories"
-          :items="['All', 'Shirts', 'Pants', 'Jackets']"
+          :items="availableCategories"
+          :model-value="categories"
+          @update:modelValue="(value) => filtersUpdateHandler('categories', value)"
           multiple
+          density="comfortable"
         />
       </div>
-      <div class="tw-pt-5 tw-w-1/6">
+      <div class="tw-pt-3 tw-w-1/6 tw--mb-3">
         <v-select
           label="All Customers"
-          :items="['All', 'Amazon', 'Walmart']"
+          :items="availableCustomers"
+          :model-value="customers"
+          @update:modelValue="(value) => filtersUpdateHandler('customers', value)"
           multiple
+          density="comfortable"
         />
       </div>
-      <div class="tw-pt-5 tw-w-1/6">
+      <div class="tw-pt-3 tw-w-1/6 tw--mb-3">
         <v-select
           label="Geography"
           :items="['USA']"
+          density="comfortable"
         />
       </div>
-      <div class="tw-flex tw-items-center tw-gap-1.5 tw-pl-2">
-        <p :class="`${!isByVolume ? 'tw-font-medium' : ''}`">Value (USD)</p>
-        <div class="tw-flex tw-pt-5" style="color: #7823DC;">
-          <v-switch inset @click="isByVolume = !isByVolume"/>
+      <div class="tw-flex tw-gap-1.5 tw-pl-3 tw--mb-3">
+        <p :class="`tw-pt-6 ${!isByVolume ? 'tw-font-medium' : ''}`">Value (USD)</p>
+        <div class="tw-flex tw-pt-2" style="color: #7823DC;">
+          <v-switch :model-value="isByVolume" inset @click="$emit('updateFilters', {
+            name: 'isByVolume',
+            value: !isByVolume
+          })"/>
         </div>
-        <p :class="`${isByVolume ? 'tw-font-medium' : ''}`">Volume</p>
+        <p :class="`tw-pt-6 ${isByVolume ? 'tw-font-medium' : ''}`">Volume</p>
       </div>
   </div>
 </template>

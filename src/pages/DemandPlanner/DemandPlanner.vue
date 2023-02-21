@@ -82,6 +82,13 @@ export default {
     },
     isCheckboxDisabled (isChecked) {
       return isChecked && this.show_array.filter(el => el === 'show').length === 1
+    },
+    updateFilters ({name, value}) {
+      this.filters = {
+        ...this.filters,
+        [name]: value
+      }
+      console.log(this.filters)
     }
   },
   watch:{
@@ -134,18 +141,20 @@ export default {
     top: 35%;
   z-index: 1000;"/>
   <div class="tw-flex tw-w-full tw-h-8 tw-bg-brand-gray-1">
-    <div class="tw-flex tw-h-full tw-items-center tw-font-bold">
-      Demand Planner Dashboard as of Jan 2023
+    <div class="tw-flex tw-h-full tw-items-center tw-font-bold tw-text-lg">
+      Demand Planner Dashboard as of Feb 2023
     </div>
     <div class="tw-ml-auto tw-h-full tw-flex tw-items-center">
-      Last Refreshed
+      Last refreshed on 31 Jan 2023
     </div>
   </div>
   <div class="tw-flex tw-w-full tw-flex-auto tw-border-t tw-border-solid tw-border-brand-gray-2" />
   <div class="tw-py-5 tw-bg-brand-gray-1" v-if="chartDataLoaded">
-    <TheHeader :categories="filters.categories"
-               :customers="filters.customers"
-               :isByVolume="filters.isByVolume"
+    <TheHeader
+      :categories="filters.categories"
+      :customers="filters.customers"
+      :isByVolume="filters.isByVolume"
+      @update-filters="updateFilters"
     />
   </div>
   <div class="tw-px-4">

@@ -49,55 +49,31 @@ export default {
       second_quarter:false,
       third_quarter:false,
       fourth_quarter:false,
-      show_array:['show','hide','hide','hide']
     }
   },
   computed: {
+    cardsVisibility () {
+      return [this.first_quarter, this.second_quarter, this.third_quarter, this.fourth_quarter]
+    },
     filteredData () {
-      // const result = this.apiData.filter((_, index) => this.show_array[index] === 'show')
-      // if(result.length === 1) this.activeCard = 0
-      // return result
-      return this.apiData.filter((_, index) => this.show_array[index] === 'show')
+      return this.apiData.filter((_, index) => this.cardsVisibility[index])
     }
   },
   async created(){
    this.apiData = await fetchMainDashboardData();
    console.log(this.apiData);
    this.chartDataLoaded = true;
-   this.activeCard = 0;
+   this.setActiveCard(0)
   },
   methods:{
-    activeEl(ind) {
-      this.activeCard = ind
-    },
-    colorBtnFunc(n) {
-      if(Math.abs(n) >= 20) {
-        return '#DC3545';
-      }
-      if(Math.abs(n) >= 6) {
-        return '#FF9900';
-      }
-      return '#04BB46';
-    },
-    isCheckboxDisabled (isChecked) {
-      return isChecked && this.show_array.filter(el => el === 'show').length === 1
-    },
-    updateFilters ({name, value}) {
-      this.filters = {
-        ...this.filters,
-        [name]: value
-      }
-      console.log(this.filters)
-    }
-  },
-  watch:{
-    activeCard(newValue){
-      let currentCard = _.get(this.filteredData, `${newValue}.externalKPIs`);
-      let currentCardPy = _.get(this.filteredData, `${newValue}.impliedMarketShare`);
-      let currentCardHistorical = _.get(this.filteredData, `${newValue}.historical`);
+    setActiveCard(index) {
+      this.activeCard = index;
+      let currentCard = _.get(this.filteredData[index], `externalKPIs`);
+      let currentCardPy = _.get(this.filteredData[index], `impliedMarketShare`);
+      let currentCardHistorical = _.get(this.filteredData[index], `historical`);
       let historicalIdentifiers = currentCardHistorical.identifiers;
-      this.projectionMonth = _.get(this.filteredData, `${newValue}.period`);
-      this.lag = _.get(this.filteredData, `${newValue}.lag`);
+      this.projectionMonth = _.get(this.filteredData[index], `period`);
+      this.lag = _.get(this.filteredData[index], `lag`);
       this.barChartData= [
         ['X', 'Y'],
         ['Stock Market', currentCard['Stock market']],
@@ -118,19 +94,26 @@ export default {
         v.columnChartData.push(data);
       })
     },
-    first_quarter(newValue){
-      this.show_array[0] = (newValue) ? 'show' : 'hide';
+    colorBtnFunc(n) {
+      if(Math.abs(n) >= 20) {
+        return '#DC3545';
+      }
+      if(Math.abs(n) >= 6) {
+        return '#FF9900';
+      }
+      return '#04BB46';
     },
-    second_quarter(newValue){
-      this.show_array[1] = (newValue) ? 'show' : 'hide';
+    isCheckboxDisabled (isChecked) {
+      return isChecked && this.cardsVisibility.filter(isCardVisible => isCardVisible).length === 1
     },
-    third_quarter(newValue){
-      this.show_array[2] = (newValue) ? 'show' : 'hide';
-    },
-    fourth_quarter(newValue){
-      this.show_array[3] = (newValue) ? 'show' : 'hide';
-    },
-  }
+    updateFilters ({name, value}) {
+      this.filters = {
+        ...this.filters,
+        [name]: value
+      }
+      console.log(this.filters)
+    }
+  },
 };
 </script>
 
@@ -157,8 +140,9 @@ export default {
     />
   </div>
   <div class="tw-px-4">
-  <div class="tw-flex tw-w-full tw-items-center tw-justify-end tw-border-b tw-border-solid tw-border-brand-gray-2" v-if="chartDataLoaded">
-    <p>Show Projections for:</p>
+  <div class="tw-flex tw-w-full tw-items-center tw-border-b tw-border-solid tw-border-brand-gray-2" v-if="chartDataLoaded">
+    <div class="tw-flex tw-justify-center tw-items-center tw-w-full">
+      <p>Show Projections for:</p>
       <div class="tw-flex tw-items-center">
         <v-checkbox
           id="first_quarter"
@@ -199,7 +183,8 @@ export default {
         />
         <label for="fourth_quarter">Month10-Month12</label>
       </div>
-    <div class="tw-flex tw-pl-32 tw-pr-4">
+    </div>
+    <div class="tw-flex tw--ml-40">
       <button class="tw-px-3 tw-py-1.5" style="background: #7823DC">
         <p class="tw-text-white tw-text-sm">Switch to Fixed View</p>
       </button>
@@ -207,7 +192,7 @@ export default {
   </div>
     <div class="tw-flex tw-justify-center tw-gap-2.5 tw-w-full tw-py-5" v-if="chartDataLoaded && filteredData.length">
         <v-card v-for="(data, index) in filteredData" :key="data.period"
-                @click="activeEl(index)"
+                @click="setActiveCard(index)"
                 class="tw-w-1/4 tw-shadow-none"
                 :style="(activeCard === index) ? 'border:1px solid #7823DC': '' "
         >

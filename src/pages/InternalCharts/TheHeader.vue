@@ -12,9 +12,6 @@ export default {
 <template>
   <div class="tw-flex tw-gap-x-4 tw-w-full tw-bg-white tw-px-3">
     <div class="tw-pt-5 tw-w-1/6">
-      <v-label>
-        Customer
-      </v-label>
       <v-select
         label="All Customers"
         :items="['All', 'Amazon', 'Walmart','Lowe`s']"

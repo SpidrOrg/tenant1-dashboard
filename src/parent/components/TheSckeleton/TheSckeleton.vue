@@ -51,7 +51,7 @@ export default {
 .screen {
   display: flex;
   width: 100vw;
-  height: 80vh;
+  height: 100vh;
 }
 .sidebar {
   display: flex;
@@ -78,7 +78,7 @@ export default {
 }
 .content-container {
   display: flex;
-  padding: 1.5rem;
+  padding: 1rem;
   flex-direction: column;
   --tw-bg-opacity: 1;
   background-color: rgb(245 245 245 / var(--tw-bg-opacity));

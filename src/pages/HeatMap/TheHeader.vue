@@ -16,7 +16,7 @@ export default {
 
 <template>
   <div class="tw-flex tw-justify-between tw-w-full tw-bg-white tw-px-3">
-    <div class="tw-flex tw-justify-start tw-w-8/12 tw-gap-x-3">
+    <div class="tw-flex tw-justify-start tw-w-7/12 tw-gap-x-3">
       <div class="tw-w-2/6 tw-pt-3 tw--mb-3">
         <v-select
           v-model="selectedYear"
@@ -34,8 +34,8 @@ export default {
         <p :class="`tw-pt-6 ${isByVolume ? 'tw-font-medium' : ''}`">Volume</p>
       </div>
     </div>
-    <div class="tw-flex tw-justify-evenly tw-w-6/12">
-      <div class="tw-flex tw-gap-1 tw-pt-4">
+    <div class="tw-flex tw-justify-end tw-w-7/12">
+      <div class="tw-flex tw-gap-1 tw-pt-4 tw-pr-3">
         <img :src="InfoIcon" class="tw-h-6 tw-m-2"/>
         <p class="tw-pt-2">Abs value scale:</p>
       </div>

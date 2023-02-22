@@ -9,6 +9,8 @@ export default {
     return {
       data: [
         ['Time Period', 'Market Sensing', 'Internal', 'Actual' ],
+        ['Aug 22 - Oct 22', 55,70, 40],
+        ['Sep 22 - Nov 22', 13,66, 20],
         ['Oct 22 - Dec 22', 24,30, 54],
         ['Nov 22 - Jan 23', 55,70, 40],
         ['Dec 22 - Feb 23', 13,66, 20],
@@ -23,13 +25,13 @@ export default {
         curveType: 'none',
         legend: { position: 'top' },
         colors: ['#570EAA', '#787878', '#C8A5F0',],
-        width: 600,
-        height: 300,
+        width: 750,
+        height: 350,
         chartArea:{
-          left:5,
-          top: 20,
-          width: '100%',
-          height: '250',
+          left: '6%',
+          top: '6%',
+          width: '90%',
+          height: '80%',
         }
       }
     }

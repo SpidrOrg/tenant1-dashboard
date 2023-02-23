@@ -13,7 +13,7 @@ export default {
     },
   },
   methods: {
-    colorBtnFunc(n) {
+    getColorCode(n) {
       if(Math.abs(n) >= 20) {
         return '#DC3545';
       }
@@ -22,6 +22,15 @@ export default {
       }
       return '#04BB46';
     },
+    getActionButtonLabel(n) {
+      if(Math.abs(n) >= 20) {
+        return 'Review';
+      }
+      if(Math.abs(n) >= 6) {
+        return 'Watch List';
+      }
+      return 'No Action';
+    }
   }
 }
 </script>
@@ -40,15 +49,15 @@ export default {
     <div class="tw-w-full tw-border-t tw-border-solid tw-border-brand-gray-2"/>
     <div class="tw-grid tw-grid-cols-5 tw-py-2">
       <div class="tw-col-span-3">
-        <p class="tw-font-medium tw-text-base">Projected Growth (%YoY)</p>
+        <p class="tw-font-medium">Projected Growth (%YoY)</p>
         <div class="tw-grid tw-grid-cols-2 tw-pt-4">
           <div>
             <p class="tw-text-2xl tw-font-semibold">{{ `${data.internal}%` }}</p>
-            <span class="tw-text-sm">Planned Internal Forecast</span>
+            <p class="tw-text-sm">Planned Internal Forecast</p>
           </div>
           <div>
             <p class="tw-text-2xl tw-font-semibold">{{ `${data.marketSensing}%` }}</p>
-            <span class="tw-text-sm">Market Sensing Model Forecast</span>
+            <p class="tw-text-sm">Market Sensing Model Forecast</p>
           </div>
         </div>
       </div>
@@ -84,22 +93,15 @@ export default {
     </div>
     <div class="tw-w-full tw-flex tw-justify-center tw-items-center tw-gap-3 tw-pt-2">
       <div class="tw-flex tw-flex-col">
-          <span class="tw-text-4xl tw-font-semibold" :style="{'color': colorBtnFunc(data.variance)}">
+          <span class="tw-text-4xl tw-font-semibold" :style="{'color': getColorCode(data.variance)}">
             {{ `${data.variance}%` }}
           </span>
         <span class="tw-text-sm">Variance</span>
       </div>
       <div>
-        <v-btn v-if="data.variance <= -20 || data.variance >= 20" prepend-icon="mdi-alert-circle" variant="outlined" :color="colorBtnFunc(data.variance)" rounded="pill">
-          Review<v-icon end icon="mdi-chevron-right"></v-icon>
-        </v-btn>
-        <v-btn v-else-if="data.variance >= -5 || data.variance <= 5" prepend-icon="mdi-circle" variant="outlined" :color="colorBtnFunc(data.variance)" rounded="pill">
-          No Action
-          <v-icon end icon="mdi-chevron-right"></v-icon>
-        </v-btn>
-        <v-btn v-else-if="-20 <= data.variance >= -6 || 6 <= data.variance <= 20" prepend-icon="mdi-circle" variant="outlined" :color="colorBtnFunc(data.variance)" rounded="pill">
-          Watch List
-          <v-icon end icon="mdi-chevron-right"></v-icon>
+        <v-btn :prepend-icon="Math.abs(data.variance) >= 20 ? 'mdi-alert-circle' : 'mdi-circle'"
+               variant="outlined" :color="getColorCode(data.variance)" rounded="pill">
+          {{getActionButtonLabel(data.variance)}}<v-icon end icon="mdi-chevron-right"/>
         </v-btn>
       </div>
     </div>

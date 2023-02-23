@@ -7,12 +7,12 @@ import InternalCharts from "@/pages/InternalCharts/InternalCharts.vue";
 import ModelAccuracy from "@/pages/ModelAccuracy/ModelAccuracy.vue";
 import TheFaq from "@/pages/TheFAQ/TheFaq.vue";
 import TheSupport from "@/pages/TheSupport/TheSupport.vue";
-import DemmandPlannerIcon from "@/images/demand-planner-icon.png";
-import HeatMapIcon from "@/images/heat-map-icon.png";
-import InternalChartsIcon from "@/images/internal-charts-icon.png";
-import ModelAccuracyIcon from "@/images/model-accuracy-icon.png";
-import FaqIcon from "@/images/faq-icon.png";
-import HelpSupportIcon from "@/images/help-support-icon.png";
+import DemandPlannerIcon from "@/images/demand-planner-icon.svg";
+import HeatMapIcon from "@/images/heat-map-icon.svg";
+import InternalChartsIcon from "@/images/internal-charts-icon.svg";
+import ModelAccuracyIcon from "@/images/model-accuracy-icon.svg";
+import FaqIcon from "@/images/faq-icon.svg";
+import HelpSupportIcon from "@/images/help-support-icon.svg";
 
 const routes = [
   {
@@ -23,14 +23,14 @@ const routes = [
         path: '',
         name: 'landing',
         label: "Demand Planner",
-        icon: DemmandPlannerIcon,
+        icon: DemandPlannerIcon,
         component: DemandPlanner,
       },
       {
         path: '/demand-planner',
         name: 'DemandPlanner',
         label: "Demand Planner",
-        icon: DemmandPlannerIcon,
+        icon: DemandPlannerIcon,
         component: DemandPlanner,
       },
       {

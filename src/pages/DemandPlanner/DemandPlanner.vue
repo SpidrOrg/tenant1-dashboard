@@ -73,8 +73,8 @@ export default {
         ['Loans consumption', currentCard['Loans consumption']]
       ]
       this.impliedMarketChartData = [
-        ['', 'Implied', 'PyActual'],
-        ['', currentCardPy['implied'], currentCardPy['pyActual']],
+        ['', 'PyActual', 'Implied'],
+        [this.projectionMonth, currentCardPy['pyActual'], currentCardPy['implied']],
       ]
       this.columnChartData = [];
       this.columnChartData.push(historicalIdentifiers);
@@ -120,9 +120,11 @@ export default {
         />
       </div>
     <div class="tw-w-full tw-p-4 tw-bg-white" v-if="chartDataLoaded">
-        <div class="tw-flex tw-w-full tw-items-center tw-border-b tw-border-solid tw-border-brand-gray-2">
-          <p>Show demand projections for:</p>
-          <div class="tw-flex tw-items-center">
+        <div class="tw-flex tw-flex-col tw-w-full tw-border-b tw-border-solid tw-border-brand-gray-2">
+          <h1 class="tw-text-3xl tw-font-bold">Future Demand Forecasting</h1>
+          <div class="tw-flex tw-items-center tw-w-full">
+            <p>Show demand projections for:</p>
+            <div class="tw-flex tw-items-center">
               <v-checkbox
                 id="first_quarter"
                 color="#7823DC"
@@ -130,9 +132,9 @@ export default {
                 v-model="first_quarter"
                 :disabled="isCheckboxDisabled(first_quarter)"
               />
-              <label for="first_quarter">Month1-Month3</label>
+              <label for="first_quarter">{{apiData[0].period}}</label>
             </div>
-          <div class="tw-flex tw-items-center">
+            <div class="tw-flex tw-items-center">
               <v-checkbox
                 id="second_quarter"
                 color="#7823DC"
@@ -140,9 +142,9 @@ export default {
                 v-model="second_quarter"
                 :disabled="isCheckboxDisabled(second_quarter)"
               />
-              <label for="second_quarter">Month4-Month6</label>
+              <label for="second_quarter">{{apiData[1].period}}</label>
             </div>
-          <div class="tw-flex tw-items-center">
+            <div class="tw-flex tw-items-center">
               <v-checkbox
                 id="third_quarter"
                 color="#7823DC"
@@ -150,9 +152,9 @@ export default {
                 v-model="third_quarter"
                 :disabled="isCheckboxDisabled(third_quarter)"
               />
-              <label for="third_quarter">Month7-Month9</label>
+              <label for="third_quarter">{{apiData[2].period}}</label>
             </div>
-          <div class="tw-flex tw-items-center">
+            <div class="tw-flex tw-items-center">
               <v-checkbox
                 id="fourth_quarter"
                 color="#7823DC"
@@ -160,12 +162,13 @@ export default {
                 v-model="fourth_quarter"
                 :disabled="isCheckboxDisabled(fourth_quarter)"
               />
-              <label for="fourth_quarter">Month10-Month12</label>
+              <label for="fourth_quarter">{{apiData[3].period}}</label>
             </div>
-          <div class="tw-flex tw-ml-auto">
-            <button class="tw-px-3 tw-py-1.5" style="background: #7823DC">
-              <p class="tw-text-white tw-text-sm">Switch to Fixed View</p>
-            </button>
+            <div class="tw-flex tw-ml-auto">
+              <button class="tw-px-3 tw-py-1.5" style="background: #7823DC">
+                <p class="tw-text-white tw-text-sm">Switch to Fixed/Quarterly View</p>
+              </button>
+            </div>
           </div>
         </div>
         <div class="tw-flex tw-justify-center tw-gap-2.5 tw-w-full tw-py-5" v-if="filteredData.length">

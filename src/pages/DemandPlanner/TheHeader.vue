@@ -69,13 +69,6 @@ export default {
           density="comfortable"
         />
       </div>
-      <div class="tw-pt-3 tw-min-w-[14%] tw--mb-3">
-        <v-select
-          label="Geography"
-          :items="['USA']"
-          density="comfortable"
-        />
-      </div>
       <div class="tw-flex tw-gap-1.5 tw-pl-3 tw--mb-3">
         <p :class="`tw-pt-6 ${!isByVolume ? 'tw-font-medium' : ''}`">Value (USD)</p>
         <div class="tw-flex tw-pt-2" style="color: #7823DC;">

@@ -51,34 +51,34 @@ export default {
 <template>
   <div class="tw-grid tw-grid-cols-4 tw-gap-4" v-if="data">
     <div class="tw-col-span-1">
-      <v-card class="tw-shadow-none" v-if="data.barChartData">
-        <h1 class="tw-font-bold">Key Demand Drivers</h1>
+      <div v-if="data.barChartData">
+        <p class="tw-font-medium tw-text-lg">Key Demand Drivers</p>
         <GChart
           type="BarChart"
           :data="data.barChartData"
           :options="barChartOptions"
         />
-      </v-card>
+      </div>
     </div>
     <div class="tw-col-span-1">
-      <v-card class="tw-shadow-none" v-if="data.impliedMarketChartData">
-        <h1 class="tw-font-bold">Implied Market Share</h1>
+      <div v-if="data.impliedMarketChartData">
+        <p class="tw-font-medium tw-text-lg">Implied Market Share</p>
         <GChart
           type="ColumnChart"
           :data="data.impliedMarketChartData"
           :options="impliedMarketChartOptions"
         />
-      </v-card>
+      </div>
     </div>
     <div class="tw-col-span-2">
-      <v-card class="tw-shadow-none" v-if="data.columnChartData">
-        <h1 class="tw-font-bold">Historic vs Actuals (%YoY)</h1>
+      <div v-if="data.columnChartData">
+        <p class="tw-font-medium tw-text-lg">Historic Projections vs Actuals (%, YoY)</p>
         <GChart
           type="ColumnChart"
           :data="data.columnChartData"
           :options="columnChartOptions"
         />
-      </v-card>
+      </div>
     </div>
   </div>
 </template>

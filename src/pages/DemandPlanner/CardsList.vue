@@ -1,29 +1,35 @@
 <script>
-import CardsListItem from './CardsListItem.vue'
+import CardsListItem from "./CardsListItem.vue";
 export default {
   name: "CardsList",
   components: {
-    CardsListItem
+    CardsListItem,
   },
   props: {
     data: {
       type: Array,
-      required: true
+      required: true,
     },
     activeCard: {
       type: Number,
-      required: true
-    }
+      required: true,
+    },
   },
-  emits: ['setActiveCard']
-}
+  emits: ["setActiveCard"],
+};
 </script>
 
 <template>
-  <v-card v-for="(cardData, index) in data" :key="cardData.period"
-          @click="$emit('setActiveCard', index)"
-          class="tw-w-1/4 tw-shadow-none"
-          :style="(activeCard === index) ? 'border-width: 1px 1px 6px 1px; border-style: solid; border-color: #7823DC;': 'opacity:60%'"
+  <v-card
+    v-for="(cardData, index) in data"
+    :key="cardData.period"
+    @click="$emit('setActiveCard', index)"
+    class="tw-w-1/4 tw-shadow-none"
+    :style="
+      activeCard === index
+        ? 'border-width: 1px 1px 6px 1px; border-style: solid; border-color: #7823DC;'
+        : 'border:1px solid #E5E5EF; opacity:60%'
+    "
   >
     <CardsListItem :data="cardData" />
   </v-card>

@@ -40,7 +40,7 @@ export default {
     <div class="tw-flex tw-flex-col tw-py-2">
       <p style="color: #9291A5;">Projected Period</p>
       <div class="tw-flex tw-gap-x-4 tw-items-center tw-w-full">
-        <p class="tw-text-xl tw-font-medium">{{ data.period }}</p>
+        <p class="tw-text-lg tw-font-medium">{{ data.period }}</p>
         <div class="tw-bg-brand-gray-4 tw-rounded">
           <p class="tw-p-1 tw-text-sm">Future {{ data.lag }} months</p>
         </div>
@@ -49,21 +49,21 @@ export default {
     <div class="tw-w-full tw-border-t tw-border-solid tw-border-brand-gray-2"/>
     <div class="tw-grid tw-grid-cols-5 tw-py-2">
       <div class="tw-col-span-3">
-        <p class="tw-font-medium">Projected Growth (%YoY)</p>
+        <p class="tw-text-sm tw-font-medium">Projected Growth (%YoY)</p>
         <div class="tw-grid tw-grid-cols-2 tw-pt-4">
           <div>
             <p class="tw-text-2xl tw-font-semibold">{{ `${data.internal}%` }}</p>
-            <p class="tw-text-sm">Planned Internal Forecast</p>
+            <p class="tw-text-xs">Planned Internal Forecast</p>
           </div>
           <div>
             <p class="tw-text-2xl tw-font-semibold">{{ `${data.marketSensing}%` }}</p>
-            <p class="tw-text-sm">Market Sensing Model Forecast</p>
+            <p class="tw-text-xs">Market Sensing Model Forecast</p>
           </div>
         </div>
       </div>
       <div class="tw-flex tw-flex-col tw-items-center tw-col-span-2">
-        <p class="tw-font-medium tw-text-center tw-pb-6">ML Model Accuracy</p>
-        <div class="tw-relative tw-flex tw-items-center tw-w-20 tw-h-12">
+        <p class="tw-text-sm tw-font-medium tw-pb-6">ML Model Accuracy</p>
+        <div class="tw-relative tw-flex tw-items-center tw-w-20 tw-h-10">
           <div class="tw-absolute tw-z-10 tw-h-full tw-w-full tw-flex tw-items-center tw-justify-center tw-text-xl tw-font-semibold">
             {{Math.round(data.modelAccuracy.current, 0)}}%
           </div>
@@ -92,11 +92,11 @@ export default {
       </div>
     </div>
     <div class="tw-w-full tw-flex tw-justify-center tw-items-center tw-gap-3 tw-pt-2">
-      <div class="tw-flex tw-flex-col">
-          <span class="tw-text-4xl tw-font-semibold" :style="{'color': getColorCode(data.variance)}">
-            {{ `${data.variance}%` }}
-          </span>
-        <span class="tw-text-sm">Variance</span>
+      <div class="tw-flex tw-flex-col tw-items-center">
+        <span class="tw-text-4xl tw-font-semibold" :style="{'color': getColorCode(data.variance)}">
+          {{ `${data.variance}%` }}
+        </span>
+        <span class="tw-text-xs">Variance</span>
       </div>
       <div>
         <v-btn :prepend-icon="Math.abs(data.variance) >= 20 ? 'mdi-alert-circle' : 'mdi-circle'"

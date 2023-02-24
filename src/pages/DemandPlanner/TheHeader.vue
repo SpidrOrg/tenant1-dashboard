@@ -1,4 +1,5 @@
 <script>
+
 export default {
   name: "TheHeader",
   props: {
@@ -19,7 +20,8 @@ export default {
   data(){
     return {
       availableCategories: ['All', 'Shirts', 'Pants', 'Jackets'], // to come from API
-      availableCustomers: ['All', 'Amazon', 'Walmart'] // to come from API
+      availableCustomers: ['All', 'Amazon', 'Walmart'], // to come from API
+      picker: null
     }
   },
   methods: {
@@ -53,6 +55,13 @@ export default {
 
 <template>
   <div class="tw-flex tw-gap-x-3 tw-w-full tw-bg-white tw-px-3">
+      <div class="tw-pt-3 tw-w-1/6 tw--mb-3">
+        <VueDatePicker v-model="picker" month-picker>
+          <template  #dp-input="{ value }">
+            <v-text-field  :value="value" density="comfortable"></v-text-field>
+          </template>
+        </VueDatePicker>
+      </div>
       <div class="tw-pt-3 tw-w-1/6 tw--mb-3">
         <v-select
           label="All Categories"
@@ -92,3 +101,13 @@ export default {
       </div>
   </div>
 </template>
+<style>
+.dp__clear_icon {
+  position: absolute;
+  top: 36%;
+  right: 0;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: var(--dp-icon-color);
+}
+</style>

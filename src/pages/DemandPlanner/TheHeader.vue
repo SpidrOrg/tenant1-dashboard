@@ -19,34 +19,30 @@ export default {
   emits: ['updateFilters'],
   data(){
     return {
-      availableCategories: ['All', 'Shirts', 'Pants', 'Jackets'], // to come from API
-      availableCustomers: ['All', 'Amazon', 'Walmart'], // to come from API
-      picker: null
+      availableCategories: ['All', 'Shirts', 'Pants', 'Jackets', 'Sportswear', 'Shorts'], // to come from API
+      availableCustomers: ['All', 'Amazon', 'Walmart', 'Home Depot'], // to come from API
+      picker: new Date('02/2023')
     }
   },
   methods: {
     filtersUpdateHandler (name, value) {
-      // if(value.includes('All')) {
-      //   let val = []
-      //   switch (name) {
-      //     case 'categories':
-      //       val = this.availableCategories.filter(item => item !== 'All')
-      //       break;
-      //     case 'customers':
-      //       val = this.availableCustomers.filter(item => item !== 'All')
-      //       break;
-      //     default:
-      //       break;
-      //   }
-      //   this.$emit('updateFilters', {
-      //     name,
-      //     value: val
-      //   })
-      //   return;
-      // }
+      let val = value;
+
+      if(value.includes('All')) {
+        switch (name) {
+          case 'categories':
+            val = this.availableCategories
+            break;
+          case 'customers':
+            val = this.availableCustomers
+            break;
+          default:
+        }
+      }
+
       this.$emit('updateFilters', {
         name,
-        value
+        value: val
       })
     }
   }
@@ -55,14 +51,14 @@ export default {
 
 <template>
   <div class="tw-flex tw-gap-x-3 tw-w-full tw-bg-white tw-px-3">
-      <div class="tw-pt-3 tw-w-1/6 tw--mb-3">
+      <div class="tw-pt-3 tw-min-w-[14%] tw--mb-3">
         <VueDatePicker v-model="picker" month-picker>
           <template  #dp-input="{ value }">
             <v-text-field  :value="value" density="comfortable"></v-text-field>
           </template>
         </VueDatePicker>
       </div>
-      <div class="tw-pt-3 tw-w-1/6 tw--mb-3">
+      <div class="tw-pt-3 tw-min-w-[14%] tw--mb-3">
         <v-select
           label="All Categories"
           :items="availableCategories"
@@ -72,20 +68,13 @@ export default {
           density="comfortable"
         />
       </div>
-      <div class="tw-pt-3 tw-w-1/6 tw--mb-3">
+      <div class="tw-pt-3 tw-min-w-[14%] tw--mb-3">
         <v-select
           label="All Customers"
           :items="availableCustomers"
           :model-value="customers"
           @update:modelValue="(value) => filtersUpdateHandler('customers', value)"
           multiple
-          density="comfortable"
-        />
-      </div>
-      <div class="tw-pt-3 tw-w-1/6 tw--mb-3">
-        <v-select
-          label="Geography"
-          :items="['USA']"
           density="comfortable"
         />
       </div>

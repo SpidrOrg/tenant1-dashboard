@@ -10,6 +10,7 @@ module.exports = {
         sans: ['Graphik', ...defaultTheme.fontFamily.sans],
       },
       colors: {
+        "brand-primary": '#7823DC',
         "brand-gray-1": "#F5F5F5",
         "brand-gray-2": "#DBDBDB",
         "brand-gray-3": "#80868b",

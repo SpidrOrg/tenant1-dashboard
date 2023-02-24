@@ -27,15 +27,17 @@ export default {
       barChartData:[],
       columnChartData:[],
       activeCard: null,
-      first_quarter:true,
-      second_quarter:false,
-      third_quarter:false,
-      fourth_quarter:false,
+      periods: {
+        first: true,
+        second: false,
+        third: false,
+        fourth: false
+      },
     }
   },
   computed: {
     cardsVisibility () {
-      return [this.first_quarter, this.second_quarter, this.third_quarter, this.fourth_quarter]
+      return [this.periods.first, this.periods.second, this.periods.third, this.periods.fourth]
     },
     filteredData () {
       return this.apiData.filter((_, index) => this.cardsVisibility[index])
@@ -46,6 +48,9 @@ export default {
         barChartData: this.barChartData,
         columnChartData: this.columnChartData,
       })
+    },
+    checkboxLabels () {
+      return this.apiData.map(el => el.period)
     }
   },
   async created(){
@@ -126,43 +131,43 @@ export default {
             <p>Show demand projections for:</p>
             <div class="tw-flex tw-items-center">
               <v-checkbox
-                id="first_quarter"
+                id="period_first"
                 color="#7823DC"
                 hide-details
-                v-model="first_quarter"
-                :disabled="isCheckboxDisabled(first_quarter)"
+                v-model="periods.first"
+                :disabled="isCheckboxDisabled(periods.first)"
               />
-              <label for="first_quarter">{{apiData[0].period}}</label>
+              <label for="period_first">{{checkboxLabels[0]}}</label>
             </div>
             <div class="tw-flex tw-items-center">
               <v-checkbox
-                id="second_quarter"
+                id="period_second"
                 color="#7823DC"
                 hide-details
-                v-model="second_quarter"
-                :disabled="isCheckboxDisabled(second_quarter)"
+                v-model="periods.second"
+                :disabled="isCheckboxDisabled(periods.second)"
               />
-              <label for="second_quarter">{{apiData[1].period}}</label>
+              <label for="period_second">{{checkboxLabels[1]}}</label>
             </div>
             <div class="tw-flex tw-items-center">
               <v-checkbox
-                id="third_quarter"
+                id="period_third"
                 color="#7823DC"
                 hide-details
-                v-model="third_quarter"
-                :disabled="isCheckboxDisabled(third_quarter)"
+                v-model="periods.third"
+                :disabled="isCheckboxDisabled(periods.third)"
               />
-              <label for="third_quarter">{{apiData[2].period}}</label>
+              <label for="period_third">{{checkboxLabels[2]}}</label>
             </div>
             <div class="tw-flex tw-items-center">
               <v-checkbox
-                id="fourth_quarter"
+                id="period_fourth"
                 color="#7823DC"
                 hide-details
-                v-model="fourth_quarter"
-                :disabled="isCheckboxDisabled(fourth_quarter)"
+                v-model="periods.fourth"
+                :disabled="isCheckboxDisabled(periods.fourth)"
               />
-              <label for="fourth_quarter">{{apiData[3].period}}</label>
+              <label for="period_fourth">{{checkboxLabels[3]}}</label>
             </div>
             <div class="tw-flex tw-ml-auto">
               <button class="tw-px-3 tw-py-1.5" style="background: #7823DC">

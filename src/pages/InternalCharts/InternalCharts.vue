@@ -20,6 +20,10 @@ export default {
             fontSize: 10
           }
         },
+        chartArea:{
+          left: '3%',
+          width:'90%'
+        },
         vAxis: {
           baselineColor: 'none',
           textPosition: 'none'
@@ -55,7 +59,11 @@ export default {
         vAxis: {
           baselineColor: 'none',
           textPosition: 'none'
-        }
+        },
+        chartArea:{
+          left: '3%',
+          width:'90%'
+        },
       }
     }
   },

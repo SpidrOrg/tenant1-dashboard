@@ -1,51 +1,57 @@
 <script>
-import { GChart }  from 'vue-google-charts'
+import { GChart } from 'vue-google-charts';
 
 export default {
-  name: "TheCharts",
+  name: 'TheCharts',
   components: {
-    GChart
+    GChart,
   },
   props: {
     data: {
       type: Object,
       required: true,
-      default: {
-        impliedMarketChartData : [],
-        barChartData: [],
-        columnChartData: [],
-      }
     },
   },
   data() {
     return {
-      barChartOptions:{
+      barChartOptions: {
         legend: 'none',
         colors: ['#646F79'],
-        chartArea:{
+        chartArea: {
           left: '24%',
           top: '0',
           width: '90%',
           height: '90%',
-        }
+        },
       },
-      columnChartOptions:{
-        legend: {position: 'top'},
-        colors: ['#570EAA', '#787878', '#C8A5F0', '#F4BE37']
+      columnChartOptions: {
+        legend: { position: 'top' },
+        colors: ['#570EAA', '#787878', '#C8A5F0', '#F4BE37'],
+        chartArea: {
+          left: '4%',
+          width: '100%',
+          height: '90%',
+        },
       },
-      impliedMarketChartOptions : {
-        legend: {position: 'top'},
+      impliedMarketChartOptions: {
+        legend: { position: 'top' },
         vAxis: {
           viewWindow: {
             max: 20,
             min: 0,
           },
         },
-        colors: ['#A5A5A5', '#F8D887']
+        chartArea: {
+          left: '12%',
+          top: '16%',
+          width: '80%',
+          height: '80%',
+        },
+        colors: ['#A5A5A5', '#F8D887'],
       },
-    }
+    };
   },
-}
+};
 </script>
 
 <template>
@@ -62,7 +68,9 @@ export default {
     </div>
     <div class="tw-col-span-1">
       <div v-if="data.impliedMarketChartData">
-        <p class="tw-font-medium tw-text-lg">Implied Market Share</p>
+        <p class="tw-font-medium tw-text-lg tw-text-center">
+          Implied Market Share
+        </p>
         <GChart
           type="ColumnChart"
           :data="data.impliedMarketChartData"
@@ -72,7 +80,9 @@ export default {
     </div>
     <div class="tw-col-span-2">
       <div v-if="data.columnChartData">
-        <p class="tw-font-medium tw-text-lg">Historic Projections vs Actuals (%, YoY)</p>
+        <p class="tw-font-medium tw-text-lg">
+          Market Sensing Forecast vs Sales (%, YoY) – Historical Period
+        </p>
         <GChart
           type="ColumnChart"
           :data="data.columnChartData"

@@ -1,7 +1,7 @@
 <script>
-import CardsListItem from "./CardsListItem.vue";
+import CardsListItem from './CardsListItem.vue';
 export default {
-  name: "CardsList",
+  name: 'CardsList',
   components: {
     CardsListItem,
   },
@@ -15,7 +15,7 @@ export default {
       required: true,
     },
   },
-  emits: ["setActiveCard"],
+  emits: ['setActiveCard'],
 };
 </script>
 
@@ -27,7 +27,7 @@ export default {
     class="tw-w-1/4 tw-shadow-none"
     :style="
       activeCard === index
-        ? 'border-width: 1px 1px 6px 1px; border-style: solid; border-color: #7823DC;'
+        ? 'border-width: 1px 1px 6px 1px; border-style: solid; border-color: #7823DC; margin-bottom: -22px'
         : 'border:1px solid #E5E5EF; opacity:60%'
     "
   >

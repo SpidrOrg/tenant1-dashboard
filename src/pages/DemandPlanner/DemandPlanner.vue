@@ -1,5 +1,6 @@
 <script>
 import { GChart }  from 'vue-google-charts'
+import fetchMainDashboardOptions from "@/api/fetchMainDashboardOptions";
 import fetchMainDashboardData from "@/api/fetchMainDashboardData";
 import TheHeader from './TheHeader.vue'
 import _ from 'lodash';
@@ -60,6 +61,7 @@ export default {
     }
   },
   async created(){
+    await fetchMainDashboardOptions();
    this.apiData = await fetchMainDashboardData();
    console.log(this.apiData);
    this.chartDataLoaded = true;

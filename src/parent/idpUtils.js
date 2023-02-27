@@ -1,5 +1,6 @@
 import 'regenerator-runtime';
 import {Amplify, Auth} from "aws-amplify";
+import axios from "axios";
 // import {fromCognitoIdentityPool} from "@aws-sdk/credential-provider-cognito-identity";
 // import {CognitoIdentityClient} from "@aws-sdk/client-cognito-identity";
 // import { LambdaClient, InvokeCommand } from "@aws-sdk/client-lambda";
@@ -98,12 +99,18 @@ export async function logout(){
 // }
 
 
-export async function invokeApi(apiName){
+export async function invokeApi(apiName, payload){
   const {accessToken} = await getAuthDetails();
-  const data = await fetch(`https://${idpData.apiPrefix}/${idpData.stage}/${apiName}`, {
+  const response = await axios.get(`https://${idpData.apiPrefix}/${idpData.stage}/${apiName}`, {
     headers: {
       Authorization: accessToken
     },
-  }).then(d => d.json())
-  return data.body;
+    params: {
+      marketSensingRefreshDate: "2023-02-01",
+      customers: "Company11",
+      categories: "All",
+      valueORvolume: "value"
+    }
+  })
+  return response?.data?.body;
 }

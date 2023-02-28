@@ -14,6 +14,7 @@ export default {
       type: Number,
       required: true,
     },
+    options: Object,
   },
   emits: ['setActiveCard'],
 };
@@ -31,6 +32,6 @@ export default {
         : 'border:1px solid #E5E5EF; opacity:60%'
     "
   >
-    <CardsListItem :data="cardData" />
+    <CardsListItem :data="cardData" :options="options" />
   </v-card>
 </template>

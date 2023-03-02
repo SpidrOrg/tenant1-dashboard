@@ -17,18 +17,19 @@ export default {
   data() {
     return {
       apiData: [],
+      isLoading: false,
+      error: null,
       filters: {
-        categories: [],
+        category: null,
         customers: [],
         isByVolume: false,
       },
-      chartDataLoaded: false,
-      projectionMonth: '',
+      projectedPeriod: '',
       lag: '',
-      impliedMarketChartData: [],
-      barChartData: [],
-      columnChartData: [],
-      activeCard: null,
+      impliedMarketShareChartData: [],
+      keyDemandDriversChartData: [],
+      marketSensingChartData: [],
+      activeCardIndex: null,
       periods: {
         first: true,
         second: false,
@@ -49,14 +50,14 @@ export default {
         this.periods.fourth,
       ];
     },
-    filteredData() {
+    cardsData() {
       return this.apiData.filter((_, index) => this.cardsVisibility[index]);
     },
     chartsData() {
       return {
-        impliedMarketChartData: this.impliedMarketChartData,
-        barChartData: this.barChartData,
-        columnChartData: this.columnChartData,
+        impliedMarketShareChartData: this.impliedMarketShareChartData,
+        keyDemandDriversChartData: this.keyDemandDriversChartData,
+        marketSensingChartData: this.marketSensingChartData,
       };
     },
     checkboxLabels() {
@@ -64,42 +65,49 @@ export default {
     },
   },
   async created() {
-    this.apiData = await fetchMainDashboardData();
-    console.log(this.apiData);
-    this.chartDataLoaded = true;
-    this.setActiveCard(0);
+    this.isLoading = true;
+    try {
+      this.apiData = await fetchMainDashboardData();
+      this.setActiveCard(0);
+    } catch (e) {
+      this.error = e;
+    }
+    this.isLoading = false;
   },
   methods: {
     setActiveCard(index) {
-      this.activeCard = index;
-      let currentCard = _.get(this.filteredData[index], `externalKPIs`);
-      let currentCardPy = _.get(this.filteredData[index], `impliedMarketShare`);
-      let currentCardHistorical = _.get(this.filteredData[index], `historical`);
+      this.activeCardIndex = index;
+      let currentCard = _.get(this.cardsData[index], `externalKPIs`);
+      let currentCardPy = _.get(this.cardsData[index], `impliedMarketShare`);
+      let currentCardHistorical = _.get(this.cardsData[index], `historical`);
       let historicalIdentifiers = currentCardHistorical.identifiers;
-      this.projectionMonth = _.get(this.filteredData[index], `period`);
-      this.lag = _.get(this.filteredData[index], `lag`);
-      this.barChartData = [
+      this.projectedPeriod = _.get(this.cardsData[index], `period`);
+      this.lag = _.get(this.cardsData[index], `lag`);
+      this.keyDemandDriversChartData = [
         ['X', 'Y'],
         ['Stock Market', currentCard['Stock market']],
         ['Inflation', currentCard['Inflation']],
-        ['Disposable income', currentCard['Per-capita disposable income']],
+        [
+          'Per capita disposable income',
+          currentCard['Per-capita disposable income'],
+        ],
         ['Pandemic', currentCard['Pandemic']],
         ['Consumer behaviour', currentCard['Consumer behaviour']],
         ['Loans consumption', currentCard['Loans consumption']],
       ];
-      this.impliedMarketChartData = [
+      this.impliedMarketShareChartData = [
         ['', 'PyActual', 'Implied'],
         [
-          this.projectionMonth,
+          this.projectedPeriod,
           currentCardPy['pyActual'],
           currentCardPy['implied'],
         ],
       ];
-      this.columnChartData = [];
-      this.columnChartData.push(historicalIdentifiers);
+      this.marketSensingChartData = [];
+      this.marketSensingChartData.push(historicalIdentifiers);
       let v = this;
       _.forEach(currentCardHistorical.data, function (data) {
-        v.columnChartData.push(data);
+        v.marketSensingChartData.push(data);
       });
     },
     isCheckboxDisabled(isChecked) {
@@ -114,7 +122,6 @@ export default {
         ...this.filters,
         [name]: value,
       };
-      console.log(this.filters);
     },
   },
 };
@@ -135,7 +142,7 @@ export default {
     />
     <div
       class="tw-w-full tw-h-3/4 tw-flex tw-justify-center tw-items-center"
-      v-if="!chartDataLoaded"
+      v-if="isLoading"
     >
       <v-progress-circular
         indeterminate
@@ -144,15 +151,15 @@ export default {
         :width="10"
       />
     </div>
-    <div class="tw-py-5" v-if="chartDataLoaded">
+    <div class="tw-py-5" v-if="!isLoading && !error">
       <TheHeader
-        :categories="filters.categories"
+        :category="filters.category"
         :customers="filters.customers"
         :isByVolume="filters.isByVolume"
         @update-filters="updateFilters"
       />
     </div>
-    <div class="tw-w-full tw-p-4 tw-bg-white" v-if="chartDataLoaded">
+    <div class="tw-w-full tw-p-4 tw-bg-white" v-if="!isLoading && !error">
       <div
         class="tw-flex tw-flex-col tw-w-full tw-border-b tw-border-solid tw-border-brand-gray-2"
       >
@@ -223,11 +230,11 @@ export default {
       </div>
       <div
         class="tw-flex tw-justify-center tw-gap-2.5 tw-w-full tw-py-5"
-        v-if="filteredData.length"
+        v-if="cardsData.length"
       >
         <CardsList
-          :data="filteredData"
-          :activeCard="activeCard"
+          :data="cardsData"
+          :activeCardIndex="activeCardIndex"
           @setActiveCard="setActiveCard"
           :options="{ isModelAccuracyHidden }"
         />
@@ -235,13 +242,13 @@ export default {
       <div class="tw-p-4" style="border: 1px solid #7823dc">
         <div class="tw-flex tw-gap-x-4 tw-items-center tw-w-full tw-py-2">
           <p class="tw-font-medium tw-text-2xl">
-            More details for {{ projectionMonth }}
+            More details for {{ projectedPeriod }}
           </p>
           <div class="tw-bg-brand-gray-4 tw-rounded">
             <p class="tw-p-1 tw-text-sm">Future {{ lag }} months</p>
           </div>
         </div>
-        <div class="tw-py-3 tw-w-full" v-if="chartDataLoaded && chartsData">
+        <div class="tw-py-3 tw-w-full" v-if="chartsData">
           <TheCharts :data="chartsData" />
         </div>
       </div>

@@ -1,10 +1,10 @@
 <script>
-import { GChart } from 'vue-google-charts';
+import ModelAccuracyChart from './ModelAccuracyChart.vue';
 
 export default {
   name: 'CardsListItem',
   components: {
-    GChart,
+    ModelAccuracyChart,
   },
   props: {
     data: {
@@ -132,36 +132,7 @@ export default {
             </p>
           </div>
         </v-menu>
-        <div class="tw-relative tw-flex tw-items-center tw-w-20 tw-h-10">
-          <div
-            class="tw-absolute tw-z-10 tw-h-full tw-w-full tw-flex tw-items-center tw-justify-center tw-text-xl tw-font-semibold"
-          >
-            {{ Math.round(data.modelAccuracy.current, 0) }}%
-          </div>
-          <GChart
-            type="PieChart"
-            :data="[
-              ['Effort', 'Percentage'],
-              ['single', data.modelAccuracy.current],
-              ['', 100 - data.modelAccuracy.current],
-            ]"
-            :options="{
-              pieHole: 0.7,
-              pieSliceTextStyle: {
-                color: 'black',
-                fontSize: '20px',
-              },
-              theme: 'maximized',
-              legend: 'none',
-              slices: {
-                0: { color: '#9150E1', textStyle: { color: 'transparent' } },
-                1: { color: '#E6E6E6', textStyle: { color: 'transparent' } },
-              },
-              height: 81,
-              width: 81,
-            }"
-          />
-        </div>
+        <ModelAccuracyChart :modelAccuracy="data.modelAccuracy.current" />
       </div>
     </div>
     <div

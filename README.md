@@ -1,4 +1,4 @@
-# default test 1 testing-something
+# default test 1
 
 ## Project setup
 

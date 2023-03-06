@@ -10,7 +10,7 @@ export default {
       type: Array,
       required: true,
     },
-    activeCard: {
+    activeCardIndex: {
       type: Number,
       required: true,
     },
@@ -27,7 +27,7 @@ export default {
     @click="$emit('setActiveCard', index)"
     class="tw-w-1/4 tw-shadow-none"
     :style="
-      activeCard === index
+      activeCardIndex === index
         ? 'border-width: 1px 1px 6px 1px; border-style: solid; border-color: #7823DC; margin-bottom: -22px'
         : 'border:1px solid #E5E5EF; opacity:60%'
     "

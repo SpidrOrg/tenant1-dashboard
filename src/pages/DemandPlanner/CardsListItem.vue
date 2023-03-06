@@ -1,10 +1,10 @@
 <script>
-import { GChart } from 'vue-google-charts';
+import ModelAccuracyChart from './ModelAccuracyChart.vue';
 
 export default {
   name: 'CardsListItem',
   components: {
-    GChart,
+    ModelAccuracyChart,
   },
   props: {
     data: {
@@ -59,71 +59,107 @@ export default {
       }`"
     >
       <div class="tw-col-span-3">
-        <p class="tw-text-sm tw-font-medium">Projected Growth (%YoY)</p>
+        <v-menu open-on-hover location="top">
+          <template v-slot:activator="{ props }">
+            <p v-bind="props" class="tw-text-sm tw-font-medium">
+              Projected Growth (%YoY)
+            </p>
+          </template>
+          <div
+            class="tw-w-52 tw-h-14 tw-p-2 tw-bg-white tw-border tw-rounded tw-border-[#D9D9D9] tw-shadow-2xl"
+          >
+            <p class="tw-text-sm tw-text-center">
+              The % increase in demand the company expects.
+            </p>
+          </div>
+        </v-menu>
         <div class="tw-grid tw-grid-cols-2 tw-pt-4">
-          <div>
-            <p class="tw-text-2xl tw-font-semibold">
-              {{ `${data.internal}%` }}
-            </p>
-            <p class="tw-text-xs">Planned Internal Forecast</p>
-          </div>
-          <div>
-            <p class="tw-text-2xl tw-font-semibold">
-              {{ `${data.marketSensing}%` }}
-            </p>
-            <p class="tw-text-xs">Market Sensing Model Forecast</p>
-          </div>
+          <v-menu open-on-hover location="top">
+            <template v-slot:activator="{ props }">
+              <div v-bind="props">
+                <p class="tw-text-2xl tw-font-semibold">
+                  {{ `${data.internal}%` }}
+                </p>
+                <p class="tw-text-xs">Planned Internal Forecast</p>
+              </div>
+            </template>
+            <div
+              class="tw-w-80 tw-h-14 tw-p-2 tw-bg-white tw-border tw-rounded tw-border-[#D9D9D9] tw-shadow-2xl"
+            >
+              <p class="tw-text-sm tw-text-center">
+                Internal market demands at a category level determined by
+                internal historical data.
+              </p>
+            </div>
+          </v-menu>
+          <v-menu open-on-hover location="top">
+            <template v-slot:activator="{ props }">
+              <div v-bind="props">
+                <p class="tw-text-2xl tw-font-semibold">
+                  {{ `${data.marketSensing}%` }}
+                </p>
+                <p class="tw-text-xs">Market Sensing Model Forecast</p>
+              </div>
+            </template>
+            <div
+              class="tw-w-96 tw-h-20 tw-p-2 tw-bg-white tw-border tw-rounded tw-border-[#D9D9D9] tw-shadow-2xl"
+            >
+              <p class="tw-text-sm tw-text-center">
+                Highly accurate market demand projections at a category level
+                based on ML models that analyze and learn from internal and
+                external data feeds
+              </p>
+            </div>
+          </v-menu>
         </div>
       </div>
       <div
         class="tw-flex tw-flex-col tw-items-center tw-col-span-2"
         v-if="!isModelAccuracyHidden"
       >
-        <p class="tw-text-sm tw-font-medium tw-pb-6">ML Model Accuracy</p>
-        <div class="tw-relative tw-flex tw-items-center tw-w-20 tw-h-10">
+        <v-menu open-on-hover location="top">
+          <template v-slot:activator="{ props }">
+            <p v-bind="props" class="tw-text-sm tw-font-medium tw-pb-6">
+              ML Model Accuracy
+            </p>
+          </template>
           <div
-            class="tw-absolute tw-z-10 tw-h-full tw-w-full tw-flex tw-items-center tw-justify-center tw-text-xl tw-font-semibold"
+            class="tw-w-96 tw-h-14 tw-p-2 tw-bg-white tw-border tw-rounded tw-border-[#D9D9D9] tw-shadow-2xl"
           >
-            {{ Math.round(data.modelAccuracy.current, 0) }}%
+            <p class="tw-text-sm tw-text-center">
+              ML Model accuracy is the percentage of correctness of prediction
+              by ML Model for the given dataset.
+            </p>
           </div>
-          <GChart
-            type="PieChart"
-            :data="[
-              ['Effort', 'Percentage'],
-              ['single', data.modelAccuracy.current],
-              ['', 100 - data.modelAccuracy.current],
-            ]"
-            :options="{
-              pieHole: 0.7,
-              pieSliceTextStyle: {
-                color: 'black',
-                fontSize: '20px',
-              },
-              theme: 'maximized',
-              legend: 'none',
-              slices: {
-                0: { color: '#9150E1', textStyle: { color: 'transparent' } },
-                1: { color: '#E6E6E6', textStyle: { color: 'transparent' } },
-              },
-              height: 81,
-              width: 81,
-            }"
-          />
-        </div>
+        </v-menu>
+        <ModelAccuracyChart :modelAccuracy="data.modelAccuracy.current" />
       </div>
     </div>
     <div
       class="tw-w-full tw-flex tw-justify-center tw-items-center tw-gap-3 tw-pt-2"
     >
-      <div class="tw-flex tw-flex-col tw-items-center">
-        <span
-          class="tw-text-4xl tw-font-semibold"
-          :style="{ color: getColorCode(data.variance) }"
+      <v-menu open-on-hover location="top">
+        <template v-slot:activator="{ props }">
+          <div v-bind="props" class="tw-flex tw-flex-col tw-items-center">
+            <span
+              class="tw-text-4xl tw-font-semibold"
+              :style="{ color: getColorCode(data.variance) }"
+            >
+              {{ `${data.variance}%` }}
+            </span>
+            <span class="tw-text-xs">Variance</span>
+          </div>
+        </template>
+        <div
+          class="tw-w-80 tw-h-14 tw-p-2 tw-bg-white tw-border tw-rounded tw-border-[#D9D9D9] tw-shadow-2xl"
         >
-          {{ `${data.variance}%` }}
-        </span>
-        <span class="tw-text-xs">Variance</span>
-      </div>
+          <p class="tw-text-sm tw-text-center">
+            {{
+              `The difference between market sensing and the internal forecast results in a ${data.variance}% variance.`
+            }}
+          </p>
+        </div>
+      </v-menu>
       <div>
         <v-btn
           :prepend-icon="

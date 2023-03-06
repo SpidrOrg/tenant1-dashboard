@@ -12,12 +12,17 @@ export default {
       chartDataLoaded:false,
       columnChartData:[['Period','Internal','Actual'],['Dec21 - Feb22',3.2,2.4],['Jan22 - Mar22',2.5,1.6],['Feb22 - Apr22',1.8,1.1],['Mar22 - May22',1.5,1.2],['Apr22 - Jun22',2.3,1.4],['May22 - Jul22',1.6,1.8],['Jun22 - Aug22',0.8,0.3],['Jul22 - Sept22',1.3,1.2],['Aug22 - Oct22',0.6,0.8],['Sept22 - Nov22',0.7,0.9],['Oct22 - Dec22',1.3,0.8],['Nov22 - Jan23',1.6,1.2]],
       columnChartOptions:{
+        height:370,
         legend: {position: 'top'},
         colors: ['#787878', '#B991EB'],
         hAxis : {
           textStyle : {
             fontSize: 10
           }
+        },
+        vAxis: {
+          baselineColor: 'none',
+          textPosition: 'none'
         }
       },
       lineChartData:[['Time Period', 'Market Sensing', 'Internal', 'Actual' ],
@@ -38,6 +43,7 @@ export default {
         curveType: 'none',
         legend: { position: 'top' },
         colors: ['#570EAA', '#787878', '#C8A5F0'],
+        height:370,
         series: {
           1: {lineDashStyle: [4, 4]}
         },
@@ -45,6 +51,10 @@ export default {
           textStyle : {
             fontSize: 10
           }
+        },
+        vAxis: {
+          baselineColor: 'none',
+          textPosition: 'none'
         }
       }
     }
@@ -70,12 +80,12 @@ export default {
       <TheHeader />
     </div>
     <div class="tw-w-full tw-border-t tw-border-solid tw-border-brand-gray-2" v-if="chartDataLoaded">
-      <div class="tw-align-center tw-grid tw-grid-rows-2 tw-gap-6">
+      <div class="tw-grid tw-grid-rows-2 tw-gap-6">
         <div>
           <v-card style="height: 370px">
             <h3 class="tw-font-bold  tw-py-2 tw-pl-2">Internal Forecast vs Actuals</h3>
-            <div class="tw-flex tw-w-full tw-flex-auto tw-border-t tw-border-solid tw-border-brand-gray-2" />
-            <GChart type="ColumnChart" :data="columnChartData" :options="columnChartOptions"/>
+            <div class="tw-w-full tw-items-left tw-border-t tw-border-solid tw-border-brand-gray-2" />
+            <GChart type="ColumnChart" :data="columnChartData" :options="columnChartOptions" height="370"/>
           </v-card>
         </div>
         <div>

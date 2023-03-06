@@ -56,7 +56,8 @@ export default {
 .sidebar {
   display: flex;
   flex-direction: column;
-  width: 13rem;
+  min-width: 13rem;
+  width: 10%;
 }
 .main-area {
   flex: 1 1 auto;

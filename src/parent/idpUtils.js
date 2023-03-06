@@ -99,18 +99,13 @@ export async function logout(){
 // }
 
 
-export async function invokeApi(apiName, payload){
+export async function invokeGetApi(apiName, payload){
   const {accessToken} = await getAuthDetails();
   const response = await axios.get(`https://${idpData.apiPrefix}/${idpData.stage}/${apiName}`, {
     headers: {
       Authorization: accessToken
     },
-    params: {
-      marketSensingRefreshDate: "2023-02-01",
-      customers: "Company11",
-      categories: "All",
-      valueORvolume: "value"
-    }
+    params: payload
   })
   return response?.data?.body;
 }

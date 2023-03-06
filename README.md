@@ -1,4 +1,4 @@
-# default test 1
+# default test 1 testing cpu usage
 
 ## Project setup
 

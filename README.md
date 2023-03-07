@@ -1,4 +1,4 @@
-# default test 1
+# Kearney
 
 ## Project setup
 

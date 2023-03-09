@@ -77,14 +77,15 @@ export default {
         ['1-12 months',91]
       ],
       cvAccuracyOptions:{
+        height:'350',
         colors: ['#570EAA'],
         legend:{
-          position:'bottom'
+          position:'none'
         },
         chartArea:{
           left: '3%',
           width:'50%',
-          height:'80%'
+          height:'90%'
         },
       },
       rollingTestAccuracyData:[
@@ -97,14 +98,15 @@ export default {
         ['1-12 months',89]
       ],
       rollingTestAccuracyOptions:{
+        height:'350',
         colors: ['#570EAA'],
         legend:{
-          position:'bottom'
+          position:'none'
         },
         chartArea:{
           left: '3%',
           width:'50%',
-          height:'80%'
+          height:'90%',
         },
       },
     }
@@ -129,8 +131,8 @@ export default {
     <div class="tw-w-full tw-border-t tw-border-solid tw-border-brand-gray-2" v-if="chartDataLoaded">
       <div class="tw-grid tw-grid-rows-2 tw-gap-6">
         <div>
-          <v-card>
-            <div class="tw-flex tw-h-8 tw-items-center tw-font-bold">
+          <v-card class="tw-h-full">
+            <div class="tw-font-bold  tw-py-2 tw-pl-2">
               Model Accuracy Forecast Performance
             </div>
             <div class="tw-flex tw-w-full tw-flex-auto tw-border-t tw-border-solid tw-border-brand-gray-2" />

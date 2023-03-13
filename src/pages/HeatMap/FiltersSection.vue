@@ -34,7 +34,7 @@ export default {
         <v-switch
           :model-value="isByVolume"
           inset
-          @click="filtersUpdateHandler('isByVolume', !isByVolume)"
+          @click="isByVolume = !isByVolume"
         />
       </div>
       <span :class="`tw-pt-6 ${isByVolume ? 'tw-font-medium' : ''}`">
@@ -43,7 +43,19 @@ export default {
     </div>
     <div class="tw-flex tw-justify-end tw-ml-auto">
       <div class="tw-flex tw-gap-1 tw-pt-4 tw-pr-3">
-        <img :src="InfoIcon" class="tw-h-6 tw-m-2" />
+        <v-menu open-on-hover location="top">
+          <template v-slot:activator="{ props }">
+            <img v-bind="props" :src="InfoIcon" class="tw-h-6 tw-m-2" />
+          </template>
+          <div
+            class="tw-w-80 tw-h-20 tw-p-2 tw-bg-white tw-border tw-rounded tw-border-[#D9D9D9] tw-shadow-2xl"
+          >
+            <p class="tw-text-sm tw-text-center">
+              Value = Market Sensing - Internal Prediction - = Internal higher
+              than Market + = Market Higher than Internal
+            </p>
+          </div>
+        </v-menu>
         <p class="tw-pt-2">Abs value scale:</p>
       </div>
       <div class="tw-w-8/12">

@@ -65,9 +65,7 @@ export default {
                   {{ `${cellValue}${index > 0 ? '%' : ''}` }}
                 </div>
               </template>
-              <div class="tw-border-2 tw-shadow-2xl tw-p-0">
-                <TooltipChart />
-              </div>
+              <TooltipChart />
             </v-menu>
           </div>
         </div>

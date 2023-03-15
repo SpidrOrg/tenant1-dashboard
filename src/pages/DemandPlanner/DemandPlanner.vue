@@ -1,130 +1,85 @@
 <script>
-import fetchMainDashboardData from '@/api/fetchMainDashboardData';
-import TheHeader from './TheHeader.vue';
-import CardsList from './CardsList.vue';
-import TheCharts from './TheCharts.vue';
+import _ from "lodash";
 import EyeIcon from '@/images/eye-icon.svg';
 import EyeOffIcon from '@/images/eye-off-icon.svg';
-import _ from 'lodash';
+import FiltersSection, {ALL_OPTION} from "@/pages/DemandPlanner/FiltersSection.vue";
+import CardsList from './CardsList.vue';
+import fetchMainDashboardData from "@/api/fetchMainDashboardData";
+import TheCharts from "@/pages/DemandPlanner/TheCharts.vue";
 
 export default {
-  name: 'DemandPlanner',
+  name: "DemandPlanner",
   components: {
-    TheHeader,
+    FiltersSection,
     CardsList,
     TheCharts,
   },
-  data() {
+  data(){
     return {
-      apiData: [],
-      isLoading: false,
-      error: null,
-      filters: {
-        category: null,
-        customers: [],
-        isByVolume: false,
-      },
-      projectedPeriod: '',
-      lag: '',
-      impliedMarketShareChartData: [],
-      keyDemandDriversChartData: [],
-      marketSensingChartData: [],
-      activeCardIndex: null,
-      periods: {
-        first: true,
-        second: false,
-        third: false,
-        fourth: false,
-      },
+      dataLoading: true,
+      debounceUpdateFilters: _.debounce(this.updateFilters, 3000),
+      dashboardData: {},
       isModelAccuracyHidden: false,
+
+      //
       EyeIcon,
       EyeOffIcon,
-    };
+      lodGet: _.get
+    }
   },
   computed: {
-    cardsVisibility() {
-      return [
-        this.periods.first,
-        this.periods.second,
-        this.periods.third,
-        this.periods.fourth,
-      ];
+    selectedCards(){
+      return _.filter(_.get(this.dashboardData, "periodsData"), v => v.isChecked)
     },
-    cardsData() {
-      return this.apiData.filter((_, index) => this.cardsVisibility[index]);
-    },
-    chartsData() {
-      return {
-        impliedMarketShareChartData: this.impliedMarketShareChartData,
-        keyDemandDriversChartData: this.keyDemandDriversChartData,
-        marketSensingChartData: this.marketSensingChartData,
-      };
-    },
-    checkboxLabels() {
-      return this.apiData.map((el) => el.period);
-    },
-  },
-  async created() {
-    this.isLoading = true;
-    try {
-      this.apiData = await fetchMainDashboardData();
-      this.setActiveCard(0);
-    } catch (e) {
-      this.error = e;
+    activePeriodData(){
+      return _.find(_.get(this.dashboardData, "periodsData"), v => v.isActive)
     }
-    this.isLoading = false;
   },
   methods: {
-    setActiveCard(index) {
-      this.activeCardIndex = index;
-      let currentCard = _.get(this.cardsData[index], `externalKPIs`);
-      let currentCardPy = _.get(this.cardsData[index], `impliedMarketShare`);
-      let currentCardHistorical = _.get(this.cardsData[index], `historical`);
-      let historicalIdentifiers = currentCardHistorical.identifiers;
-      this.projectedPeriod = _.get(this.cardsData[index], `period`);
-      this.lag = _.get(this.cardsData[index], `lag`);
-      this.keyDemandDriversChartData = [
-        ['X', 'Y'],
-        ['Stock Market', currentCard['Stock market']],
-        ['Inflation', currentCard['Inflation']],
-        [
-          'Per capita disposable income',
-          currentCard['Per-capita disposable income'],
-        ],
-        ['Pandemic', currentCard['Pandemic']],
-        ['Consumer behaviour', currentCard['Consumer behaviour']],
-        ['Loans consumption', currentCard['Loans consumption']],
-      ];
-      this.impliedMarketShareChartData = [
-        ['', 'PyActual', 'Implied'],
-        [
-          this.projectedPeriod,
-          currentCardPy['pyActual'],
-          currentCardPy['implied'],
-        ],
-      ];
-      this.marketSensingChartData = [];
-      this.marketSensingChartData.push(historicalIdentifiers);
-      let v = this;
-      _.forEach(currentCardHistorical.data, function (data) {
-        v.marketSensingChartData.push(data);
+    isCheckDisabled(isChecked){
+      return isChecked && _.size(_.filter(_.map(this.dashboardData.periodsData, v => v.isChecked), v => v === true)) === 1;
+    },
+    setActiveCard(activeCardIndex){
+      _.forEach(_.get(this.dashboardData, "periodsData"), (v, i)=>{
+        _.set(this.dashboardData, `periodsData[${i}].isActive`, i === activeCardIndex)
+      })
+    },
+    async updateFilters(filtersData){
+      this.dataLoading = true;
+      const selectedMarketSensingRefreshDate = _.get(filtersData, "refreshDates.selected");
+      const selectedCategories = _.get(filtersData, "categories.selected");
+      const selectedCustomers = _.get(filtersData, "customers.selected");
+      const selectedValueORvolume = _.get(filtersData, "valueOrQuantity");
+
+      const jsDateRefreshDate = new Date(selectedMarketSensingRefreshDate.year, selectedMarketSensingRefreshDate.month);
+      const response = await fetchMainDashboardData({
+        marketSensingRefreshDate: new Date(jsDateRefreshDate.getTime() - (jsDateRefreshDate.getTimezoneOffset() * 60000 ))
+          .toISOString()
+          .split("T")[0],
+        categories: selectedCategories === ALL_OPTION ? "*" : selectedCategories,
+        customers: selectedCustomers === ALL_OPTION ? "*" : selectedCustomers,
+        valueORvolume: selectedValueORvolume
       });
-    },
-    isCheckboxDisabled(isChecked) {
-      return (
-        isChecked &&
-        this.cardsVisibility.filter((isCardVisible) => isCardVisible).length ===
-          1
-      );
-    },
-    updateFilters({ name, value }) {
-      this.filters = {
-        ...this.filters,
-        [name]: value,
-      };
-    },
-  },
-};
+
+      if (!_.isEmpty(response)){
+        this.dataLoading = false;
+        this.dashboardData.periodsData = response;
+        _.forEach(this.dashboardData.periodsData, (v, i) => {
+          v.label = _.get(_.keys(v), "[0]");
+          v.metrics = _.get(v, `${v.label}.metrics`, {})
+          v.lag = _.get(v, `${v.label}.futureLagMonths`, "");
+          v.modelAccuracy = _.get(v, `${v.label}.modelAccuracy`, null);
+          delete v[v.label];
+
+          v.metrics.variance = _.round(_.subtract(v.metrics.jdaGrowth, v.metrics.marketSensingGrowth), 0)
+          v.isChecked = i === 0;
+          v.isActive = i === 0;
+
+        })
+      }
+    }
+  }
+}
 </script>
 
 <template>
@@ -140,71 +95,28 @@ export default {
     <div
       class="tw-flex tw-w-full tw-flex-auto tw-border-t tw-border-solid tw-border-brand-gray-2"
     />
-    <div
-      class="tw-w-full tw-h-3/4 tw-flex tw-justify-center tw-items-center"
-      v-if="isLoading"
-    >
-      <v-progress-circular
-        indeterminate
-        color="#7823DC"
-        :size="80"
-        :width="10"
+    <div class="tw-py-5" >
+      <FiltersSection
+        @update-filters="debounceUpdateFilters"
       />
     </div>
-    <div class="tw-py-5" v-if="!isLoading && !error">
-      <TheHeader
-        :category="filters.category"
-        :customers="filters.customers"
-        :isByVolume="filters.isByVolume"
-        @update-filters="updateFilters"
-      />
+    <div class="tw-w-full tw-h-3/4 tw-flex tw-justify-center tw-items-center" v-if="dataLoading">
+      <v-progress-circular indeterminate color="#7823DC" :size="80" :width="10"/>
     </div>
-    <div class="tw-w-full tw-p-4 tw-bg-white" v-if="!isLoading && !error">
-      <div
-        class="tw-flex tw-flex-col tw-w-full tw-border-b tw-border-solid tw-border-brand-gray-2"
-      >
+    <div class="tw-w-full tw-p-4 tw-bg-white" v-else>
+      <div class="tw-flex tw-flex-col tw-w-full tw-border-b tw-border-solid tw-border-brand-gray-2">
         <h1 class="tw-text-3xl tw-font-bold">Future Demand Forecasting</h1>
         <div class="tw-flex tw-items-center tw-w-full">
           <p>Show demand projections for:</p>
-          <div class="tw-flex tw-items-center">
+          <div v-for="periodData in dashboardData.periodsData" :key="periodData.label" class="tw-flex tw-items-center">
             <v-checkbox
-              id="period_first"
+              :id="`period${periodData.label}`"
               color="#7823DC"
               hide-details
-              v-model="periods.first"
-              :disabled="isCheckboxDisabled(periods.first)"
+              :disabled="isCheckDisabled(periodData.isChecked)"
+              v-model="periodData.isChecked"
             />
-            <label for="period_first">{{ checkboxLabels[0] }}</label>
-          </div>
-          <div class="tw-flex tw-items-center">
-            <v-checkbox
-              id="period_second"
-              color="#7823DC"
-              hide-details
-              v-model="periods.second"
-              :disabled="isCheckboxDisabled(periods.second)"
-            />
-            <label for="period_second">{{ checkboxLabels[1] }}</label>
-          </div>
-          <div class="tw-flex tw-items-center">
-            <v-checkbox
-              id="period_third"
-              color="#7823DC"
-              hide-details
-              v-model="periods.third"
-              :disabled="isCheckboxDisabled(periods.third)"
-            />
-            <label for="period_third">{{ checkboxLabels[2] }}</label>
-          </div>
-          <div class="tw-flex tw-items-center">
-            <v-checkbox
-              id="period_fourth"
-              color="#7823DC"
-              hide-details
-              v-model="periods.fourth"
-              :disabled="isCheckboxDisabled(periods.fourth)"
-            />
-            <label for="period_fourth">{{ checkboxLabels[3] }}</label>
+            <label :for="`period${periodData.label}`">{{periodData.label}}</label>
           </div>
           <div class="tw-flex tw-gap-x-3 tw-ml-auto">
             <button
@@ -215,26 +127,26 @@ export default {
               <div class="tw-flex tw-gap-x-2">
                 <img :src="isModelAccuracyHidden ? EyeIcon : EyeOffIcon" />
                 <span class="tw-text-sm"
-                  >{{ isModelAccuracyHidden ? 'Show' : 'Hide' }} Model
+                >{{ isModelAccuracyHidden ? 'Show' : 'Hide' }} Model
                   Accuracy</span
                 >
               </div>
             </button>
             <button class="tw-px-3 tw-py-1.5" style="background: #7823dc">
               <span class="tw-text-white tw-text-sm"
-                >Switch to Fixed/Quarterly View</span
+              >Switch to Fixed/Quarterly View</span
               >
             </button>
           </div>
         </div>
       </div>
+
       <div
         class="tw-flex tw-justify-center tw-gap-2.5 tw-w-full tw-py-5"
-        v-if="cardsData.length"
+        v-if="lodGet(dashboardData, 'periodsData.length')"
       >
         <CardsList
-          :data="cardsData"
-          :activeCardIndex="activeCardIndex"
+          :data="selectedCards"
           @setActiveCard="setActiveCard"
           :options="{ isModelAccuracyHidden }"
         />
@@ -242,16 +154,17 @@ export default {
       <div class="tw-p-4" style="border: 1px solid #7823dc">
         <div class="tw-flex tw-gap-x-4 tw-items-center tw-w-full tw-py-2">
           <p class="tw-font-medium tw-text-2xl">
-            More details for {{ projectedPeriod }}
+            More details for {{ activePeriodData.label }}
           </p>
           <div class="tw-bg-brand-gray-4 tw-rounded">
-            <p class="tw-p-1 tw-text-sm">Future {{ lag }} months</p>
+            <p class="tw-p-1 tw-text-sm">Future {{ activePeriodData.lag }} months</p>
           </div>
         </div>
-        <div class="tw-py-3 tw-w-full" v-if="chartsData">
-          <TheCharts :data="chartsData" />
+        <div class="tw-py-3 tw-w-full" v-if="activePeriodData">
+          <TheCharts :data="activePeriodData.metrics" :projectedPeriod="activePeriodData.label" />
         </div>
       </div>
     </div>
+
   </div>
 </template>

@@ -1,4 +1,5 @@
 <script>
+import _ from 'lodash';
 import ModelAccuracyChart from './ModelAccuracyChart.vue';
 
 export default {
@@ -12,6 +13,13 @@ export default {
       required: true,
     },
     options: Object,
+  },
+  data(){
+    return {
+      //
+      lodGet: _.get,
+      lodSubtract: _.subtract
+    }
   },
   computed: {
     isModelAccuracyHidden() {
@@ -46,7 +54,7 @@ export default {
     <div class="tw-flex tw-flex-col tw-py-2">
       <p style="color: #9291a5">Projected Period</p>
       <div class="tw-flex tw-gap-x-4 tw-items-center tw-w-full">
-        <p class="tw-text-lg tw-font-medium">{{ data.period }}</p>
+        <p class="tw-text-lg tw-font-medium">{{ data.label }}</p>
         <div class="tw-bg-brand-gray-4 tw-rounded">
           <p class="tw-p-1 tw-text-sm">Future {{ data.lag }} months</p>
         </div>
@@ -78,7 +86,7 @@ export default {
             <template v-slot:activator="{ props }">
               <div v-bind="props">
                 <p class="tw-text-2xl tw-font-semibold">
-                  {{ `${data.internal}%` }}
+                  {{ `${lodGet(data, 'metrics.jdaGrowth')}%` }}
                 </p>
                 <p class="tw-text-xs">Planned Internal Forecast</p>
               </div>
@@ -96,7 +104,7 @@ export default {
             <template v-slot:activator="{ props }">
               <div v-bind="props">
                 <p class="tw-text-2xl tw-font-semibold">
-                  {{ `${data.marketSensing}%` }}
+                  {{ `${lodGet(data, 'metrics.marketSensingGrowth')}%` }}
                 </p>
                 <p class="tw-text-xs">Market Sensing Model Forecast</p>
               </div>
@@ -132,7 +140,7 @@ export default {
             </p>
           </div>
         </v-menu>
-        <ModelAccuracyChart :modelAccuracy="data.modelAccuracy.current" />
+        <ModelAccuracyChart :modelAccuracy="lodGet(data, 'modelAccuracy')" />
       </div>
     </div>
     <div
@@ -143,9 +151,9 @@ export default {
           <div v-bind="props" class="tw-flex tw-flex-col tw-items-center">
             <span
               class="tw-text-4xl tw-font-semibold"
-              :style="{ color: getColorCode(data.variance) }"
+              :style="{ color: getColorCode(lodGet(data, 'metrics.variance')) }"
             >
-              {{ `${data.variance}%` }}
+              {{ `${lodGet(data, 'metrics.variance')}%` }}
             </span>
             <span class="tw-text-xs">Variance</span>
           </div>
@@ -155,7 +163,7 @@ export default {
         >
           <p class="tw-text-sm tw-text-center">
             {{
-              `The difference between market sensing and the internal forecast results in a ${data.variance}% variance.`
+              `The difference between market sensing and the internal forecast results in a ${lodGet(data, 'metrics.variance')}% variance.`
             }}
           </p>
         </div>
@@ -163,13 +171,13 @@ export default {
       <div>
         <v-btn
           :prepend-icon="
-            Math.abs(data.variance) >= 20 ? 'mdi-alert-circle' : 'mdi-circle'
+            Math.abs(lodGet(data, 'metrics.variance')) >= 20 ? 'mdi-alert-circle' : 'mdi-circle'
           "
           variant="outlined"
-          :color="getColorCode(data.variance)"
+          :color="getColorCode(lodGet(data, 'metrics.variance'))"
           rounded="pill"
         >
-          {{ getActionButtonLabel(data.variance)
+          {{ getActionButtonLabel(lodGet(data, 'metrics.variance'))
           }}<v-icon end icon="mdi-chevron-right" />
         </v-btn>
       </div>

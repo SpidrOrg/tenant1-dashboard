@@ -18,12 +18,12 @@ export default {
         },
         categories: {
           items: [],
-          selected: [],
+          selected: null,
           filterlabel: "Categories"
         },
         customers: {
           items: [],
-          selected: [],
+          selected: null,
           filterlabel: "Customers"
         },
         valueOrQuantity: BY_VALUE
@@ -58,8 +58,8 @@ export default {
       month: earliestRefreshDate.getMonth(),
       year: earliestRefreshDate.getFullYear()
     });
-    this.selectFilterUpdated("categories", [ALL_OPTION]);
-    this.selectFilterUpdated("customers", [this.filters.customers.items[1]])
+    this.selectFilterUpdated("categories", ALL_OPTION);
+    this.selectFilterUpdated("customers", this.filters.customers.items[1])
     this.dataLoaded = true;
   },
 
@@ -67,25 +67,7 @@ export default {
 
   methods: {
     selectFilterUpdated(filterName, currentSelection){
-      const previousSelection = this.filters[filterName].selected;
-
-      const isSelectedAllThisTime = _.includes(currentSelection, ALL_OPTION)
-        && !_.includes(previousSelection, ALL_OPTION);
-
-      const isSelectedAllRemovedThisTime = _.includes(previousSelection, ALL_OPTION)
-        && !_.includes(currentSelection, ALL_OPTION);
-
-      if (isSelectedAllThisTime){
-        this.filters[filterName].selected = this.filters[filterName].items
-      } else if (isSelectedAllRemovedThisTime){
-        this.filters[filterName].selected = []
-      } else {
-        this.filters[filterName].selected = currentSelection;
-        this.filters[filterName].selected = _.remove(this.filters[filterName].selected, v => {
-          return v !== ALL_OPTION;
-        })
-      }
-
+      this.filters[filterName].selected = currentSelection;
       this.filtersUpdated();
     },
     refreshDateUpdated({month, year}){
@@ -106,7 +88,7 @@ export default {
 <template>
   <div class="tw-flex tw-gap-x-3 tw-w-full tw-bg-white tw-px-3">
     <div class="tw-pt-3 tw-min-w-[14%] tw--mb-3">
-      <div>Month & Year</div>
+<!--      <div>Month & Year</div>-->
       <VueDatePicker v-model="filters.refreshDates.selected" month-picker @update:model-value="refreshDateUpdated">
         <template  #dp-input="{ value }">
           <v-text-field  :value="value" density="comfortable"></v-text-field>
@@ -114,64 +96,22 @@ export default {
       </VueDatePicker>
     </div>
     <div class="tw-pt-3 tw-min-w-[14%] tw--mb-3">
-      <div>{{filters.categories.filterlabel}}</div>
       <v-select
+        label="Category"
         :items="filters.categories.items"
         :model-value="filters.categories.selected"
-        @update:modelValue="selection=>selectFilterUpdated('categories', selection)"
-        multiple
+        @update:modelValue="value=>selectFilterUpdated('categories', value)"
         density="comfortable"
-      >
-        <template v-slot:selection="{ item, index }">
-          <div v-if="includes(filters.categories.selected, ALL_OPTION)">
-            <v-chip v-if="index === 0">
-              <span>{{ ALL_OPTION }}</span>
-            </v-chip>
-          </div>
-          <div v-else>
-            <v-chip v-if="index < 2">
-              <span>{{ item.title }}</span>
-            </v-chip>
-            <span
-              v-if="index === 2"
-              class="text-grey text-caption align-self-center"
-            >
-          (+{{ filters.categories.selected.length - 2 }} others)
-        </span>
-          </div>
-
-        </template>
-      </v-select>
+      />
     </div>
     <div class="tw-pt-3 tw-min-w-[14%] tw--mb-3">
-      <div>{{filters.customers.filterlabel}}</div>
       <v-select
+        label="All Customers"
         :items="filters.customers.items"
         :model-value="filters.customers.selected"
-        @update:modelValue="selection=>selectFilterUpdated('customers', selection)"
-        multiple
+        @update:modelValue="value=>selectFilterUpdated('customers', value)"
         density="comfortable"
-      >
-        <template v-slot:selection="{ item, index }">
-          <div v-if="includes(filters.customers.selected, ALL_OPTION)">
-            <v-chip v-if="index === 0">
-              <span>{{ ALL_OPTION }}</span>
-            </v-chip>
-          </div>
-          <div v-else>
-            <v-chip v-if="index < 2">
-              <span>{{ item.title }}</span>
-            </v-chip>
-            <span
-              v-if="index === 2"
-              class="text-grey text-caption align-self-center"
-            >
-          (+{{ filters.customers.selected.length - 2 }} others)
-        </span>
-          </div>
-
-        </template>
-      </v-select>
+      />
     </div>
     <div class="tw-flex tw-gap-1.5 tw-pl-3 tw--mb-3">
       <p :class="`tw-pt-6 ${filters.valueOrQuantity === BY_VALUE ? 'tw-font-medium' : ''}`">Value {{currency}}</p>
@@ -182,13 +122,3 @@ export default {
     </div>
   </div>
 </template>
-<style>
-.dp__clear_icon {
-  position: absolute;
-  top: 36%;
-  right: 0;
-  transform: translateY(-50%);
-  cursor: pointer;
-  color: var(--dp-icon-color);
-}
-</style>

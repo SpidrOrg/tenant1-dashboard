@@ -1,7 +1,7 @@
 // Composables
 import { createRouter, createWebHistory } from 'vue-router'
 import Default from "@/layouts/default/Default.vue";
-import DemandPlanner from "@/pages/DemandPlanner/DemandPlannerNew.vue";
+import DemandPlanner from "@/pages/DemandPlanner/DemandPlanner.vue";
 import HeatMap from "@/pages/HeatMap/HeatMap.vue";
 import InternalCharts from "@/pages/InternalCharts/InternalCharts.vue";
 import ModelAccuracy from "@/pages/ModelAccuracy/ModelAccuracy.vue";

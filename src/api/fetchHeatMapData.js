@@ -1,4 +1,4 @@
-import { invokeApi } from '@/parent/idpUtils';
+import { invokeGetApi } from '@/parent/idpUtils';
 
 let cachedData = [
   {
@@ -86,6 +86,6 @@ export default async function () {
       }, 1300);
     });
   }
-  const data = await invokeApi('heatmap');
+  const data = await invokeGetApi('heatmap');
   return data;
 }

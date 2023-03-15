@@ -1,4 +1,4 @@
-import { invokeApi } from '@/parent/idpUtils';
+import { invokeGetApi } from '@/parent/idpUtils';
 import _ from 'lodash';
 
 let cachedData = JSON.parse('internal_forecast:{"identifiers":["period","Internal","Actual"],"data":{[' +
@@ -36,7 +36,7 @@ export default async function () {
       }, 1300);
     });
   }
-  const data = await invokeApi('internalcharts'); // apidatacleint2 //maindashboard
+  const data = await invokeGetApi('internalcharts'); // apidatacleint2 //maindashboard
   let dataForUi = _.get(data, 'projectionsData.projections', []);
   dataForUi = _.map(dataForUi, (v) => ({
     ...v,

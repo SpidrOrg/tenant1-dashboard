@@ -1,7 +1,6 @@
 <script>
 import { GChart }  from 'vue-google-charts'
-import TheHeader from './TheHeader'
-import { INTERNAL_CHARTS_DATA_LINE, INTERNAL_CHARTS_DATA_COLUMN } from "@/pages/InternalCharts/constants";
+import TheHeader, {ALL_OPTION} from './TheHeader'
 import fetchInternalChartsData from "@/api/fetchInternalChartsData";
 import _ from "lodash";
 
@@ -16,6 +15,7 @@ export default {
       isLoading:false,
       apiData:[],
       columnChartData:[],
+      debounceUpdateFilters: _.debounce(this.updateFilters, 3000),
       columnChartOptions:{
         height:370,
         legend: {position: 'top'},
@@ -78,6 +78,37 @@ export default {
     }
     this.isLoading = false;
   },
+  methods:{
+    async updateFilters(filtersData){
+      this.dataLoading = true;
+      const selectedCategories = _.get(filtersData, "categories.selected");
+      const selectedCustomers = _.get(filtersData, "customers.selected");
+      const selectedValueORvolume = _.get(filtersData, "valueOrQuantity");
+
+      const response = await fetchInternalChartsData({
+        categories: selectedCategories === ALL_OPTION ? "*" : selectedCategories,
+        customers: selectedCustomers === ALL_OPTION ? "*" : selectedCustomers,
+        valueORvolume: selectedValueORvolume
+      });
+
+      if (!_.isEmpty(response)){
+        this.dataLoading = false;
+        this.dashboardData.periodsData = response;
+        _.forEach(this.dashboardData.periodsData, (v, i) => {
+          v.label = _.get(_.keys(v), "[0]");
+          v.metrics = _.get(v, `${v.label}.metrics`, {})
+          v.lag = _.get(v, `${v.label}.futureLagMonths`, "");
+          v.modelAccuracy = _.get(v, `${v.label}.modelAccuracy`, null);
+          delete v[v.label];
+
+          v.metrics.variance = _.round(_.subtract(v.metrics.jdaGrowth, v.metrics.marketSensingGrowth), 0)
+          v.isChecked = i === 0;
+          v.isActive = i === 0;
+
+        })
+      }
+    }
+  }
 }
 </script>
 

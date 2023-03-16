@@ -1,4 +1,4 @@
-import { invokeGetApi } from '@/parent/idpUtils';
+import getApiBase from './getApiBase';
 
 let cachedData = [
   {
@@ -78,7 +78,7 @@ let cachedData = [
     ],
   },
 ];
-export default async function () {
+export default async function ({ marketSensingRefreshDate, valueORvolume }) {
   if (cachedData) {
     return await new Promise((res) => {
       setTimeout(() => {
@@ -86,6 +86,9 @@ export default async function () {
       }, 1300);
     });
   }
-  const data = await invokeGetApi('heatmap');
+  const data = await getApiBase('heatmap', {
+    marketSensingRefreshDate,
+    valueORvolume,
+  });
   return data;
 }

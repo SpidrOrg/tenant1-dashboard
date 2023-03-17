@@ -90,7 +90,7 @@ export default {
         <div class="tw-grid tw-grid-cols-2 tw-pt-4">
           <v-menu open-on-hover location="top">
             <template v-slot:activator="{ props }">
-              <div v-bind="props">
+              <div v-bind="props" class="tw-text-center">
                 <p class="tw-text-2xl tw-font-semibold">
                   {{ `${lodGetNumeric(data, 'metrics.jdaGrowth')}` }}
                 </p>
@@ -108,7 +108,7 @@ export default {
           </v-menu>
           <v-menu open-on-hover location="top">
             <template v-slot:activator="{ props }">
-              <div v-bind="props">
+              <div v-bind="props" class="tw-text-center">
                 <p class="tw-text-2xl tw-font-semibold">
                   {{ `${lodGetNumeric(data, 'metrics.marketSensingGrowth')}` }}
                 </p>

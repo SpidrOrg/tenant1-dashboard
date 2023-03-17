@@ -1,14 +1,15 @@
 <script>
 import _ from 'lodash';
-import fetchMainDashboardOptions from '@/api/fetchMainDashboardOptions';
+import fetchHeatMapOptions from '@/api/fetchHeatMapOptions';
+
+import InfoIcon from '@/images/info-icon.svg';
+import HeatMapScaleIcon from '@/images/heatmap-scale.svg';
 
 const BY_VALUE = 'BY_VALUE';
 const BY_QUANTITY = 'BY_QUANTITY';
 
-export const ALL_OPTION = 'All';
-
 export default {
-  name: 'FilterSelection',
+  name: 'FiltersSection',
   data() {
     return {
       filters: {
@@ -16,46 +17,22 @@ export default {
           items: [],
           selected: null,
         },
-        categories: {
-          items: [],
-          selected: null,
-          filterlabel: 'Categories',
-        },
-        customers: {
-          items: [],
-          selected: null,
-          filterlabel: 'Customers',
-        },
         valueOrQuantity: BY_VALUE,
       },
-      currency: 'USD',
       dataLoaded: false,
-
+      currency: 'USD',
       BY_VALUE,
       BY_QUANTITY,
-      ALL_OPTION,
-      includes: _.includes,
+      InfoIcon,
+      HeatMapScaleIcon,
     };
   },
-
   async created() {
     // Make API call to get available options for the filters
-    const options = await fetchMainDashboardOptions().catch(() => null);
+    const options = await fetchHeatMapOptions().catch(() => null);
     if (options) {
-      this.filters.categories.items = options.categories;
-      this.filters.customers.items = options.customers;
       this.filters.refreshDates.items = options.marketSensingRefreshDates;
     }
-
-    // Add all option to the categories and customers filters
-    this.filters.categories.items = _.concat(
-      ALL_OPTION,
-      this.filters.categories.items
-    );
-    this.filters.customers.items = _.concat(
-      ALL_OPTION,
-      this.filters.customers.items
-    );
 
     // Set default option on filters
     // this.filters.refreshDates.selected = new Date(_.first(this.filters.refreshDates.items));
@@ -66,18 +43,12 @@ export default {
       month: earliestRefreshDate.getMonth(),
       year: earliestRefreshDate.getFullYear(),
     });
-    this.selectFilterUpdated('categories', ALL_OPTION);
-    this.selectFilterUpdated('customers', this.filters.customers.items[1]);
     this.dataLoaded = true;
   },
 
   emits: ['updateFilters'],
 
   methods: {
-    selectFilterUpdated(filterName, currentSelection) {
-      this.filters[filterName].selected = currentSelection;
-      this.filtersUpdated();
-    },
     refreshDateUpdated({ month, year }) {
       this.filters.refreshDates.selected = { month, year };
       this.filtersUpdated();
@@ -97,7 +68,6 @@ export default {
 <template>
   <div class="tw-flex tw-gap-x-3 tw-w-full tw-bg-white tw-px-3">
     <div class="tw-pt-3 tw-min-w-[14%] tw--mb-3">
-      <!--      <div>Month & Year</div>-->
       <VueDatePicker
         v-model="filters.refreshDates.selected"
         month-picker
@@ -107,24 +77,6 @@ export default {
           <v-text-field :value="value" density="comfortable"></v-text-field>
         </template>
       </VueDatePicker>
-    </div>
-    <div class="tw-pt-3 tw-min-w-[14%] tw--mb-3">
-      <v-select
-        label="Category"
-        :items="filters.categories.items"
-        :model-value="filters.categories.selected"
-        @update:modelValue="(value) => selectFilterUpdated('categories', value)"
-        density="comfortable"
-      />
-    </div>
-    <div class="tw-pt-3 tw-min-w-[14%] tw--mb-3">
-      <v-select
-        label="All Customers"
-        :items="filters.customers.items"
-        :model-value="filters.customers.selected"
-        @update:modelValue="(value) => selectFilterUpdated('customers', value)"
-        density="comfortable"
-      />
     </div>
     <div class="tw-flex tw-gap-1.5 tw-pl-3 tw--mb-3">
       <span
@@ -148,6 +100,27 @@ export default {
       >
         Volume
       </span>
+    </div>
+    <div class="tw-flex tw-justify-end tw-ml-auto">
+      <div class="tw-flex tw-gap-1 tw-pt-4 tw-pr-3">
+        <v-menu open-on-hover location="top">
+          <template v-slot:activator="{ props }">
+            <img v-bind="props" :src="InfoIcon" class="tw-h-6 tw-m-2" />
+          </template>
+          <div
+            class="tw-w-80 tw-h-20 tw-p-2 tw-bg-white tw-border tw-rounded tw-border-[#D9D9D9] tw-shadow-2xl"
+          >
+            <p class="tw-text-sm tw-text-center">
+              Value = Market Sensing - Internal Prediction - = Internal higher
+              than Market + = Market Higher than Internal
+            </p>
+          </div>
+        </v-menu>
+        <p class="tw-pt-2">Abs value scale:</p>
+      </div>
+      <div class="tw-w-8/12">
+        <img :src="HeatMapScaleIcon" class="tw-h-full" />
+      </div>
     </div>
   </div>
 </template>

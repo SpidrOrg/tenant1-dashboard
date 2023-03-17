@@ -3,7 +3,6 @@ import _ from 'lodash';
 import fetchHeatMapData from '@/api/fetchHeatMapData';
 import FiltersSection from '@/pages/HeatMap/FiltersSection.vue';
 import CardsList from '@/pages/HeatMap/CardsList.vue';
-
 export default {
   name: 'HeatMap',
   components: {
@@ -19,7 +18,7 @@ export default {
     };
   },
   methods: {
-    async updateFilters(filtersData) {
+    async updateFilters(filtersData, metaData) {
       this.isLoading = true;
       const selectedMarketSensingRefreshDate = _.get(
         filtersData,
@@ -33,6 +32,7 @@ export default {
       );
       try {
         this.apiData = await fetchHeatMapData({
+          ...metaData,
           marketSensingRefreshDate: new Date(
             jsDateRefreshDate.getTime() -
             jsDateRefreshDate.getTimezoneOffset() * 60000
@@ -54,23 +54,23 @@ export default {
 </script>
 
 <template>
-  <div className="tw-h-full tw-w-full tw-px-4 tw-pt-2 tw-pb-10 tw-bg-brand-gray-1">
-    <div className="tw-flex tw-w-full tw-h-8 tw-bg-brand-gray-1">
-      <div className="tw-flex tw-h-full tw-items-center tw-font-bold tw-text-lg">
+  <div class="tw-h-full tw-w-full tw-px-4 tw-pt-2 tw-pb-10 tw-bg-brand-gray-1">
+    <div class="tw-flex tw-w-full tw-h-8 tw-bg-brand-gray-1">
+      <div class="tw-flex tw-h-full tw-items-center tw-font-bold tw-text-lg">
         Heat-map View
       </div>
-      <div className="tw-ml-auto tw-h-full tw-flex tw-items-center">
+      <div class="tw-ml-auto tw-h-full tw-flex tw-items-center">
         Last refreshed on 01 Jan 2023
       </div>
     </div>
     <div
-      className="tw-flex tw-w-full tw-flex-auto tw-border-t tw-border-solid tw-border-brand-gray-2"
+      class="tw-flex tw-w-full tw-flex-auto tw-border-t tw-border-solid tw-border-brand-gray-2"
     />
-    <div className="tw-py-5">
-      <FiltersSection @update-filters="debounceUpdateFilters"/>
+    <div class="tw-py-5">
+      <FiltersSection @update-filters="debounceUpdateFilters" />
     </div>
     <div
-      className="tw-w-full tw-h-3/4 tw-flex tw-justify-center tw-items-center"
+      class="tw-w-full tw-h-3/4 tw-flex tw-justify-center tw-items-center"
       v-if="isLoading"
     >
       <v-progress-circular
@@ -81,7 +81,7 @@ export default {
       />
     </div>
     <div v-if="!isLoading && !error">
-      <CardsList :data="apiData"/>
+      <CardsList :data="apiData" />
     </div>
   </div>
 </template>

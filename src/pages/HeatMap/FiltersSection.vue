@@ -25,13 +25,14 @@ export default {
       BY_QUANTITY,
       InfoIcon,
       HeatMapScaleIcon,
+      apiData: null
     };
   },
   async created() {
     // Make API call to get available options for the filters
-    const options = await fetchHeatMapOptions().catch(() => null);
-    if (options) {
-      this.filters.refreshDates.items = options.marketSensingRefreshDates;
+    this.apiData = await fetchHeatMapOptions().catch(() => null);
+    if (this.apiData) {
+      this.filters.refreshDates.items = this.apiData.marketSensingRefreshDates;
     }
 
     // Set default option on filters
@@ -59,7 +60,7 @@ export default {
       this.filtersUpdated();
     },
     filtersUpdated() {
-      this.$emit('updateFilters', this.filters);
+      this.$emit('updateFilters', this.filters, {customers: _.get(this.apiData, "customers", []), categories: _.get(this.apiData, "categories", []) });
     },
   },
 };

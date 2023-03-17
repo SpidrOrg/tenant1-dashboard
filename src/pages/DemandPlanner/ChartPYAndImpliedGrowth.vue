@@ -27,8 +27,8 @@ export default {
         ['', 'PyActual', 'Implied'],
         [
           this.projectedPeriod,
-          this.pyVal,
-          this.impliedVal,
+          _.isNaN(_.toNumber(this.pyVal)) ? 0 : _.toNumber(this.pyVal),
+          _.isNaN(_.toNumber(this.impliedVal)) ? 0 : _.toNumber(this.impliedVal),
         ],
       ]
     },

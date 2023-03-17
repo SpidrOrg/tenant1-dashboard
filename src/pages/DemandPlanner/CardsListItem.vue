@@ -17,7 +17,6 @@ export default {
   data(){
     return {
       //
-      lodGet: _.get,
       lodSubtract: _.subtract
     }
   },
@@ -27,6 +26,13 @@ export default {
     },
   },
   methods: {
+    lodGetNumeric(obj, path, isPercentValue = true){
+      const val = _.get(obj, path, null);
+      if (val === null || _.isNaN(val) || !_.isNumber(val)){
+        return "NA"
+      }
+      return `${val}${isPercentValue ? "%": ""}`
+    },
     getColorCode(n) {
       if (Math.abs(n) >= 20) {
         return '#DC3545';
@@ -86,7 +92,7 @@ export default {
             <template v-slot:activator="{ props }">
               <div v-bind="props">
                 <p class="tw-text-2xl tw-font-semibold">
-                  {{ `${lodGet(data, 'metrics.jdaGrowth')}%` }}
+                  {{ `${lodGetNumeric(data, 'metrics.jdaGrowth')}` }}
                 </p>
                 <p class="tw-text-xs">Planned Internal Forecast</p>
               </div>
@@ -104,7 +110,7 @@ export default {
             <template v-slot:activator="{ props }">
               <div v-bind="props">
                 <p class="tw-text-2xl tw-font-semibold">
-                  {{ `${lodGet(data, 'metrics.marketSensingGrowth')}%` }}
+                  {{ `${lodGetNumeric(data, 'metrics.marketSensingGrowth')}` }}
                 </p>
                 <p class="tw-text-xs">Market Sensing Model Forecast</p>
               </div>
@@ -140,7 +146,7 @@ export default {
             </p>
           </div>
         </v-menu>
-        <ModelAccuracyChart :modelAccuracy="lodGet(data, 'modelAccuracy')" />
+        <ModelAccuracyChart :modelAccuracy="lodGetNumeric(data, 'modelAccuracy', false)" />
       </div>
     </div>
     <div
@@ -151,9 +157,9 @@ export default {
           <div v-bind="props" class="tw-flex tw-flex-col tw-items-center">
             <span
               class="tw-text-4xl tw-font-semibold"
-              :style="{ color: getColorCode(lodGet(data, 'metrics.variance')) }"
+              :style="{ color: getColorCode(lodGetNumeric(data, 'metrics.variance')) }"
             >
-              {{ `${lodGet(data, 'metrics.variance')}%` }}
+              {{ `${lodGetNumeric(data, 'metrics.variance')}` }}
             </span>
             <span class="tw-text-xs">Variance</span>
           </div>
@@ -163,7 +169,7 @@ export default {
         >
           <p class="tw-text-sm tw-text-center">
             {{
-              `The difference between market sensing and the internal forecast results in a ${lodGet(data, 'metrics.variance')}% variance.`
+              `The difference between market sensing and the internal forecast results in a ${lodGetNumeric(data, 'metrics.variance')} variance.`
             }}
           </p>
         </div>
@@ -171,13 +177,13 @@ export default {
       <div>
         <v-btn
           :prepend-icon="
-            Math.abs(lodGet(data, 'metrics.variance')) >= 20 ? 'mdi-alert-circle' : 'mdi-circle'
+            Math.abs(lodGetNumeric(data, 'metrics.variance')) >= 20 ? 'mdi-alert-circle' : 'mdi-circle'
           "
           variant="outlined"
-          :color="getColorCode(lodGet(data, 'metrics.variance'))"
+          :color="getColorCode(lodGetNumeric(data, 'metrics.variance'))"
           rounded="pill"
         >
-          {{ getActionButtonLabel(lodGet(data, 'metrics.variance'))
+          {{ getActionButtonLabel(lodGetNumeric(data, 'metrics.variance'))
           }}<v-icon end icon="mdi-chevron-right" />
         </v-btn>
       </div>

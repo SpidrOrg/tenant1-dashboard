@@ -20,7 +20,7 @@ export default {
       return [
         [...dataKeys],
         ..._.map(this.data, v => {
-          return _.map(dataKeys, k => v[k])
+          return _.map(dataKeys, k => v[k] === null ? 0 : v[k])
         })
       ]
     }

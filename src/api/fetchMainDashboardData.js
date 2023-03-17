@@ -1,6 +1,6 @@
 import _ from "lodash";
 import apiBase from "@/api/getApiBase";
-const apiResp = [
+const apiResp1 = [
   {
     "Mar 23 - May 23": {
       "metrics": {
@@ -170,6 +170,228 @@ const apiResp = [
     }
   }
 ]
+const apiResp = [
+  {
+    "Mar 23 - May 23": {
+      "metrics": {
+        "marketSensingGrowth": null,
+        "jdaGrowth": null,
+        "pyGrowth": null,
+        "impliedGrowth": null,
+        "keyDemandDrivers": [
+          {
+            "": 0
+          }
+        ],
+        "historical": [
+          {
+            "period": "Jan 23 - Nov 22",
+            "Market Sensing": null,
+            "Internal": null,
+            "Actual": null
+          },
+          {
+            "period": "Dec 22 - Oct 22",
+            "Market Sensing": null,
+            "Internal": null,
+            "Actual": null
+          },
+          {
+            "period": "Nov 22 - Sep 22",
+            "Market Sensing": null,
+            "Internal": null,
+            "Actual": null
+          },
+          {
+            "period": "Oct 22 - Aug 22",
+            "Market Sensing": null,
+            "Internal": null,
+            "Actual": null
+          },
+          {
+            "period": "Sep 22 - Jul 22",
+            "Market Sensing": null,
+            "Internal": null,
+            "Actual": null
+          },
+          {
+            "period": "Aug 22 - Jun 22",
+            "Market Sensing": null,
+            "Internal": null,
+            "Actual": null
+          }
+        ]
+      },
+      "futureLagMonths": "1-3",
+      "modelAccuracy": "95"
+    }
+  },
+  {
+    "Jun 23 - Aug 23": {
+      "metrics": {
+        "marketSensingGrowth": null,
+        "jdaGrowth": null,
+        "pyGrowth": null,
+        "impliedGrowth": null,
+        "keyDemandDrivers": [
+          {
+            "": 0
+          }
+        ],
+        "historical": [
+          {
+            "period": "Jan 23 - Nov 22",
+            "Market Sensing": null,
+            "Internal": null,
+            "Actual": null
+          },
+          {
+            "period": "Dec 22 - Oct 22",
+            "Market Sensing": null,
+            "Internal": null,
+            "Actual": null
+          },
+          {
+            "period": "Nov 22 - Sep 22",
+            "Market Sensing": null,
+            "Internal": null,
+            "Actual": null
+          },
+          {
+            "period": "Oct 22 - Aug 22",
+            "Market Sensing": null,
+            "Internal": null,
+            "Actual": null
+          },
+          {
+            "period": "Sep 22 - Jul 22",
+            "Market Sensing": null,
+            "Internal": null,
+            "Actual": null
+          },
+          {
+            "period": "Aug 22 - Jun 22",
+            "Market Sensing": null,
+            "Internal": null,
+            "Actual": null
+          }
+        ]
+      },
+      "futureLagMonths": "4-6",
+      "modelAccuracy": "88"
+    }
+  },
+  {
+    "Sep 23 - Nov 23": {
+      "metrics": {
+        "marketSensingGrowth": null,
+        "jdaGrowth": null,
+        "pyGrowth": null,
+        "impliedGrowth": null,
+        "keyDemandDrivers": [
+          {
+            "": 0
+          }
+        ],
+        "historical": [
+          {
+            "period": "Jan 23 - Nov 22",
+            "Market Sensing": null,
+            "Internal": null,
+            "Actual": null
+          },
+          {
+            "period": "Dec 22 - Oct 22",
+            "Market Sensing": null,
+            "Internal": null,
+            "Actual": null
+          },
+          {
+            "period": "Nov 22 - Sep 22",
+            "Market Sensing": null,
+            "Internal": null,
+            "Actual": null
+          },
+          {
+            "period": "Oct 22 - Aug 22",
+            "Market Sensing": null,
+            "Internal": null,
+            "Actual": null
+          },
+          {
+            "period": "Sep 22 - Jul 22",
+            "Market Sensing": null,
+            "Internal": null,
+            "Actual": null
+          },
+          {
+            "period": "Aug 22 - Jun 22",
+            "Market Sensing": null,
+            "Internal": null,
+            "Actual": null
+          }
+        ]
+      },
+      "futureLagMonths": "7-9",
+      "modelAccuracy": "92"
+    }
+  },
+  {
+    "Dec 23 - Feb 24": {
+      "metrics": {
+        "marketSensingGrowth": null,
+        "jdaGrowth": null,
+        "pyGrowth": null,
+        "impliedGrowth": null,
+        "keyDemandDrivers": [
+          {
+            "": 0
+          }
+        ],
+        "historical": [
+          {
+            "period": "Jan 23 - Nov 22",
+            "Market Sensing": null,
+            "Internal": null,
+            "Actual": null
+          },
+          {
+            "period": "Dec 22 - Oct 22",
+            "Market Sensing": null,
+            "Internal": null,
+            "Actual": null
+          },
+          {
+            "period": "Nov 22 - Sep 22",
+            "Market Sensing": null,
+            "Internal": null,
+            "Actual": null
+          },
+          {
+            "period": "Oct 22 - Aug 22",
+            "Market Sensing": null,
+            "Internal": null,
+            "Actual": null
+          },
+          {
+            "period": "Sep 22 - Jul 22",
+            "Market Sensing": null,
+            "Internal": null,
+            "Actual": null
+          },
+          {
+            "period": "Aug 22 - Jun 22",
+            "Market Sensing": null,
+            "Internal": null,
+            "Actual": null
+          }
+        ]
+      },
+      "futureLagMonths": "10-12",
+      "modelAccuracy": "92"
+    }
+  }
+]
 
 export default async function (
   {
@@ -197,7 +419,7 @@ export default async function (
     const metricsObj = _.get(periodData, "metrics");
     _.forOwn(metricsObj, (v, k)=>{
       if (!(k === "historical" || k === "keyDemandDrivers")){
-        metricsObj[k] = _.round(_.toNumber(v), 0)
+        metricsObj[k] = v === null ? "NA" : _.round(_.toNumber(v), 0)
       }
     })
   })

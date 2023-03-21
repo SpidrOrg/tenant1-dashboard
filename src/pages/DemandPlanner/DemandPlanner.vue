@@ -72,7 +72,7 @@ export default {
           delete v[v.label];
 
           v.metrics.variance = _.round(_.subtract(v.metrics.jdaGrowth, v.metrics.marketSensingGrowth), 0)
-          v.isChecked = i === 0;
+          v.isChecked = true;
           v.isActive = i === 0;
 
         })

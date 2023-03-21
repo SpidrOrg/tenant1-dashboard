@@ -17,7 +17,8 @@ export default {
   data(){
     return {
       //
-      lodSubtract: _.subtract
+      lodSubtract: _.subtract,
+      lodToNumber: _.toNumber
     }
   },
   computed: {
@@ -33,7 +34,8 @@ export default {
       }
       return `${val}${isPercentValue ? "%": ""}`
     },
-    getColorCode(n) {
+    getColorCode(num) {
+      const n = _.toNumber(num);
       if (Math.abs(n) >= 20) {
         return '#DC3545';
       }
@@ -42,7 +44,8 @@ export default {
       }
       return '#04BB46';
     },
-    getActionButtonLabel(n) {
+    getActionButtonLabel(num) {
+      const n = _.toNumber(num);
       if (Math.abs(n) >= 20) {
         return 'Review';
       }
@@ -146,7 +149,7 @@ export default {
             </p>
           </div>
         </v-menu>
-        <ModelAccuracyChart :modelAccuracy="lodGetNumeric(data, 'modelAccuracy', false)" />
+        <ModelAccuracyChart :modelAccuracy="lodToNumber(lodGetNumeric(data, 'modelAccuracy', false))" />
       </div>
     </div>
     <div
@@ -157,7 +160,7 @@ export default {
           <div v-bind="props" class="tw-flex tw-flex-col tw-items-center">
             <span
               class="tw-text-4xl tw-font-semibold"
-              :style="{ color: getColorCode(lodGetNumeric(data, 'metrics.variance')) }"
+              :style="{ color: getColorCode(lodGetNumeric(data, 'metrics.variance', false)) }"
             >
               {{ `${lodGetNumeric(data, 'metrics.variance')}` }}
             </span>
@@ -177,13 +180,13 @@ export default {
       <div>
         <v-btn
           :prepend-icon="
-            Math.abs(lodGetNumeric(data, 'metrics.variance')) >= 20 ? 'mdi-alert-circle' : 'mdi-circle'
+            Math.abs(lodToNumber(lodGetNumeric(data, 'metrics.variance', false))) >= 20 ? 'mdi-alert-circle' : 'mdi-circle'
           "
           variant="outlined"
-          :color="getColorCode(lodGetNumeric(data, 'metrics.variance'))"
+          :color="getColorCode(lodGetNumeric(data, 'metrics.variance', false))"
           rounded="pill"
         >
-          {{ getActionButtonLabel(lodGetNumeric(data, 'metrics.variance'))
+          {{ getActionButtonLabel(lodToNumber(lodGetNumeric(data, 'metrics.variance', false)))
           }}<v-icon end icon="mdi-chevron-right" />
         </v-btn>
       </div>

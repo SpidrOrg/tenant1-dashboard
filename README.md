@@ -1,4 +1,4 @@
-# default har
+# default hards
 
 ## Project setup
 

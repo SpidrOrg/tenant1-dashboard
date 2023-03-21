@@ -35,7 +35,7 @@ export default {
           ...metaData,
           marketSensingRefreshDate: new Date(
             jsDateRefreshDate.getTime() -
-            jsDateRefreshDate.getTimezoneOffset() * 60000
+              jsDateRefreshDate.getTimezoneOffset() * 60000
           )
             .toISOString()
             .split('T')[0],
@@ -56,8 +56,11 @@ export default {
 <template>
   <div class="tw-h-full tw-w-full tw-px-4 tw-pt-2 tw-pb-10 tw-bg-brand-gray-1">
     <div class="tw-flex tw-w-full tw-h-8 tw-bg-brand-gray-1">
-      <div class="tw-flex tw-h-full tw-items-center tw-font-bold tw-text-lg">
-        Heat-map View
+      <div class="tw-flex tw-h-full tw-items-center">
+        <h1 class="tw-font-bold tw-text-lg">Heat-map View -&nbsp;</h1>
+        <h2 class="tw-text-lg">
+          Representation of variance across categories and stores
+        </h2>
       </div>
       <div class="tw-ml-auto tw-h-full tw-flex tw-items-center">
         Last refreshed on 01 Jan 2023
@@ -82,6 +85,9 @@ export default {
     </div>
     <div v-if="!isLoading && !error">
       <CardsList :data="apiData" />
+    </div>
+    <div v-if="!isLoading && error">
+      <v-alert type="error" :text="error.toString()"></v-alert>
     </div>
   </div>
 </template>

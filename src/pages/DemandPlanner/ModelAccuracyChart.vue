@@ -102,6 +102,7 @@ export default {
         ]"
         :options="{
           legend: { position: 'none' },
+          tooltip: { trigger: 'none' },
           height: 240,
           width: 560,
           vAxis: {

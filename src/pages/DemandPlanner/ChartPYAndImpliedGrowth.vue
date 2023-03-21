@@ -1,9 +1,9 @@
 <script>
-import _ from "lodash";
+import _ from 'lodash';
 import { GChart } from 'vue-google-charts';
 
 export default {
-  name: "ChartPYandImpliedGrowth",
+  name: 'ChartPYandImpliedGrowth',
   components: {
     GChart,
   },
@@ -22,23 +22,32 @@ export default {
     },
   },
   computed: {
-    chartData(){
+    chartData() {
       return [
         ['', 'PyActual', 'Implied'],
         [
           this.projectedPeriod,
           _.isNaN(_.toNumber(this.pyVal)) ? 0 : _.toNumber(this.pyVal),
-          _.isNaN(_.toNumber(this.impliedVal)) ? 0 : _.toNumber(this.impliedVal),
+          _.isNaN(_.toNumber(this.impliedVal))
+            ? 0
+            : _.toNumber(this.impliedVal),
         ],
-      ]
+      ];
     },
-    chartOptions(){
+    chartOptions() {
       return {
         legend: { position: 'top' },
+        tooltip: { trigger: 'none' },
         vAxis: {
           viewWindow: {
-            max: _.add(_.max([_.toNumber(this.pyVal), _.toNumber(this.impliedVal)]), 5),
-            min: _.subtract(_.min([_.toNumber(this.pyVal), _.toNumber(this.impliedVal)]), 5),
+            max: _.add(
+              _.max([_.toNumber(this.pyVal), _.toNumber(this.impliedVal)]),
+              5
+            ),
+            min: _.subtract(
+              _.min([_.toNumber(this.pyVal), _.toNumber(this.impliedVal)]),
+              5
+            ),
           },
         },
         hAxis: {
@@ -55,34 +64,30 @@ export default {
           height: '80%',
         },
         colors: ['#A5A5A5', '#F8D887'],
-      }
-    }
-  }
-}
+      };
+    },
+  },
+};
 </script>
 
 <template>
   <v-menu open-on-hover location="top">
     <template v-slot:activator="{ props }">
-          <span
-            v-bind="props"
-            class="tw-font-medium tw-text-lg tw-text-center tw-cursor-default"
-          >
-            Implied Market Share
-          </span>
+      <span
+        v-bind="props"
+        class="tw-font-medium tw-text-lg tw-text-center tw-cursor-default"
+      >
+        Implied Market Share
+      </span>
     </template>
     <div
       class="tw-w-96 tw-h-14 tw-p-2 tw-bg-white tw-border tw-rounded tw-border-[#D9D9D9] tw-shadow-2xl"
     >
       <p class="tw-text-sm tw-text-center">
-        Size of the company in relation to its market and its competitors
-        based on demand projections
+        Size of the company in relation to its market and its competitors based
+        on demand projections
       </p>
     </div>
   </v-menu>
-  <GChart
-    type="ColumnChart"
-    :data="chartData"
-    :options="chartOptions"
-  />
+  <GChart type="ColumnChart" :data="chartData" :options="chartOptions" />
 </template>

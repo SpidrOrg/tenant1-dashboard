@@ -1,5 +1,5 @@
 <script>
-import _ from "lodash";
+import _ from 'lodash';
 import TooltipChart from '@/pages/HeatMap/TooltipChart.vue';
 
 export default {
@@ -13,11 +13,11 @@ export default {
   components: {
     TooltipChart,
   },
-  data(){
+  data() {
     return {
       lodGet: _.get,
-      lodSize: _.size
-    }
+      lodSize: _.size,
+    };
   },
   methods: {
     getCellStyling(cellValue) {
@@ -41,21 +41,31 @@ export default {
     <div class="tw-w-full tw-border tw-border-solid tw-border-brand-gray-2" />
     <div class="tw-w-full tw-h-full tw-overflow-auto">
       <div
-        :class="`tw-grid tw-grid-cols-${lodSize(lodGet(data, 'columnHeaders', []))} tw-gap-x-3 tw-pb-4`"
+        :class="`tw-grid tw-grid-cols-${lodSize(
+          lodGet(data, 'columnHeaders', [])
+        )} tw-grid-flow-col tw-gap-x-3 tw-pb-4`"
       >
         <span
-          v-for="columnHeader in data.columnHeaders"
+          v-for="(columnHeader, index) in data.columnHeaders"
           :key="columnHeader"
-          class="tw-font-medium tw-text-sm"
+          :class="`tw-font-medium tw-text-sm ${
+            index > 0 ? 'tw-text-center' : ''
+          }`"
         >
           {{ columnHeader }}
         </span>
       </div>
-      <div :class="`tw-grid tw-grid-rows-${lodSize(lodGet(data, 'records', []))} tw-gap-y-3`">
+      <div
+        :class="`tw-grid tw-grid-rows-${lodSize(
+          lodGet(data, 'records', [])
+        )} tw-grid-flow-row tw-gap-y-3`"
+      >
         <div
           v-for="rowData in data.records"
           :key="rowData[0]"
-          :class="`tw-grid tw-grid-cols-${lodSize(rowData ?? [])} tw-gap-x-3 tw-items-center`"
+          :class="`tw-grid tw-grid-cols-${lodSize(
+            rowData ?? []
+          )} tw-grid-flow-col tw-gap-x-3 tw-items-center`"
         >
           <div
             v-for="(cellValue, index) in rowData"
@@ -72,7 +82,11 @@ export default {
                   {{ `${cellValue}${index > 0 ? '%' : ''}` }}
                 </div>
               </template>
-              <TooltipChart />
+              <TooltipChart
+                :category="data.columnHeaders[index]"
+                :customer="rowData[0]"
+                :period="data.period"
+              />
             </v-menu>
           </div>
         </div>
@@ -80,7 +94,3 @@ export default {
     </div>
   </div>
 </template>
-
-<style>
-
-</style>

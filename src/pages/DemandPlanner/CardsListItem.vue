@@ -1,11 +1,13 @@
 <script>
 import _ from 'lodash';
 import ModelAccuracyChart from './ModelAccuracyChart.vue';
+import ActionButton from './ActionButton.vue';
 
 export default {
   name: 'CardsListItem',
   components: {
     ModelAccuracyChart,
+    ActionButton,
   },
   props: {
     data: {
@@ -14,12 +16,12 @@ export default {
     },
     options: Object,
   },
-  data(){
+  data() {
     return {
       //
       lodSubtract: _.subtract,
-      lodToNumber: _.toNumber
-    }
+      lodToNumber: _.toNumber,
+    };
   },
   computed: {
     isModelAccuracyHidden() {
@@ -27,12 +29,12 @@ export default {
     },
   },
   methods: {
-    lodGetNumeric(obj, path, isPercentValue = true){
+    lodGetNumeric(obj, path, isPercentValue = true) {
       const val = _.get(obj, path, null);
-      if (val === null || _.isNaN(val) || !_.isNumber(val)){
-        return "NA"
+      if (val === null || _.isNaN(val) || !_.isNumber(val)) {
+        return 'NA';
       }
-      return `${val}${isPercentValue ? "%": ""}`
+      return `${val}${isPercentValue ? '%' : ''}`;
     },
     getColorCode(num) {
       const n = _.toNumber(num);
@@ -43,16 +45,6 @@ export default {
         return '#FF9900';
       }
       return '#04BB46';
-    },
-    getActionButtonLabel(num) {
-      const n = _.toNumber(num);
-      if (Math.abs(n) >= 20) {
-        return 'Review';
-      }
-      if (Math.abs(n) >= 6) {
-        return 'Watch List';
-      }
-      return 'No Action';
     },
   },
 };
@@ -149,7 +141,11 @@ export default {
             </p>
           </div>
         </v-menu>
-        <ModelAccuracyChart :modelAccuracy="lodToNumber(lodGetNumeric(data, 'modelAccuracy', false))" />
+        <ModelAccuracyChart
+          :modelAccuracy="
+            lodToNumber(lodGetNumeric(data, 'modelAccuracy', false))
+          "
+        />
       </div>
     </div>
     <div
@@ -160,7 +156,11 @@ export default {
           <div v-bind="props" class="tw-flex tw-flex-col tw-items-center">
             <span
               class="tw-text-4xl tw-font-semibold"
-              :style="{ color: getColorCode(lodGetNumeric(data, 'metrics.variance', false)) }"
+              :style="{
+                color: getColorCode(
+                  lodGetNumeric(data, 'metrics.variance', false)
+                ),
+              }"
             >
               {{ `${lodGetNumeric(data, 'metrics.variance')}` }}
             </span>
@@ -172,23 +172,20 @@ export default {
         >
           <p class="tw-text-sm tw-text-center">
             {{
-              `The difference between market sensing and the internal forecast results in a ${lodGetNumeric(data, 'metrics.variance')} variance.`
+              `The difference between market sensing and the internal forecast results in a ${lodGetNumeric(
+                data,
+                'metrics.variance'
+              )} variance.`
             }}
           </p>
         </div>
       </v-menu>
       <div>
-        <v-btn
-          :prepend-icon="
-            Math.abs(lodToNumber(lodGetNumeric(data, 'metrics.variance', false))) >= 20 ? 'mdi-alert-circle' : 'mdi-circle'
+        <ActionButton
+          :variance="
+            lodToNumber(lodGetNumeric(data, 'metrics.variance', false))
           "
-          variant="outlined"
-          :color="getColorCode(lodGetNumeric(data, 'metrics.variance', false))"
-          rounded="pill"
-        >
-          {{ getActionButtonLabel(lodToNumber(lodGetNumeric(data, 'metrics.variance', false)))
-          }}<v-icon end icon="mdi-chevron-right" />
-        </v-btn>
+        />
       </div>
     </div>
   </div>

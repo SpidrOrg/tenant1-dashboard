@@ -21,10 +21,10 @@ export default {
   },
   methods: {
     getCellStyling(cellValue) {
-      let styles = 'tw-cursor-pointer tw-text-center tw-rounded';
+      let styles = 'tw-cursor-pointer tw-text-center tw-rounded tw-shadow';
 
-      if (Math.abs(cellValue) >= 20) styles += ' tw-bg-brand-red-1';
-      else if (Math.abs(cellValue) >= 6) styles += ' tw-bg-brand-yellow-1';
+      if (Math.abs(cellValue) >= 20) styles += ' tw-bg-brand-red-2';
+      else if (Math.abs(cellValue) >= 6) styles += ' tw-bg-brand-yellow-2';
       else styles += ' tw-bg-brand-green-2';
 
       return styles;

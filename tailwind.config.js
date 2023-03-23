@@ -1,5 +1,5 @@
 /** @type {import('tailwindcss').Config} */
-const defaultTheme = require("tailwindcss/defaultTheme");
+const defaultTheme = require('tailwindcss/defaultTheme');
 
 module.exports = {
   content: ['./index.html', './src/**/*.{vue, js, ts}'],
@@ -25,12 +25,12 @@ module.exports = {
         'brand-gray-2': '#DBDBDB',
         'brand-gray-3': '#80868b',
         'brand-gray-4': '#EDEDED',
-        'brand-blue-1': '#1967d2',
-        'brand-blue-2': '#4285f4',
-        'brand-green-1': '#137333',
+        'brand-red-1': '#DC3545',
+        'brand-red-2': '#FF3429B2',
+        'brand-green-1': '#04BB46',
         'brand-green-2': '#04BB46B2',
-        'brand-yellow-1': '#FFC107B2',
-        'brand-red-1': '#FF3429B2',
+        'brand-yellow-1': '#FF9900',
+        'brand-yellow-2': '#FFC107B2',
       },
       boxShadow: {
         blue: '0 0  3px 3px #4285f4',

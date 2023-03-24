@@ -2,12 +2,14 @@
 import _ from 'lodash';
 import ModelAccuracyChart from './ModelAccuracyChart.vue';
 import ActionButton from './ActionButton.vue';
+import ActionForm from './ActionForm.vue';
 
 export default {
   name: 'CardsListItem',
   components: {
     ModelAccuracyChart,
     ActionButton,
+    ActionForm,
   },
   props: {
     data: {
@@ -18,6 +20,9 @@ export default {
   },
   data() {
     return {
+      actionFormIsShown: false,
+      isReviewed: false,
+      numOfReviews: 0,
       //
       lodSubtract: _.subtract,
       lodToNumber: _.toNumber,
@@ -29,6 +34,12 @@ export default {
     },
   },
   methods: {
+    showFormHandler() {
+      this.actionFormIsShown = true;
+    },
+    hideFormHandler() {
+      this.actionFormIsShown = false;
+    },
     lodGetNumeric(obj, path, isPercentValue = true) {
       const val = _.get(obj, path, null);
       if (val === null || _.isNaN(val) || !_.isNumber(val)) {
@@ -45,6 +56,12 @@ export default {
         return '#FF9900';
       }
       return '#04BB46';
+    },
+    handleReviewAddition() {
+      if (!this.isReviewed) {
+        this.isReviewed = true;
+      }
+      this.numOfReviews++;
     },
   },
 };
@@ -128,7 +145,10 @@ export default {
       >
         <v-menu open-on-hover location="top">
           <template v-slot:activator="{ props }">
-            <p v-bind="props" class="tw-text-sm tw-font-medium tw-pb-6">
+            <p
+              v-bind="props"
+              class="tw-text-sm tw-font-medium tw-text-center tw-pb-2"
+            >
               ML Model Accuracy
             </p>
           </template>
@@ -185,8 +205,17 @@ export default {
           :variance="
             lodToNumber(lodGetNumeric(data, 'metrics.variance', false))
           "
+          :isReviewed="isReviewed"
+          @click="showFormHandler"
         />
       </div>
     </div>
+    <ActionForm
+      :actionFormIsShown="actionFormIsShown"
+      :variance="lodToNumber(lodGetNumeric(data, 'metrics.variance', false))"
+      :isReviewed="isReviewed"
+      @close-form="hideFormHandler"
+      @submitted="handleReviewAddition"
+    />
   </div>
 </template>

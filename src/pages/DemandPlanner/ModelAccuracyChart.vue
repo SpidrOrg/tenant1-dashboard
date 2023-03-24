@@ -38,10 +38,7 @@ export default {
 <template>
   <v-menu open-on-hover location="right">
     <template v-slot:activator="{ props }">
-      <div
-        class="tw-relative tw-flex tw-items-center tw-w-20 tw-h-10"
-        v-bind="props"
-      >
+      <div class="tw-relative tw-flex tw-items-center" v-bind="props">
         <div
           class="tw-absolute tw-z-10 tw-h-full tw-w-full tw-flex tw-items-center tw-justify-center tw-text-xl tw-font-semibold"
         >
@@ -73,8 +70,8 @@ export default {
                 textStyle: { color: 'transparent' },
               },
             },
-            height: 81,
-            width: 81,
+            height: 72,
+            width: 72,
           }"
         />
       </div>

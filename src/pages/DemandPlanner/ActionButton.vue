@@ -6,6 +6,10 @@ export default {
       type: Number,
       required: true,
     },
+    isReviewed: {
+      type: Boolean,
+      required: true,
+    },
   },
   methods: {
     getColorCode(n) {
@@ -18,6 +22,8 @@ export default {
       return '#04BB46';
     },
     getActionButtonLabel(n) {
+      if (this.isReviewed) return 'Reviewed';
+
       if (Math.abs(n) >= 20) {
         return 'Review';
       }
@@ -36,6 +42,7 @@ export default {
     rounded="pill"
     size="large"
     :color="getColorCode(variance)"
+    :ripple="false"
   >
     <v-icon
       :icon="Math.abs(variance) >= 20 ? 'mdi-alert-circle' : 'mdi-circle'"

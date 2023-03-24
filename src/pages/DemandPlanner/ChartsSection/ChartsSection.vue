@@ -1,14 +1,14 @@
 <script>
-import ChartKeyDemandDrivers from "@/pages/DemandPlanner/ChartKeyDemandDrivers.vue";
-import ChartPYandImpliedGrowth from "@/pages/DemandPlanner/ChartPYAndImpliedGrowth.vue";
-import ChartHistoricalAndActual from "@/pages/DemandPlanner/ChartHistoricalAndActual.vue";
+import ChartKeyDemandDrivers from '@/pages/DemandPlanner/ChartsSection/ChartKeyDemandDrivers.vue';
+import ChartPYandImpliedGrowth from '@/pages/DemandPlanner/ChartsSection/ChartPYAndImpliedGrowth.vue';
+import ChartHistoricalAndActual from '@/pages/DemandPlanner/ChartsSection/ChartHistoricalAndActual.vue';
 
 export default {
-  name: 'TheCharts',
+  name: 'ChartsSection',
   components: {
     ChartKeyDemandDrivers,
     ChartPYandImpliedGrowth,
-    ChartHistoricalAndActual
+    ChartHistoricalAndActual,
   },
   props: {
     data: {
@@ -19,14 +19,14 @@ export default {
       type: String,
       required: true,
     },
-  }
+  },
 };
 </script>
 
 <template>
   <div class="tw-grid tw-grid-cols-4 tw-gap-4" v-if="data">
     <div class="tw-col-span-1">
-      <ChartKeyDemandDrivers :data="data.keyDemandDrivers"/>
+      <ChartKeyDemandDrivers :data="data.keyDemandDrivers" />
     </div>
     <div class="tw-col-span-1">
       <ChartPYandImpliedGrowth
@@ -36,7 +36,7 @@ export default {
       />
     </div>
     <div class="tw-col-span-2">
-      <ChartHistoricalAndActual :data="data.historical"/>
+      <ChartHistoricalAndActual :data="data.historical" />
     </div>
   </div>
 </template>

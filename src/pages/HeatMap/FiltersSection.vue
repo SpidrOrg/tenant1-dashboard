@@ -1,18 +1,67 @@
 <script>
+import _ from 'lodash';
+import fetchHeatMapOptions from '@/api/fetchHeatMapOptions';
+
 import InfoIcon from '@/images/info-icon.svg';
 import HeatMapScaleIcon from '@/images/heatmap-scale.svg';
+
+const BY_VALUE = 'BY_VALUE';
+const BY_QUANTITY = 'BY_QUANTITY';
+
 export default {
   name: 'FiltersSection',
   data() {
     return {
+      filters: {
+        refreshDates: {
+          items: [],
+          selected: null,
+        },
+        valueOrQuantity: BY_VALUE,
+      },
+      dataLoaded: false,
+      currency: 'USD',
+      BY_VALUE,
+      BY_QUANTITY,
       InfoIcon,
       HeatMapScaleIcon,
-      isByVolume: false,
-      selectedDate: new Date().toLocaleDateString('en-us', {
-        year: 'numeric',
-        month: 'numeric',
-      }),
+      apiData: null
     };
+  },
+  async created() {
+    // Make API call to get available options for the filters
+    this.apiData = await fetchHeatMapOptions().catch(() => null);
+    if (this.apiData) {
+      this.filters.refreshDates.items = this.apiData.marketSensingRefreshDates;
+    }
+
+    // Set default option on filters
+    // this.filters.refreshDates.selected = new Date(_.first(this.filters.refreshDates.items));
+    const earliestRefreshDate = new Date(
+      _.first(this.filters.refreshDates.items)
+    );
+    this.refreshDateUpdated({
+      month: earliestRefreshDate.getMonth(),
+      year: earliestRefreshDate.getFullYear(),
+    });
+    this.dataLoaded = true;
+  },
+
+  emits: ['updateFilters'],
+
+  methods: {
+    refreshDateUpdated({ month, year }) {
+      this.filters.refreshDates.selected = { month, year };
+      this.filtersUpdated();
+    },
+    valueOrQuantityUpdate() {
+      this.filters.valueOrQuantity =
+        this.filters.valueOrQuantity === BY_VALUE ? BY_QUANTITY : BY_VALUE;
+      this.filtersUpdated();
+    },
+    filtersUpdated() {
+      this.$emit('updateFilters', this.filters, {customers: _.get(this.apiData, "customers", []), categories: _.get(this.apiData, "categories", []) });
+    },
   },
 };
 </script>
@@ -20,24 +69,36 @@ export default {
 <template>
   <div class="tw-flex tw-gap-x-3 tw-w-full tw-bg-white tw-px-3">
     <div class="tw-pt-3 tw-min-w-[14%] tw--mb-3">
-      <VueDatePicker v-model="selectedDate" month-picker>
+      <VueDatePicker
+        v-model="filters.refreshDates.selected"
+        month-picker
+        @update:model-value="refreshDateUpdated"
+      >
         <template #dp-input="{ value }">
           <v-text-field :value="value" density="comfortable"></v-text-field>
         </template>
       </VueDatePicker>
     </div>
     <div class="tw-flex tw-gap-1.5 tw-pl-3 tw--mb-3">
-      <span :class="`tw-pt-6 ${!isByVolume ? 'tw-font-medium' : ''}`">
-        Value (USD)
+      <span
+        :class="`tw-pt-6 ${
+          filters.valueOrQuantity === BY_VALUE ? 'tw-font-medium' : ''
+        }`"
+      >
+        Value {{ currency }}
       </span>
       <div class="tw-flex tw-pt-2" style="color: #7823dc">
         <v-switch
-          :model-value="isByVolume"
+          :model="filters.valueOrQuantity"
           inset
-          @click="isByVolume = !isByVolume"
+          @click="valueOrQuantityUpdate"
         />
       </div>
-      <span :class="`tw-pt-6 ${isByVolume ? 'tw-font-medium' : ''}`">
+      <span
+        :class="`tw-pt-6 ${
+          filters.valueOrQuantity === BY_QUANTITY ? 'tw-font-medium' : ''
+        }`"
+      >
         Volume
       </span>
     </div>
@@ -64,3 +125,14 @@ export default {
     </div>
   </div>
 </template>
+
+<style>
+.dp__clear_icon {
+  position: absolute;
+  top: 36%;
+  right: 0;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: var(--dp-icon-color);
+}
+</style>

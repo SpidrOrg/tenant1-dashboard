@@ -37,10 +37,10 @@ export default {
           },
         },
         chartArea: {
-          top: '10%',
+          top: '8%',
           right: '4%',
           width: '60%',
-          height: '80%',
+          height: '82%',
         },
       },
     };
@@ -49,21 +49,26 @@ export default {
 </script>
 
 <template>
-  <v-menu open-on-hover location="top">
-    <template v-slot:activator="{ props }">
-      <span v-bind="props" class="tw-font-medium tw-text-lg tw-cursor-default">
-        Key Demand Drivers
-      </span>
-    </template>
-    <div
-      class="tw-w-96 tw-h-20 tw-p-2 tw-bg-white tw-border tw-rounded tw-border-[#D9D9D9] tw-shadow-2xl"
-    >
-      <p class="tw-text-sm tw-text-center">
-        Most impactful types of data for the select projected period of demand
-        predictions. These factors are accounting the most for the demand
-        forecast.
-      </p>
-    </div>
-  </v-menu>
-  <GChart type="BarChart" :data="chartData" :options="chartOptions" />
+  <div class="tw-flex tw-flex-col tw-justify-between tw-h-full">
+    <v-menu open-on-hover location="top">
+      <template v-slot:activator="{ props }">
+        <span
+          v-bind="props"
+          class="tw-font-medium tw-text-lg tw-cursor-default"
+        >
+          Key Demand Drivers
+        </span>
+      </template>
+      <div
+        class="tw-w-96 tw-h-20 tw-p-2 tw-bg-white tw-border tw-rounded tw-border-[#D9D9D9] tw-shadow-2xl"
+      >
+        <p class="tw-text-sm tw-text-center">
+          Most impactful types of data for the select projected period of demand
+          predictions. These factors are accounting the most for the demand
+          forecast.
+        </p>
+      </div>
+    </v-menu>
+    <GChart type="BarChart" :data="chartData" :options="chartOptions" />
+  </div>
 </template>

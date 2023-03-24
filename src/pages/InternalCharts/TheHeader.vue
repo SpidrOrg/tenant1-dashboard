@@ -47,6 +47,7 @@ export default {
   },
   async created() {
     const options = await fetchInternalChartsOptions().catch(() => null);
+    
     if (options){
       this.filters.categories.items = options.categories;
       this.filters.customers.items = options.customers;
@@ -56,7 +57,6 @@ export default {
     // Add all option to the categories and customers filters
     this.filters.categories.items = _.concat(ALL_OPTION, this.filters.categories.items);
     this.filters.customers.items = _.concat(ALL_OPTION, this.filters.customers.items);
-
     this.selectFilterUpdated("categories", ALL_OPTION);
     this.selectFilterUpdated("time_horizon", this.filters.time_horizon.items[0]);
     this.selectFilterUpdated("internal_model", this.filters.internal_model.items[0]);
@@ -70,6 +70,7 @@ export default {
     },
     valueOrQuantityUpdate(){
       this.filters.valueOrQuantity = this.filters.valueOrQuantity === BY_VALUE ? BY_QUANTITY : BY_VALUE;
+      this.isByVolume = !this.isByVolume;
       this.filtersUpdated();
     },
     filtersUpdated(){
@@ -83,7 +84,7 @@ export default {
   <div class="tw-flex tw-gap-x-4 tw-w-full tw-bg-white tw-px-3">
     <div class="tw-pt-5 tw-w-1/6">
       <v-select
-        label="All Customers"
+        label="Customers"
         :items="filters.customers.items"
         :model-value="filters.customers.selected"
         @update:modelValue="value=>selectFilterUpdated('customers', value)"
@@ -116,7 +117,7 @@ export default {
     <div class="tw-flex tw-items-center tw-gap-1.5">
       <p :class="`${!isByVolume ? 'tw-font-medium' : ''}`">Value (USD)</p>
       <div class="tw-flex tw-pt-5" style="color: #7823DC;">
-        <v-switch inset @click="isByVolume = !isByVolume"></v-switch>
+        <v-switch inset @click="valueOrQuantityUpdate"></v-switch>
       </div>
       <p :class="`${isByVolume ? 'tw-font-medium' : ''}`">Volume</p>
     </div>

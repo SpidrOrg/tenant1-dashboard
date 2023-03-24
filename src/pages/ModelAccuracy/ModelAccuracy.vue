@@ -12,7 +12,9 @@ export default {
   data(){
     return {
       isLoading:false,
-      cvAccuracy:true,
+      isCVAccuracyLoading: false,
+      isHistoricPerformanceLoading:false,
+      cvAccuracy:false,
       apiData:[],
       filtersTestAccuracy : {
         categories: {
@@ -39,7 +41,7 @@ export default {
         cssClassNames:{
           legend:'legend'
         },
-        legend: {position: 'top'},
+        legend: {position: 'none'},
         colors: ['#A5A5A5', '#5F5F5F'],
         hAxis : {
           textStyle : {
@@ -145,13 +147,13 @@ export default {
     getColorCode(n) {
       switch (true) {
         case n >= 90:
-          return '#570EAA';
+          return '#8737E1';
         case n >= 80:
           return '#AF7DEB';
         case n >= 60:
-          return '#A5A5A5';
+          return '#B9B9B9';
         default:
-          return '#626262';
+          return '#8C8C8C';
       }
     },
     selectFilterUpdated(filterName, currentSelection){
@@ -160,70 +162,214 @@ export default {
     },
     selectAccuracyFilterUpdated(filterName, currentSelection){
       this.filtersTestAccuracy[filterName].selected = currentSelection;
-      this.filtersUpdated();
+      this.filtersAccuracyUpdated();
     },
-    filtersUpdated(){
-      this.$emit("updateFilters", this.filtersCharts);
+    async filtersUpdated(){
+      let v = this;
+      this.isHistoricPerformanceLoading = true;
+      const selectedAccuracyCategories = _.get(this.filtersTestAccuracy, "categories.selected");
+      const selectedHistoricCategories = _.get(this.filtersCharts, "categories.selected");
+      const selectedprojectedPeriod = _.get(this.filtersCharts, "projected_period.selected");
+      const response = await fetchModelAccuracyData({categoriesAccuracy: selectedAccuracyCategories === ALL_OPTION ? "*" : selectedAccuracyCategories,
+      categoriesHistoric: selectedHistoricCategories === ALL_OPTION ? "*" : selectedHistoricCategories,
+            projected_period: selectedprojectedPeriod});
+      if (!_.isEmpty(response)){
+        this.apiData = response;
+
+        //Historic Performance data
+        if(!this.columnChartData.length){
+          this.columnChartData.push(this.apiData[0].historic_performance.identifiers);
+          _.forEach(this.apiData[0].historic_performance.data, function (data) {
+          v.columnChartData.push(data);
+          });
+        }
+        
+      //Historic performance end
+
+     //Historic Performance accuracy data
+     if(!this.lineChartData.length){
+        if(!this.apiData[0].historic_performance_accuracy.identifiers.includes({role: 'annotation', type: 'string'})){
+          this.apiData[0].historic_performance_accuracy.identifiers.push({role: 'annotation', type: 'string'});
+        }
+        this.lineChartData.push(this.apiData[0].historic_performance_accuracy.identifiers);
+        _.forEach(this.apiData[0].historic_performance_accuracy.data, function (data) {
+          data.push(data[1])
+        });
+        _.forEach(this.apiData[0].historic_performance_accuracy.data, function (data) {
+          v.lineChartData.push(data);
+        });
+     }
+      
+      //Historic Performance accuracy data --end
+
+      //CV Accuracy Data
+      if(!this.cvAccuracyData.length){
+        if(!this.apiData[0].cv_accuracy.identifiers.includes({ role: 'style' })){
+          this.apiData[0].cv_accuracy.identifiers.push({ role: 'style' });
+        }
+        this.cvAccuracyData.push(this.apiData[0].cv_accuracy.identifiers);
+
+        _.forEach(this.apiData[0].cv_accuracy.data, function (data) {
+        data.push(`color: ${v.getColorCode(data[1])}`);
+        });
+        _.forEach(this.apiData[0].cv_accuracy.data, function (data) {
+          v.cvAccuracyData.push(data);
+        });
+      }
+      //CV Accuracy Data --end
+
+        //Rolling Test Accuracy Data
+        if(!this.rollingTestAccuracyData.length){
+          if(!this.apiData[0].rolling_test_accuracy.identifiers.includes({ role: 'style' })){
+          this.apiData[0].rolling_test_accuracy.identifiers.push({ role: 'style' });
+          }
+          this.rollingTestAccuracyData.push(this.apiData[0].rolling_test_accuracy.identifiers);
+          _.forEach(this.apiData[0].rolling_test_accuracy.data, function (data) {
+            data.push(`color: ${v.getColorCode(data[1])}`);
+          });
+          _.forEach(this.apiData[0].rolling_test_accuracy.data, function (data) {
+              v.rollingTestAccuracyData.push(data);
+            });
+        }
+        //Rolling Test Accuracy Data --end
+    }
+      this.isHistoricPerformanceLoading = false;
+    },
+    async filtersAccuracyUpdated(){
+      let v = this;
+      this.isCVAccuracyLoading = true;
+      const selectedAccuracyCategories = _.get(this.filtersTestAccuracy, "categories.selected");
+      const selectedHistoricCategories = _.get(this.filtersCharts, "categories.selected");
+      const selectedprojectedPeriod = _.get(this.filtersCharts, "projected_period.selected");
+      const response = await fetchModelAccuracyData({categoriesAccuracy: selectedAccuracyCategories === ALL_OPTION ? "*" : selectedAccuracyCategories,
+      categoriesHistoric: selectedHistoricCategories === ALL_OPTION ? "*" : selectedHistoricCategories,
+            projected_period: selectedprojectedPeriod});
+            if (!_.isEmpty(response)){
+        this.apiData = response;
+
+        //Historic Performance data
+        if(!this.columnChartData.length){
+          this.columnChartData.push(this.apiData[0].historic_performance.identifiers);
+          _.forEach(this.apiData[0].historic_performance.data, function (data) {
+          v.columnChartData.push(data);
+          });
+        }
+        
+      //Historic performance end
+
+     //Historic Performance accuracy data
+     if(!this.lineChartData.length){
+        if(!this.apiData[0].historic_performance_accuracy.identifiers.includes({role: 'annotation', type: 'string'})){
+          this.apiData[0].historic_performance_accuracy.identifiers.push({role: 'annotation', type: 'string'});
+        }
+        this.lineChartData.push(this.apiData[0].historic_performance_accuracy.identifiers);
+        _.forEach(this.apiData[0].historic_performance_accuracy.data, function (data) {
+          data.push(data[1])
+        });
+        _.forEach(this.apiData[0].historic_performance_accuracy.data, function (data) {
+          v.lineChartData.push(data);
+        });
+     }
+      
+      //Historic Performance accuracy data --end
+
+      //CV Accuracy Data
+      if(!this.cvAccuracyData.length){
+        if(!this.apiData[0].cv_accuracy.identifiers.includes({ role: 'style' })){
+          this.apiData[0].cv_accuracy.identifiers.push({ role: 'style' });
+        }
+        this.cvAccuracyData.push(this.apiData[0].cv_accuracy.identifiers);
+
+        _.forEach(this.apiData[0].cv_accuracy.data, function (data) {
+        data.push(`color: ${v.getColorCode(data[1])}`);
+        });
+        _.forEach(this.apiData[0].cv_accuracy.data, function (data) {
+          v.cvAccuracyData.push(data);
+        });
+      }
+      //CV Accuracy Data --end
+
+        //Rolling Test Accuracy Data
+        if(!this.rollingTestAccuracyData.length){
+          if(!this.apiData[0].rolling_test_accuracy.identifiers.includes({ role: 'style' })){
+          this.apiData[0].rolling_test_accuracy.identifiers.push({ role: 'style' });
+          }
+          this.rollingTestAccuracyData.push(this.apiData[0].rolling_test_accuracy.identifiers);
+          _.forEach(this.apiData[0].rolling_test_accuracy.data, function (data) {
+            data.push(`color: ${v.getColorCode(data[1])}`);
+          });
+          _.forEach(this.apiData[0].rolling_test_accuracy.data, function (data) {
+              v.rollingTestAccuracyData.push(data);
+            });
+        }
+        //Rolling Test Accuracy Data --end
+    }
+        this.isCVAccuracyLoading = false;
     },
   },
   emits: ['updateFilters'],
   async created() {
     this.isLoading = true;
-    let v = this;
+    this.isCVAccuracyLoading = true;
+    this.isHistoricPerformanceLoading = true;
+    //let v = this;
     //try {
-      this.apiData = await fetchModelAccuracyData();
+    //   this.apiData = await fetchModelAccuracyData();
 
-      //Historic Performance data
-      this.columnChartData.push(this.apiData[0].historic_performance.identifiers);
-      _.forEach(this.apiData[0].historic_performance.data, function (data) {
-        v.columnChartData.push(data);
-      });
-      //Historic performance end
+    //   //Historic Performance data
+    //   this.columnChartData.push(this.apiData[0].historic_performance.identifiers);
+    //   _.forEach(this.apiData[0].historic_performance.data, function (data) {
+    //     v.columnChartData.push(data);
+    //   });
+    //   //Historic performance end
 
-     //Historic Performance accuracy data
-      if(!this.apiData[0].historic_performance_accuracy.identifiers.includes({role: 'annotation', type: 'string'})){
-        this.apiData[0].historic_performance_accuracy.identifiers.push({role: 'annotation', type: 'string'});
-      }
-      this.lineChartData.push(this.apiData[0].historic_performance_accuracy.identifiers);
-      _.forEach(this.apiData[0].historic_performance_accuracy.data, function (data) {
-        data.push(data[1])
-      });
-      _.forEach(this.apiData[0].historic_performance_accuracy.data, function (data) {
-        v.lineChartData.push(data);
-      });
-      //Historic Performance accuracy data --end
+    //  //Historic Performance accuracy data
+    //   if(!this.apiData[0].historic_performance_accuracy.identifiers.includes({role: 'annotation', type: 'string'})){
+    //     this.apiData[0].historic_performance_accuracy.identifiers.push({role: 'annotation', type: 'string'});
+    //   }
+    //   this.lineChartData.push(this.apiData[0].historic_performance_accuracy.identifiers);
+    //   _.forEach(this.apiData[0].historic_performance_accuracy.data, function (data) {
+    //     data.push(data[1])
+    //   });
+    //   _.forEach(this.apiData[0].historic_performance_accuracy.data, function (data) {
+    //     v.lineChartData.push(data);
+    //   });
+      
+    //   //Historic Performance accuracy data --end
 
-      //CV Accuracy Data
-      if(!this.apiData[0].cv_accuracy.identifiers.includes({ role: 'style' })){
-        this.apiData[0].cv_accuracy.identifiers.push({ role: 'style' });
-      }
-      this.cvAccuracyData.push(this.apiData[0].cv_accuracy.identifiers);
+    //   //CV Accuracy Data
+    //   if(!this.apiData[0].cv_accuracy.identifiers.includes({ role: 'style' })){
+    //     this.apiData[0].cv_accuracy.identifiers.push({ role: 'style' });
+    //   }
+    //   this.cvAccuracyData.push(this.apiData[0].cv_accuracy.identifiers);
 
-      _.forEach(this.apiData[0].cv_accuracy.data, function (data) {
-      data.push(`color: ${v.getColorCode(data[1])}`);
-      });
-    _.forEach(this.apiData[0].cv_accuracy.data, function (data) {
-      v.cvAccuracyData.push(data);
-    });
-      //CV Accuracy Data --end
+    //   _.forEach(this.apiData[0].cv_accuracy.data, function (data) {
+    //   data.push(`color: ${v.getColorCode(data[1])}`);
+    //   });
+    // _.forEach(this.apiData[0].cv_accuracy.data, function (data) {
+    //   v.cvAccuracyData.push(data);
+    // });
+    //   //CV Accuracy Data --end
 
-      //Rolling Test Accuracy Data
-    if(!this.apiData[0].rolling_test_accuracy.identifiers.includes({ role: 'style' })){
-      this.apiData[0].rolling_test_accuracy.identifiers.push({ role: 'style' });
-    }
-    this.rollingTestAccuracyData.push(this.apiData[0].rolling_test_accuracy.identifiers);
-    _.forEach(this.apiData[0].rolling_test_accuracy.data, function (data) {
-      data.push(`color: ${v.getColorCode(data[1])}`);
-    });
-    _.forEach(this.apiData[0].rolling_test_accuracy.data, function (data) {
-        v.rollingTestAccuracyData.push(data);
-      });
+    //   //Rolling Test Accuracy Data
+    // if(!this.apiData[0].rolling_test_accuracy.identifiers.includes({ role: 'style' })){
+    //   this.apiData[0].rolling_test_accuracy.identifiers.push({ role: 'style' });
+    // }
+    // this.rollingTestAccuracyData.push(this.apiData[0].rolling_test_accuracy.identifiers);
+    // _.forEach(this.apiData[0].rolling_test_accuracy.data, function (data) {
+    //   data.push(`color: ${v.getColorCode(data[1])}`);
+    // });
+    // _.forEach(this.apiData[0].rolling_test_accuracy.data, function (data) {
+    //     v.rollingTestAccuracyData.push(data);
+    //   });
     //Rolling Test Accuracy Data --end
 
     // } catch (e) {
     //   this.error = e;
     // }
-    this.isLoading = false;
+    //this.isLoading = false;
+    this.isCVAccuracyLoading = false;
+    this.isHistoricPerformanceLoading = false;
     const options = await fetchModelAccuracyOptions().catch(() => null);
     if (options){
       this.filtersCharts.categories.items = options.categories;
@@ -242,16 +388,20 @@ export default {
 </script>
 
 <template>
-  <v-progress-circular indeterminate color="#7823DC" v-if="isLoading" :size="70" :width="7" style="position: fixed;
+  <v-progress-circular indeterminate color="#7823DC"  :size="70" :width="7" style="position: fixed;
     left: 50%;
     top: 35%;
-  z-index: 1000;"/>
+  z-index: 1000;" v-if="isCVAccuracyLoading"/>
+  <v-progress-circular indeterminate color="#7823DC"  :size="70" :width="7" style="position: fixed;
+    left: 50%;
+    top: 70%;
+  z-index: 1000;" v-if="isHistoricPerformanceLoading"/>
   <div class="tw-w-full tw-h-full tw-bg-brand-gray-1">
     <div class="tw-flex tw-h-8 tw-items-center tw-font-bold">
       Model Accuracy
     </div>
     <div class="tw-flex tw-w-full tw-flex-auto tw-border-t tw-border-solid tw-border-brand-gray-2" />
-    <div class="tw-w-full tw-border-t tw-border-solid tw-border-brand-gray-2" v-if="!isLoading">
+    <div class="tw-w-full tw-border-t tw-border-solid tw-border-brand-gray-2" >
       <div class="tw-grid tw-grid-rows-2 tw-gap-6">
         <div>
           <v-card class="tw-h-full">
@@ -262,19 +412,20 @@ export default {
             <div class="tw-flex tw-gap-x-4 tw-w-full tw-bg-white tw-px-3">
               <div class="tw-pl-2 tw-pt-5 tw-w-1/6">
                 <v-select
-                  label="All Categories"
+                  label="Categories"
                   :items="filtersTestAccuracy.categories.items"
                   :model-value="filtersTestAccuracy.categories.selected"
                   @update:modelValue="value=>selectAccuracyFilterUpdated('categories', value)"
                 ></v-select>
               </div>
               <div class="tw-flex tw-items-center tw-gap-1.5">
-                <p :class="`${cvAccuracy ? 'tw-font-medium' : ''}`">CV Accuracy</p>
+                <p :class="`${!cvAccuracy ? 'tw-font-medium' : ''}`" >Rolling Test Accuracy</p>
                 <div class="tw-flex tw-pt-5" style="color: #7823DC;">
                   <v-switch inset @click="cvAccuracy = !cvAccuracy"></v-switch>
                 </div>
-                <p :class="`${!cvAccuracy ? 'tw-font-medium' : ''}`">Rolling Test Accuracy</p>
+                <p :class="`${cvAccuracy ? 'tw-font-medium' : ''}`">CV Accuracy</p>
             </div>
+
               <div class="tw-flex tw-justify-end tw-w-7/12">
                 <img src="../../assets/model-accuracy-scale.svg" class="tw-h-full"/>
               </div>
@@ -284,7 +435,7 @@ export default {
                 <h3 class="tw-pl-2 tw-flex tw-h-8 tw-justify-center tw-font-bold">CV Accuracy</h3>
               </div>
 <!--              <div class="tw-flex tw-w-full tw-flex-auto tw-border-t tw-border-solid tw-border-brand-gray-2" />-->
-              <div class="tw-flex tw-justify-center">
+              <div class="tw-flex tw-justify-center" v-if="!isCVAccuracyLoading">
                 <GChart type="ColumnChart" :data="cvAccuracyData" :options="cvAccuracyOptions"/>
               </div>
 
@@ -294,7 +445,7 @@ export default {
                 <h3 class="tw-pl-2 tw-flex tw-h-8 tw-items-center tw-font-bold">Rolling Test Accuracy</h3>
               </div>
 <!--              <div class="tw-flex tw-w-full tw-flex-auto tw-border-t tw-border-solid tw-border-brand-gray-2" />-->
-                <div class="tw-flex tw-justify-center">
+                <div class="tw-flex tw-justify-center" v-if="!isCVAccuracyLoading">
                   <GChart type="ColumnChart" :data="rollingTestAccuracyData" :options="rollingTestAccuracyOptions"/>
                 </div>
             </div>
@@ -307,7 +458,7 @@ export default {
             <div class="tw-flex tw-gap-x-4 tw-w-full tw-bg-white tw-px-3">
               <div class="tw-pl-2 tw-pt-5 tw-w-1/6">
                 <v-select
-                  label="All Categories"
+                  label="Categories"
                   :items="filtersCharts.categories.items"
                   :model-value="filtersCharts.categories.selected"
                   @update:modelValue="value=>selectFilterUpdated('categories', value)"
@@ -321,8 +472,22 @@ export default {
                 ></v-select>
               </div>
             </div>
-          <div class="tw-w-full tw-grid-rows-2">
+          <div class="tw-w-full tw-grid-rows-2" v-if="!isHistoricPerformanceLoading">
             <div class="tw-h-1/6">
+              <div class="tw-flex">
+                <div style="width:21px;height:21px;background: #A5A5A5;" class="tw-ml-3">
+                </div>
+                <div style="height:21px" class="tw-ml-1">Predicted Values</div>
+                <div class="tw-flex">
+                <div style="width:21px;height:21px;background: #5F5F5F;" class="tw-ml-3">
+                </div>
+                <div style="height:21px" class="tw-ml-1">Actual Values</div>
+                <div style="width:21px;height:21px;background: #7823DC;" class="tw-ml-3">
+                </div>
+                <div style="height:21px" class="tw-ml-1">Prediction Accuracy</div>
+                </div>
+              </div>
+              
               <GChart type="LineChart" :options="lineChartOptions" :data="lineChartData"/>
             </div>
             <div>

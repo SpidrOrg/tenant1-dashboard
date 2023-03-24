@@ -15,7 +15,7 @@ export default {
       isLoading:false,
       apiData:[],
       columnChartData:[],
-      debounceUpdateFilters: _.debounce(this.updateFilters, 3000),
+      debounceUpdateFilters: _.debounce(this.updateFilters, 500),
       columnChartOptions:{
         height:370,
         legend: {position: 'top'},
@@ -60,53 +60,61 @@ export default {
     }
   },
 
-  async created() {
-    this.isLoading = true;
-    try {
-      this.apiData = await fetchInternalChartsData();
-      this.columnChartData.push(this.apiData[0].internal_forecast.identifiers);
-      this.lineChartData.push(this.apiData[0].projections.identifiers);
-      let v = this;
-      _.forEach(this.apiData[0].internal_forecast.data, function (data) {
-        v.columnChartData.push(data);
-      });
-      _.forEach(this.apiData[0].projections.data, function (data) {
-        v.lineChartData.push(data);
-      });
-    } catch (e) {
-      this.error = e;
-    }
-    this.isLoading = false;
-  },
+   //created() {
+     //this.isLoading = true;
+  //   //try {
+  //     const selectedCategories = _.get(filtersData, "categories.selected");
+  //     const selectedCustomers = _.get(filtersData, "customers.selected");
+  //     const selectedValueORvolume = _.get(filtersData, "valueOrQuantity");
+  //     this.apiData = await fetchInternalChartsData({categories: selectedCategories === ALL_OPTION ? "*" : selectedCategories,
+  //       customers: selectedCustomers === ALL_OPTION ? "*" : selectedCustomers,
+  //       valueORvolume: selectedValueORvolume});
+  //     this.columnChartData.push(this.apiData[0].internal_forecast.identifiers);
+  //     this.lineChartData.push(this.apiData[0].projections.identifiers);
+  //     let v = this;
+  //     _.forEach(this.apiData[0].internal_forecast.data, function (data) {
+  //       v.columnChartData.push(data);
+  //     });
+  //     _.forEach(this.apiData[0].projections.data, function (data) {
+  //       v.lineChartData.push(data);
+  //     });
+  //   // } catch (e) {
+  //   //   this.error = e;
+  //   // }
+  //   this.isLoading = false;
+   //},
   methods:{
     async updateFilters(filtersData){
-      this.dataLoading = true;
-      const selectedCategories = _.get(filtersData, "categories.selected");
-      const selectedCustomers = _.get(filtersData, "customers.selected");
-      const selectedValueORvolume = _.get(filtersData, "valueOrQuantity");
+      try{
+          this.isLoading = true;
+          const selectedCategories = _.get(filtersData, "categories.selected");
+          const selectedCustomers = _.get(filtersData, "customers.selected");
+          const selectedValueORvolume = _.get(filtersData, "valueOrQuantity");
 
-      const response = await fetchInternalChartsData({
-        categories: selectedCategories === ALL_OPTION ? "*" : selectedCategories,
-        customers: selectedCustomers === ALL_OPTION ? "*" : selectedCustomers,
-        valueORvolume: selectedValueORvolume
-      });
-
-      if (!_.isEmpty(response)){
-        this.dataLoading = false;
-        this.dashboardData.periodsData = response;
-        _.forEach(this.dashboardData.periodsData, (v, i) => {
-          v.label = _.get(_.keys(v), "[0]");
-          v.metrics = _.get(v, `${v.label}.metrics`, {})
-          v.lag = _.get(v, `${v.label}.futureLagMonths`, "");
-          v.modelAccuracy = _.get(v, `${v.label}.modelAccuracy`, null);
-          delete v[v.label];
-
-          v.metrics.variance = _.round(_.subtract(v.metrics.jdaGrowth, v.metrics.marketSensingGrowth), 0)
-          v.isChecked = i === 0;
-          v.isActive = i === 0;
-
-        })
+          const response = await fetchInternalChartsData({categories: selectedCategories === ALL_OPTION ? "*" : selectedCategories,
+            customers: selectedCustomers === ALL_OPTION ? "*" : selectedCustomers,
+            valueORvolume: selectedValueORvolume});
+            if (!_.isEmpty(response)){
+              this.apiData = response;
+              this.isLoading = false;
+              let v = this;
+              if(!this.columnChartData.length){
+                this.columnChartData.push(this.apiData[0].internal_forecast.identifiers);
+                _.forEach(this.apiData[0].internal_forecast.data, function (data) {
+                v.columnChartData.push(data);
+              });
+              }
+              if(!this.lineChartData.length){
+                this.lineChartData.push(this.apiData[0].projections.identifiers);
+                _.forEach(this.apiData[0].projections.data, function (data) {
+                v.lineChartData.push(data);
+              });
+              }
+        }       
+      } catch(e) {
+        console.log(e);
       }
+      this.isLoading = false;
     }
   }
 }
@@ -122,8 +130,8 @@ export default {
       Internal Charts
     </div>
     <div class="tw-flex tw-w-full tw-flex-auto tw-border-t tw-border-solid tw-border-brand-gray-2" />
-    <div class="tw-py-5 tw-bg-brand-gray-1" v-if="!isLoading">
-      <TheHeader />
+    <div class="tw-py-5 tw-bg-brand-gray-1">
+      <TheHeader  @update-filters="debounceUpdateFilters"/>
     </div>
     <div class="tw-w-full tw-border-t tw-border-solid tw-border-brand-gray-2" v-if="!isLoading">
       <div class="tw-grid tw-grid-rows-2 tw-gap-6">

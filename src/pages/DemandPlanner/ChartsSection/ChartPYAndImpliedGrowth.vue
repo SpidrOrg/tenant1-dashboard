@@ -2,6 +2,21 @@
 import _ from 'lodash';
 import { GChart } from 'vue-google-charts';
 
+const DATA_CONFIG = [
+  {
+    key: 'pyVal',
+    label: 'PY Actual',
+    color: '#A5A5A5',
+  },
+  {
+    key: 'impliedVal',
+    label: 'Implied',
+    color: '#F8D887',
+  },
+];
+
+const dataKeys = _.map(DATA_CONFIG, (el) => el.key);
+
 export default {
   name: 'ChartPYandImpliedGrowth',
   components: {
@@ -21,10 +36,15 @@ export default {
       required: true,
     },
   },
+  data() {
+    return {
+      legendData: DATA_CONFIG,
+    };
+  },
   computed: {
     chartData() {
       return [
-        ['', 'PyActual', 'Implied'],
+        ['', ...dataKeys],
         [
           this.projectedPeriod,
           _.isNaN(_.toNumber(this.pyVal)) ? 0 : _.toNumber(this.pyVal),
@@ -36,7 +56,7 @@ export default {
     },
     chartOptions() {
       return {
-        legend: { position: 'top' },
+        legend: { position: 'none' },
         tooltip: { trigger: 'none' },
         vAxis: {
           viewWindow: {
@@ -63,7 +83,7 @@ export default {
           width: '70%',
           height: '80%',
         },
-        colors: ['#A5A5A5', '#F8D887'],
+        colors: _.map(DATA_CONFIG, (el) => el.color),
       };
     },
   },
@@ -73,12 +93,26 @@ export default {
 <template>
   <v-menu open-on-hover location="top">
     <template v-slot:activator="{ props }">
-      <span
-        v-bind="props"
-        class="tw-font-medium tw-text-lg tw-text-center tw-cursor-default"
-      >
-        Implied Market Share
-      </span>
+      <div class="tw-flex tw-flex-col tw-items-center tw-gap-y-2">
+        <span
+          v-bind="props"
+          class="tw-font-medium tw-text-lg tw-text-center tw-cursor-default"
+        >
+          Implied Market Share
+        </span>
+        <div class="tw-flex tw-items-center tw-gap-x-3">
+          <div
+            v-for="item in legendData"
+            :key="item.key"
+            class="tw-flex tw-items-center tw-gap-x-1"
+          >
+            <span
+              :style="`height: 12px; width: 12px; background: ${item.color}`"
+            />
+            <span class="tw-text-xs">{{ item.label }}</span>
+          </div>
+        </div>
+      </div>
     </template>
     <div
       class="tw-w-96 tw-h-14 tw-p-2 tw-bg-white tw-border tw-rounded tw-border-[#D9D9D9] tw-shadow-2xl"

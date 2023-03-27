@@ -22,13 +22,13 @@ export default {
     getColorCode(n) {
       switch (true) {
         case n >= 90:
-          return '#570EAA';
+          return '#8737E1';
         case n >= 80:
-          return '#AF7DEB';
+          return '#BF9CEC';
         case n >= 60:
-          return '#A5A5A5';
+          return '#C6C6C9';
         default:
-          return '#626262';
+          return '#A7A7AA';
       }
     },
   },
@@ -62,7 +62,7 @@ export default {
             tooltip: { trigger: 'none' },
             slices: {
               0: {
-                color: '#9150E1',
+                color: getColorCode(modelAccuracy),
                 textStyle: { color: 'transparent' },
               },
               1: {

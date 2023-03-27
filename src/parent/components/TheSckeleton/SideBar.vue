@@ -41,7 +41,8 @@ export default {
     <router-link v-for="menuItem in menuItems" :key="menuItem.name" :to="menuItem.path" :class="`menu-item ${menuItem.name === cRoute ? 'menu-item-selected': ''}`">
       <div class="menu-item-content">
         <div class="menu-item-content-image">
-          <img :src="menuItem.icon"/>
+          <img :src="menuItem.icon_active" v-if="menuItem.name === cRoute"/>
+          <img :src="menuItem.icon" v-else/>
         </div>
         <div>
           {{menuItem.label}}

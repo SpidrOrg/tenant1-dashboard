@@ -1,10 +1,16 @@
 <script>
-import _ from 'lodash';
+import { ACTION_STATUS_LABELS } from './constants';
+
+const {
+  PENDING_ACTION,
+  REVIEWED_AND_ACTION_TAKEN,
+  REVIEWED_AND_ACTION_NOT_TAKEN,
+} = ACTION_STATUS_LABELS;
 
 const ACTION_STATUS_LIST = [
-  { id: 1, label: 'Pending Action' },
-  { id: 2, label: 'Reviewed and Action has been taken' },
-  { id: 3, label: 'Reviewed and Action has not been taken' },
+  PENDING_ACTION,
+  REVIEWED_AND_ACTION_TAKEN,
+  REVIEWED_AND_ACTION_NOT_TAKEN,
 ];
 
 let RESPONSES = [
@@ -33,22 +39,15 @@ export default {
       type: Number,
       required: true,
     },
-    isReviewed: {
-      type: Boolean,
-      required: true,
-    },
   },
-  emits: ['closeForm', 'submitted'],
+  emits: ['closeForm', 'reviewed'],
   data() {
     return {
-      actionStatus: 1,
+      actionStatus: PENDING_ACTION,
       userResponse: null,
       ACTION_STATUS_LIST,
+      responseSubmitted: false,
       RESPONSES,
-
-      lodMap: _.map,
-      lodGet: _.get,
-      lodFind: _.find,
     };
   },
   methods: {
@@ -62,10 +61,7 @@ export default {
       return 'No Action';
     },
     updateActionStatus(label) {
-      this.actionStatus = this.lodGet(
-        this.lodFind(ACTION_STATUS_LIST, (item) => item.label === label),
-        'id'
-      );
+      this.actionStatus = label;
     },
     isSubmitButtonDisabled() {
       return !(this.userResponse && this.actionStatus);
@@ -84,7 +80,18 @@ export default {
       };
       RESPONSES.push(newItem);
       this.userResponse = null;
-      this.$emit('submitted');
+
+      this.responseSubmitted = true;
+      setTimeout(() => {
+        this.responseSubmitted = false;
+      }, 5000);
+
+      if (
+        this.actionStatus === REVIEWED_AND_ACTION_TAKEN ||
+        this.actionStatus === REVIEWED_AND_ACTION_NOT_TAKEN
+      ) {
+        this.$emit('reviewed');
+      }
     },
   },
 };
@@ -134,16 +141,8 @@ export default {
             <label for="status">Recommended Action Status</label>
             <v-select
               id="status"
-              :model-value="
-                lodGet(
-                  lodFind(
-                    ACTION_STATUS_LIST,
-                    (item) => item.id === actionStatus
-                  ),
-                  'label'
-                )
-              "
-              :items="lodMap(ACTION_STATUS_LIST, (item) => item.label)"
+              :model-value="actionStatus"
+              :items="ACTION_STATUS_LIST"
               @update:modelValue="(value) => updateActionStatus(value)"
               density="comfortable"
             />
@@ -163,7 +162,7 @@ export default {
           <span class="tw-text-white tw-text-base">Save Updates</span>
         </button>
         <div
-          v-if="isReviewed"
+          v-if="responseSubmitted"
           class="tw-px-4 tw-py-2 tw-flex tw-items-center tw-gap-x-2 tw-border-2 tw-border-solid tw-border-brand-green-1 tw-rounded-sm tw-bg-brand-green-3"
         >
           <v-icon icon="mdi-check-circle" color="#04BB46" />

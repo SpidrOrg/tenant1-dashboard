@@ -1,7 +1,6 @@
 import getApiBase from './getApiBase';
 
 let cachedData = [
-  ['Time Period', 'Market Sensing', 'Internal', 'Sales'],
   ['Jun 22 - Aug 22', 12, 33, 44],
   ['Aug 22 - Oct 22', 55, 70, 40],
   ['Sep 22 - Nov 22', 13, 66, 20],

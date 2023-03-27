@@ -22,7 +22,6 @@ export default {
     return {
       actionFormIsShown: false,
       isReviewed: false,
-      numOfReviews: 0,
       //
       lodSubtract: _.subtract,
       lodToNumber: _.toNumber,
@@ -57,11 +56,10 @@ export default {
       }
       return '#04BB46';
     },
-    handleReviewAddition() {
+    reviewHandler() {
       if (!this.isReviewed) {
         this.isReviewed = true;
       }
-      this.numOfReviews++;
     },
   },
 };
@@ -213,9 +211,8 @@ export default {
     <ActionForm
       :actionFormIsShown="actionFormIsShown"
       :variance="lodToNumber(lodGetNumeric(data, 'metrics.variance', false))"
-      :isReviewed="isReviewed"
       @close-form="hideFormHandler"
-      @submitted="handleReviewAddition"
+      @reviewed="reviewHandler"
     />
   </div>
 </template>

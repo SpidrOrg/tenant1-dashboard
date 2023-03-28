@@ -22,7 +22,7 @@ export default {
 </script>
 
 <template>
-  <section class="tw-flex tw-h-screen tw-flex-col tw-pt-10 tw-pb-20">
+  <section class="tw-flex tw-h-screen tw-flex-col">
     <div class="tw-grid tw-grid-cols-12 tw-my-auto">
       <div class="tw-col-span-1 tw-col-start-1" />
       <div
@@ -51,6 +51,9 @@ export default {
       </div>
       <div class="tw-col-span-1 tw-col-start-12" />
     </div>
+    <footer class="footer">
+      <div class="footer-copy-right">Copyright @ Kearney 2023</div>
+    </footer>
   </section>
 </template>
 
@@ -59,5 +62,21 @@ export default {
   height: 630px;
   width: 571px;
   object-fit: contain;
+}
+.footer {
+  display: flex;
+  width: 100%;
+  height: 3rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  border-top-width: 1px;
+  border-style: solid;
+  --tw-border-opacity: 1;
+  border-color: rgb(219 219 219 / var(--tw-border-opacity));
+}
+.footer-copy-right {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
 }
 </style>

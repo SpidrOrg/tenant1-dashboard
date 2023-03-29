@@ -9,7 +9,7 @@ export default {
   name: "TheHeader",
   data(){
     return {
-      isByVolume: false,
+      isByVolume: true,
       filters : {
         categories: {
           items: [],
@@ -33,7 +33,7 @@ export default {
         },
 
 
-        valueOrQuantity: BY_VALUE
+        valueOrQuantity: BY_QUANTITY
       },
       currency: "USD",
       dataLoaded: false,
@@ -84,18 +84,18 @@ export default {
   <div class="tw-flex tw-gap-x-4 tw-w-full tw-bg-white tw-px-3">
     <div class="tw-pt-5 tw-w-1/6">
       <v-select
-        label="Customers"
-        :items="filters.customers.items"
-        :model-value="filters.customers.selected"
-        @update:modelValue="value=>selectFilterUpdated('customers', value)"
-      ></v-select>
-    </div>
-    <div class="tw-pt-5 tw-w-1/6">
-      <v-select
         label="Category"
         :items="filters.categories.items"
         :model-value="filters.categories.selected"
         @update:modelValue="value=>selectFilterUpdated('categories', value)"
+      ></v-select>
+    </div>
+    <div class="tw-pt-5 tw-w-1/6">
+      <v-select
+        label="Customers"
+        :items="filters.customers.items"
+        :model-value="filters.customers.selected"
+        @update:modelValue="value=>selectFilterUpdated('customers', value)"
       ></v-select>
     </div>
     <div class="tw-pt-5 tw-w-1/6">
@@ -117,7 +117,7 @@ export default {
     <div class="tw-flex tw-items-center tw-gap-1.5">
       <p :class="`${!isByVolume ? 'tw-font-medium' : ''}`">Value (USD)</p>
       <div class="tw-flex tw-pt-5" style="color: #7823DC;">
-        <v-switch inset @click="valueOrQuantityUpdate"></v-switch>
+        <v-switch inset @click="valueOrQuantityUpdate" v-model="isByVolume"></v-switch>
       </div>
       <p :class="`${isByVolume ? 'tw-font-medium' : ''}`">Volume</p>
     </div>

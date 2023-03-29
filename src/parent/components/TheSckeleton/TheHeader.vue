@@ -10,7 +10,9 @@ export default {
     return {
       AnyUser,
       DownArrow,
-      menuSelected: false //todo
+      menuSelected: false, //todo
+      optionSelected:'',
+      items:[{title:'Hi Admin!'},{title:'Logout'}]
     }
   },
   props: {
@@ -30,10 +32,12 @@ export default {
       //   element.dispatchEvent(event);
       // } catch (e){console.log(e)}
     },
-    handleLougut(){
+    handleLogout(optionSelected){
       //todo
-      this.menuSelected = false;
-      logout()
+      console.log(optionSelected);
+      if(optionSelected == 'Logout'){
+        logout()
+      }      
     },
     handleFocusOut(){
       //todo
@@ -46,19 +50,32 @@ export default {
 <template>
   <div class="account-control">
     <div class="control-section">
-      <div class="user-icon">
-        <img :src="AnyUser"/>
-      </div>
-      <div>
-        My Account
-      </div>
-      <div class="down-arrow">
-        <img :src="DownArrow" @click="onMenuSelect" />
-        <select v-if="menuSelected === true" id="menu-actions" class="menu-options" @change="handleLougut" @focusout="handleFocusOut">
-          <option :selected="true">{{userdata.userName}}{{userdata.isAdmin ? '(Admin)' : ''}}</option>
-          <option :selected="false">Logout</option>
-        </select>
-      </div>
+      <!-- <div class="user-icon">
+         <img :src="AnyUser"/> 
+      </div> -->
+      <!-- <div class="down-arrow">
+        <img :src="DownArrow" @click="onMenuSelect" /> -->
+        <!-- <v-select label="My Account" id="menu-actions" v-model="optionSelected" class="menu-options" @update:model-value="handleLogout" :items="['Hello! Admin','Logout']" prepend-inner-icon="mdi-account"> -->
+          <!-- <option :selected="true">{{userdata.userName}}{{userdata.isAdmin ? '(Admin)' : ''}}</option>
+          <option :selected="false">Logout</option> -->
+        <!-- </v-select> -->
+        <v-menu>
+          <template v-slot:activator="{ props }">
+          <v-btn variant="text" prepend-icon="mdi-account" v-bind="props">
+            My Account
+          </v-btn>
+      </template>
+      <v-list v-model="optionSelected">
+        <v-list-item
+          v-for="(item, index) in items"
+          :key="index"
+          :value="index"
+        >
+          <v-list-item-title @click="handleLogout(item.title)">{{ item.title }}</v-list-item-title>
+        </v-list-item>
+      </v-list>
+    </v-menu>
+      <!-- </div> -->
     </div>
   </div>
 </template>
@@ -78,6 +95,7 @@ export default {
   display: flex;
   align-items: center;
   gap: 10px;
+  width: 150px;
 }
 .down-arrow {
   width: 14px;

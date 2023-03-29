@@ -85,7 +85,7 @@ export default {
   background-color: rgb(245 245 245 / var(--tw-bg-opacity));
 }
 .footer {
-  position: fixed;
+  position: relative;
   bottom: 0;
   display: flex;
   right: 1.5rem;

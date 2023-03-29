@@ -7,7 +7,7 @@ export default {
   props: {
     category: { type: String, required: true },
     customer: { type: String, required: true },
-    period: { type: String, required: true },
+    period: { type: String, required: true }
   },
   components: {
     GoogleChart,
@@ -57,6 +57,11 @@ export default {
     }
     this.isLoading = false;
   },
+  methods:{
+    clickClose() {
+      this.$emit('closeEvent');
+    }
+  }
 };
 </script>
 
@@ -93,7 +98,7 @@ export default {
             <span style="height: 12px; width: 12px; background: #c8a5f0" />
             <span class="tw-text-xs">Sales</span>
           </div>
-          <v-btn variant="plain" icon="mdi-close"></v-btn>
+          <v-btn variant="plain" icon="mdi-close" @click="clickClose"></v-btn>
         </div>
       </div>
       <div class="tw-w-full tw-border tw-border-solid tw-border-brand-gray-2" />

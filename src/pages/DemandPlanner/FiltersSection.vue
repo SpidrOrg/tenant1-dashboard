@@ -104,7 +104,7 @@ export default {
         @update:model-value="refreshDateUpdated"
       >
         <template #dp-input="{ value }">
-          <v-text-field :value="value" density="comfortable"></v-text-field>
+          <v-text-field :value="value" density="comfortable" append-inner-icon="mdi-calendar-month"></v-text-field>
         </template>
       </VueDatePicker>
     </div>

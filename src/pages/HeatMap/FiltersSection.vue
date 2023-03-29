@@ -69,17 +69,18 @@ export default {
 <template>
   <div class="tw-flex tw-gap-x-3 tw-w-full tw-bg-white tw-px-3">
     <div class="tw-pt-3 tw-min-w-[14%] tw--mb-3">
+      <label>Month & Year</label>
       <VueDatePicker
         v-model="filters.refreshDates.selected"
         month-picker
         @update:model-value="refreshDateUpdated"
       >
         <template #dp-input="{ value }">
-          <v-text-field :value="value" density="comfortable"></v-text-field>
+          <v-text-field :value="value" density="comfortable" append-inner-icon="mdi-calendar-month" style="cursor: pointer;"></v-text-field>
         </template>
       </VueDatePicker>
     </div>
-    <div class="tw-flex tw-gap-1.5 tw-pl-3 tw--mb-3">
+    <div class="tw-flex tw-gap-1.5 tw-pl-3 tw-mt-5">
       <span
         :class="`tw-pt-6 ${
           filters.valueOrQuantity === BY_VALUE ? 'tw-font-medium' : ''
@@ -103,7 +104,7 @@ export default {
       </span>
     </div>
     <div class="tw-flex tw-justify-end tw-ml-auto">
-      <div class="tw-flex tw-gap-1 tw-pt-4 tw-pr-3">
+      <div class="tw-flex tw-gap-1 tw-pt-4 tw-pr-3 tw-mt-6">
         <v-menu open-on-hover location="top">
           <template v-slot:activator="{ props }">
             <img v-bind="props" :src="InfoIcon" class="tw-h-6 tw-m-2" />
@@ -119,7 +120,7 @@ export default {
         </v-menu>
         <p class="tw-pt-2">Abs value scale:</p>
       </div>
-      <div class="tw-w-8/12">
+      <div class="tw-w-8/12 tw-mt-6">
         <img :src="HeatMapScaleIcon" class="tw-h-full" />
       </div>
     </div>
@@ -130,9 +131,30 @@ export default {
 .dp__clear_icon {
   position: absolute;
   top: 36%;
-  right: 0;
+  right: 15%;
   transform: translateY(-50%);
   cursor: pointer;
   color: var(--dp-icon-color);
+}
+.dp__theme_light {
+   --dp-background-color: #ffffff;
+   --dp-text-color: #212121;
+   --dp-hover-color: #f3f3f3;
+   --dp-hover-text-color: #212121;
+   --dp-hover-icon-color: #959595;
+   --dp-primary-color: #7823DC;
+   --dp-primary-text-color: #f8f5f5;
+   --dp-secondary-color: #c0c4cc;
+   --dp-border-color: #ddd;
+   --dp-menu-border-color: #E6D2FA;
+   --dp-border-color-hover: #E6D2FA;
+   --dp-disabled-color: #f6f6f6;
+   --dp-scroll-bar-background: #f3f3f3;
+   --dp-scroll-bar-color: #959595;
+   --dp-success-color: #7823DC;
+   --dp-success-color-disabled: #a3d9b1;
+   --dp-icon-color: #959595;
+   --dp-danger-color: #ff6f60;
+   --dp-highlight-color: rgba(25, 118, 210, 0.1);
 }
 </style>

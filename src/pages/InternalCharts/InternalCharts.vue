@@ -137,14 +137,14 @@ export default {
       <div class="tw-grid tw-grid-rows-2 tw-gap-6">
         <div>
           <v-card style="height: 370px">
-            <h3 class="tw-font-bold  tw-py-2 tw-pl-2">Internal Forecast vs Actuals</h3>
+            <h3 class="tw-font-bold  tw-py-2 tw-pl-2">Internal Forecast vs Sales</h3>
             <div class="tw-w-full tw-items-left tw-border-t tw-border-solid tw-border-brand-gray-2" />
             <GChart type="ColumnChart" :data="columnChartData" :options="columnChartOptions" height="370"/>
           </v-card>
         </div>
         <div>
           <v-card style="height: 370px">
-            <h3 class="tw-font-bold tw-py-2 tw-pl-2">Projections of MS vs Internal vs Actuals</h3>
+            <h3 class="tw-font-bold tw-py-2 tw-pl-2">Projections of Market Sensing Forecast vs Internal Forecast vs Sales</h3>
             <div class="tw-flex tw-w-full tw-flex-auto tw-border-t tw-border-solid tw-border-brand-gray-2" />
             <GChart type="LineChart" :options="lineChartOptions" :data="lineChartData"/>
           </v-card>

@@ -1,6 +1,32 @@
 <script>
+import _ from 'lodash';
 import GoogleChart from '@/components/GoogleChart';
 import fetchDemandForecastData from '@/api/fetchDemandForecastData';
+
+const DATA_CONFIG = [
+  {
+    key: 'period',
+    label: 'Time Period',
+    color: '',
+  },
+  {
+    key: 'Market Sensing',
+    label: 'Market Sensing Forecast',
+    color: '#570EAA',
+  },
+  {
+    key: 'Internal',
+    label: 'Internal Forecast',
+    color: '#787878',
+  },
+  {
+    key: 'Sales',
+    label: 'Sales',
+    color: '#C8A5F0',
+  },
+];
+
+const dataKeys = _.map(DATA_CONFIG, (el) => el.key);
 
 export default {
   name: 'TooltipChart',
@@ -17,12 +43,12 @@ export default {
       apiData: [],
       isLoading: true,
       error: null,
+      legendData: DATA_CONFIG.slice(1),
       options: {
         title: '',
         curveType: 'none',
         legend: { position: 'none' },
         tooltip: { trigger: 'none' },
-        colors: ['#570EAA', '#787878', '#C8A5F0'],
         width: 800,
         height: 350,
         hAxis: {
@@ -39,7 +65,9 @@ export default {
           height: '84%',
         },
         series: {
-          1: { lineDashStyle: [6, 6] },
+          0: { color: DATA_CONFIG[1].color },
+          1: { color: DATA_CONFIG[2].color, lineDashStyle: [6, 6] },
+          2: { color: DATA_CONFIG[3].color },
         },
       },
     };
@@ -61,7 +89,12 @@ export default {
     clickClose() {
       this.$emit('closeEvent');
     }
-  }
+  },
+  computed: {
+    chartData() {
+      return [[...dataKeys], ...this.apiData];
+    },
+  },
 };
 </script>
 
@@ -103,7 +136,7 @@ export default {
       </div>
       <div class="tw-w-full tw-border tw-border-solid tw-border-brand-gray-2" />
       <div class="tw-w-full tw-flex tw-justify-center tw-pt-4">
-        <GoogleChart type="LineChart" :options="options" :data="apiData" />
+        <GoogleChart type="LineChart" :options="options" :data="chartData" />
       </div>
     </div>
     <div v-if="!isLoading && error">

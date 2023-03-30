@@ -125,6 +125,7 @@ export async function invokePostApi(apiName, payload) {
     {
       headers: {
         Authorization: accessToken,
+        'Content-Type': 'application/json',
       },
     }
   );

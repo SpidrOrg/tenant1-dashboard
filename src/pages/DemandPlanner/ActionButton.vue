@@ -12,6 +12,10 @@ export default {
     },
   },
   methods: {
+    getIcon(n) {
+      if (this.isReviewed) return 'mdi-circle-outline';
+      return Math.abs(n) >= 20 ? 'mdi-alert-circle' : 'mdi-circle';
+    },
     getColorCode(n) {
       if (Math.abs(n) >= 20) {
         return '#DC3545';
@@ -45,7 +49,7 @@ export default {
     :ripple="false"
   >
     <v-icon
-      :icon="Math.abs(variance) >= 20 ? 'mdi-alert-circle' : 'mdi-circle'"
+      :icon="getIcon(variance)"
       start
       :color="getColorCode(variance)"
       size="large"

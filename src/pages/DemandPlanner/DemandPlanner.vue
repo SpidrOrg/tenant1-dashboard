@@ -19,8 +19,8 @@ export default {
   props: {
     userdata: {
       type: Object,
-      required: true
-    }
+      required: true,
+    },
   },
   data() {
     return {
@@ -53,6 +53,18 @@ export default {
         _.get(this.dashboardData, 'periodsData'),
         (v) => v.isActive
       );
+    },
+    userId() {
+      return _.get(this.userdata, 'deocdedJWT.email');
+    },
+    userDisplayName() {
+      let userDisplayName = _.get(this.userdata, 'deocdedJWT.name');
+      if (!userDisplayName) {
+        const { isAdmin } = this.userdata;
+        const userEmail = _.get(this.userdata, 'deocdedJWT.email');
+        userDisplayName = isAdmin ? `${userEmail}[admin]` : userEmail;
+      }
+      return userDisplayName;
     },
   },
   methods: {
@@ -102,7 +114,7 @@ export default {
         marketSensingRefreshDate: marketSensingRefreshDate,
         category: selectedCategories === ALL_OPTION ? '*' : selectedCategories,
         customer: selectedCustomers === ALL_OPTION ? '*' : selectedCustomers,
-        valueORvolume: selectedValueORvolume,
+        valueOrQuantity: selectedValueORvolume,
       };
 
       const response = await fetchMainDashboardData({
@@ -216,7 +228,11 @@ export default {
         <CardsList
           :data="selectedCards"
           @setActiveCard="setActiveCard"
-          :options="{ isModelAccuracyHidden, selectedFilters }"
+          :options="{
+            isModelAccuracyHidden,
+            selectedFilters,
+            userData: { userId, userDisplayName },
+          }"
         />
       </div>
       <div class="tw-p-4" style="border: 1px solid #7823dc">

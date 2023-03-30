@@ -32,7 +32,10 @@ export default {
       return this.options.isModelAccuracyHidden || false;
     },
     selectedFilters() {
-      return this.options.selectedFilters;
+      return _.get(this.options, 'selectedFilters');
+    },
+    userData() {
+      return _.get(this.options, 'userData');
     },
   },
   methods: {
@@ -215,6 +218,7 @@ export default {
       v-if="actionFormIsShown"
       :actionFormIsShown="actionFormIsShown"
       :variance="lodToNumber(lodGetNumeric(data, 'metrics.variance', false))"
+      :userData="userData"
       :period="data.label"
       :selectedFilters="selectedFilters"
       @close-form="hideFormHandler"

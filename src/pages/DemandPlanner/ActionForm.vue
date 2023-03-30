@@ -1,4 +1,6 @@
 <script>
+import _ from 'lodash';
+import addReview from '@/api/DemandPlanner/addReview';
 import getReviews from '@/api/DemandPlanner/getReviews';
 import { ACTION_STATUS_LABELS, NUMERIC_MONTH_MAP } from './constants';
 
@@ -14,21 +16,6 @@ const ACTION_STATUS_LIST = [
   REVIEWED_AND_ACTION_NOT_TAKEN,
 ];
 
-// let RESPONSES = [
-//   {
-//     id: 1,
-//     name: 'Morty Smith',
-//     date: 'Feb 8, 2023',
-//     text: 'We need to review this with the team.',
-//   },
-//   {
-//     id: 2,
-//     name: 'Rick Sanchez',
-//     date: 'Feb 10, 2023',
-//     text: 'We have reviewed this forecast variance with management team on Feb 7. On the basis of conclusion of that meeting we agreed on the forecast and decided that no further action is required.',
-//   },
-// ];
-
 export default {
   name: 'ActionForm',
   props: {
@@ -38,6 +25,10 @@ export default {
     },
     variance: {
       type: Number,
+      required: true,
+    },
+    userData: {
+      type: Object,
       required: true,
     },
     selectedFilters: {
@@ -53,12 +44,14 @@ export default {
   data() {
     return {
       isFetching: false,
+      isSubmitting: false,
       error: null,
       reviews: [],
       actionStatus: PENDING_ACTION,
       userResponse: null,
       ACTION_STATUS_LIST,
       responseSubmitted: false,
+      lodGet: _.get,
     };
   },
   methods: {
@@ -75,23 +68,26 @@ export default {
       this.actionStatus = label;
     },
     isSubmitButtonDisabled() {
-      return !(this.userResponse && this.actionStatus);
+      return !(this.userResponse && this.actionStatus) || this.isSubmitting;
     },
-    submitHandler() {
-      // const latestId = RESPONSES[RESPONSES.length - 1]?.id + 1 || 1;
-      // const newItem = {
-      //   id: latestId,
-      //   name: 'Maximilian Schwarzmüller',
-      //   date: new Date().toLocaleDateString('en-us', {
-      //     year: 'numeric',
-      //     month: 'short',
-      //     day: 'numeric',
-      //   }),
-      //   text: this.userResponse,
-      // };
-      // RESPONSES.push(newItem);
+    async fetchReviews() {
+      this.isFetching = true;
+      try {
+        this.reviews = await getReviews({
+          refreshDate: this.selectedFilters.marketSensingRefreshDate,
+          customer: this.selectedFilters.customer.replaceAll("'", "\\'"),
+          category: this.selectedFilters.category,
+          valueOrQuantity: this.selectedFilters.valueOrQuantity,
+          periodStart: this.periodStartDate,
+          periodEnd: this.periodEndDate,
+        });
+      } catch (e) {
+        this.error = e;
+      }
+      this.isFetching = false;
+    },
+    handleSuccessfulSubmission() {
       this.userResponse = null;
-
       this.responseSubmitted = true;
       setTimeout(() => {
         this.responseSubmitted = false;
@@ -103,6 +99,31 @@ export default {
       ) {
         this.$emit('reviewed');
       }
+
+      this.fetchReviews();
+    },
+    async submitHandler() {
+      this.isSubmitting = true;
+      try {
+        await addReview({
+          userId: _.get(this.userData, 'userId'),
+          userDisplayName: _.get(this.userData, 'userDisplayName'),
+          action: this.actionStatus,
+          asOn: this.selectedFilters.marketSensingRefreshDate,
+          comment: this.userResponse,
+          periodStartDate: this.periodStartDate,
+          periodEndDate: this.periodEndDate,
+          customer: this.selectedFilters.customer,
+          category: this.selectedFilters.category,
+          byValueOrByVolume: this.selectedFilters.valueOrQuantity,
+          forecastPeriodType: 'r3m',
+        });
+
+        this.handleSuccessfulSubmission();
+      } catch (error) {
+        this.error = error;
+      }
+      this.isSubmitting = false;
     },
   },
   computed: {
@@ -123,21 +144,8 @@ export default {
       return `20${yearShortForm}-${numericMonth}-01`;
     },
   },
-  async created() {
-    this.isFetching = true;
-    try {
-      this.reviews = await getReviews({
-        refreshDate: this.selectedFilters.marketSensingRefreshDate,
-        customer: this.selectedFilters.customer.replaceAll("'", "\\'"),
-        category: this.selectedFilters.category,
-        valueOrQuantity: this.selectedFilters.selectedValueORvolume,
-        periodStart: this.periodStartDate,
-        periodEnd: this.periodEndDate,
-      });
-    } catch (e) {
-      this.error = e;
-    }
-    this.isFetching = false;
+  created() {
+    this.fetchReviews();
   },
 };
 </script>
@@ -152,22 +160,32 @@ export default {
         <div
           class="tw-col-span-1 tw-py-3 tw-px-4 tw-border-2 tw-border-solid tw-border-brand-secondary-10 tw-overflow-auto"
         >
-          <div v-if="isFetching">Fetching Reviews...</div>
+          <div
+            v-if="isFetching"
+            class="tw-w-full tw-h-3/4 tw-flex tw-justify-center tw-items-center"
+          >
+            <v-progress-circular
+              indeterminate
+              color="#7823DC"
+              :size="60"
+              :width="10"
+            />
+          </div>
           <div class="tw-flex tw-flex-col tw-gap-y-7" v-else>
             <div
               v-for="review in reviews"
-              :key="review.id"
+              :key="lodGet(review, 'id')"
               class="tw-flex tw-flex-col tw-gap-y-2"
             >
               <div class="tw-flex tw-justify-between">
                 <span class="tw-text-base tw-font-medium tw-text-black">{{
-                  review.name
+                  lodGet(review, 'displayname')
                 }}</span>
                 <span class="tw-text-base tw-text-brand-gray-3">{{
-                  review.date
+                  lodGet(review, 'date')
                 }}</span>
               </div>
-              <p>{{ review.text }}</p>
+              <p>{{ lodGet(review, 'comment') }}</p>
             </div>
           </div>
         </div>
@@ -195,7 +213,7 @@ export default {
           </div>
         </div>
       </div>
-      <div class="tw-flex tw-gap-x-4 tw-pt-4">
+      <div class="tw-flex tw-items-center tw-gap-x-4 tw-pt-4">
         <button
           :class="`tw-px-6 tw-py-2 ${
             isSubmitButtonDisabled()
@@ -209,7 +227,7 @@ export default {
         </button>
         <div
           v-if="responseSubmitted"
-          class="tw-px-4 tw-py-2 tw-flex tw-items-center tw-gap-x-2 tw-border-2 tw-border-solid tw-border-brand-green-1 tw-rounded-sm tw-bg-brand-green-3"
+          class="tw-px-4 tw-py-1 tw-flex tw-items-center tw-gap-x-2 tw-border-2 tw-border-solid tw-border-brand-green-1 tw-rounded-sm tw-bg-brand-green-3"
         >
           <v-icon icon="mdi-check-circle" color="#04BB46" />
           <span class="tw-text-brand-green-1 tw-text-base"

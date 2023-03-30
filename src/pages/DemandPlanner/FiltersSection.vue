@@ -26,7 +26,7 @@ export default {
           selected: null,
           filterlabel: 'Customers',
         },
-        valueOrQuantity: BY_QUANTITY,
+        valueOrQuantity: BY_VALUE,
       },
       currency: 'USD',
       dataLoaded: false,

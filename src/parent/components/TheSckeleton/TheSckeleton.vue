@@ -33,7 +33,7 @@ export default {
         </div>
       </div>
       <div class="content-container">
-        <router-view />
+        <router-view :userdata="userdata"/>
       </div>
       <footer class="footer">
         <div class="footer-copy-right">Copyright @ Kearney 2023</div>

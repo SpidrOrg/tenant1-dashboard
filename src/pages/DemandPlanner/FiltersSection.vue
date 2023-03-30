@@ -26,7 +26,7 @@ export default {
           selected: null,
           filterlabel: 'Customers',
         },
-        valueOrQuantity: BY_VALUE,
+        valueOrQuantity: BY_QUANTITY,
       },
       currency: 'USD',
       dataLoaded: false,
@@ -97,20 +97,26 @@ export default {
 <template>
   <div class="tw-flex tw-gap-x-3 tw-w-full tw-bg-white tw-px-3">
     <div class="tw-pt-3 tw-min-w-[14%] tw--mb-3">
-      <!--      <div>Month & Year</div>-->
+      <label for="date-picker" class="tw-text-sm">Month & Year</label>
       <VueDatePicker
+        id="date-picker"
         v-model="filters.refreshDates.selected"
         month-picker
         @update:model-value="refreshDateUpdated"
       >
         <template #dp-input="{ value }">
-          <v-text-field :value="value" density="comfortable"></v-text-field>
+          <v-text-field
+            :value="value"
+            density="comfortable"
+            append-inner-icon="mdi-calendar-month"
+          ></v-text-field>
         </template>
       </VueDatePicker>
     </div>
     <div class="tw-pt-3 tw-min-w-[14%] tw--mb-3">
+      <label for="category" class="tw-text-sm">Category</label>
       <v-select
-        label="Category"
+        id="category"
         :items="filters.categories.items"
         :model-value="filters.categories.selected"
         @update:modelValue="(value) => selectFilterUpdated('categories', value)"
@@ -118,31 +124,33 @@ export default {
       />
     </div>
     <div class="tw-pt-3 tw-min-w-[14%] tw--mb-3">
+      <label for="customers" class="tw-text-sm">Customer(s)</label>
       <v-select
-        label="All Customers"
+        id="customers"
         :items="filters.customers.items"
         :model-value="filters.customers.selected"
         @update:modelValue="(value) => selectFilterUpdated('customers', value)"
         density="comfortable"
       />
     </div>
-    <div class="tw-flex tw-gap-1.5 tw-pl-3 tw--mb-3">
+    <div class="tw-flex tw-gap-1.5 tw-pt-3 tw-pl-3 tw--mb-3">
       <span
-        :class="`tw-pt-6 ${
+        :class="`tw-pt-10 ${
           filters.valueOrQuantity === BY_VALUE ? 'tw-font-medium' : ''
         }`"
       >
         Value {{ currency }}
       </span>
-      <div class="tw-flex tw-pt-2" style="color: #7823dc">
+      <div class="tw-flex tw-pt-8" style="color: #7823dc">
         <v-switch
-          :model="filters.valueOrQuantity"
+          :model-value="filters.valueOrQuantity === BY_QUANTITY"
           inset
+          density="compact"
           @click="valueOrQuantityUpdate"
         />
       </div>
       <span
-        :class="`tw-pt-6 ${
+        :class="`tw-pt-10 ${
           filters.valueOrQuantity === BY_QUANTITY ? 'tw-font-medium' : ''
         }`"
       >

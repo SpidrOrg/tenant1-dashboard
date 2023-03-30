@@ -1,5 +1,6 @@
 <script>
 import _ from 'lodash';
+import { format as formatFn } from 'date-fns';
 import addReview from '@/api/DemandPlanner/addReview';
 import getReviews from '@/api/DemandPlanner/getReviews';
 import { ACTION_STATUS_LABELS, NUMERIC_MONTH_MAP } from './constants';
@@ -55,6 +56,9 @@ export default {
     };
   },
   methods: {
+    formatDate(dateString, format = 'yyyy-MM-dd') {
+      return formatFn(new Date(dateString), format);
+    },
     getStatus(n) {
       if (Math.abs(n) >= 20) {
         return 'Review';
@@ -182,7 +186,7 @@ export default {
                   lodGet(review, 'displayname')
                 }}</span>
                 <span class="tw-text-base tw-text-brand-gray-3">{{
-                  lodGet(review, 'date')
+                  formatDate(lodGet(review, 'date'), 'MMM dd, yyyy')
                 }}</span>
               </div>
               <p>{{ lodGet(review, 'comment') }}</p>

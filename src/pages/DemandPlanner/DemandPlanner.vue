@@ -21,6 +21,12 @@ export default {
       dataLoading: true,
       debounceUpdateFilters: _.debounce(this.updateFilters, 3000),
       dashboardData: {},
+      selectedFilters: {
+        marketSensingRefreshDate: null,
+        category: '',
+        customer: '',
+        valueORvolume: null,
+      },
       isModelAccuracyHidden: false,
 
       //
@@ -78,13 +84,23 @@ export default {
         selectedMarketSensingRefreshDate.year,
         selectedMarketSensingRefreshDate.month
       );
+
+      const marketSensingRefreshDate = new Date(
+        jsDateRefreshDate.getTime() -
+          jsDateRefreshDate.getTimezoneOffset() * 60000
+      )
+        .toISOString()
+        .split('T')[0];
+
+      this.selectedFilters = {
+        marketSensingRefreshDate: marketSensingRefreshDate,
+        category: selectedCategories === ALL_OPTION ? '*' : selectedCategories,
+        customer: selectedCustomers === ALL_OPTION ? '*' : selectedCustomers,
+        valueORvolume: selectedValueORvolume,
+      };
+
       const response = await fetchMainDashboardData({
-        marketSensingRefreshDate: new Date(
-          jsDateRefreshDate.getTime() -
-            jsDateRefreshDate.getTimezoneOffset() * 60000
-        )
-          .toISOString()
-          .split('T')[0],
+        marketSensingRefreshDate: marketSensingRefreshDate,
         categories:
           selectedCategories === ALL_OPTION ? '*' : selectedCategories,
         customers: selectedCustomers === ALL_OPTION ? '*' : selectedCustomers,
@@ -194,7 +210,7 @@ export default {
         <CardsList
           :data="selectedCards"
           @setActiveCard="setActiveCard"
-          :options="{ isModelAccuracyHidden }"
+          :options="{ isModelAccuracyHidden, selectedFilters }"
         />
       </div>
       <div class="tw-p-4" style="border: 1px solid #7823dc">

@@ -1,5 +1,6 @@
 <script>
-import { ACTION_STATUS_LABELS } from './constants';
+import getReviews from '@/api/DemandPlanner/getReviews';
+import { ACTION_STATUS_LABELS, NUMERIC_MONTH_MAP } from './constants';
 
 const {
   PENDING_ACTION,
@@ -13,20 +14,20 @@ const ACTION_STATUS_LIST = [
   REVIEWED_AND_ACTION_NOT_TAKEN,
 ];
 
-let RESPONSES = [
-  {
-    id: 1,
-    name: 'Morty Smith',
-    date: 'Feb 8, 2023',
-    text: 'We need to review this with the team.',
-  },
-  {
-    id: 2,
-    name: 'Rick Sanchez',
-    date: 'Feb 10, 2023',
-    text: 'We have reviewed this forecast variance with management team on Feb 7. On the basis of conclusion of that meeting we agreed on the forecast and decided that no further action is required.',
-  },
-];
+// let RESPONSES = [
+//   {
+//     id: 1,
+//     name: 'Morty Smith',
+//     date: 'Feb 8, 2023',
+//     text: 'We need to review this with the team.',
+//   },
+//   {
+//     id: 2,
+//     name: 'Rick Sanchez',
+//     date: 'Feb 10, 2023',
+//     text: 'We have reviewed this forecast variance with management team on Feb 7. On the basis of conclusion of that meeting we agreed on the forecast and decided that no further action is required.',
+//   },
+// ];
 
 export default {
   name: 'ActionForm',
@@ -39,15 +40,25 @@ export default {
       type: Number,
       required: true,
     },
+    selectedFilters: {
+      type: Object,
+      required: true,
+    },
+    period: {
+      type: String,
+      required: true,
+    },
   },
   emits: ['closeForm', 'reviewed'],
   data() {
     return {
+      isFetching: false,
+      error: null,
+      reviews: [],
       actionStatus: PENDING_ACTION,
       userResponse: null,
       ACTION_STATUS_LIST,
       responseSubmitted: false,
-      RESPONSES,
     };
   },
   methods: {
@@ -67,18 +78,18 @@ export default {
       return !(this.userResponse && this.actionStatus);
     },
     submitHandler() {
-      const latestId = RESPONSES[RESPONSES.length - 1]?.id + 1 || 1;
-      const newItem = {
-        id: latestId,
-        name: 'Maximilian Schwarzmüller',
-        date: new Date().toLocaleDateString('en-us', {
-          year: 'numeric',
-          month: 'short',
-          day: 'numeric',
-        }),
-        text: this.userResponse,
-      };
-      RESPONSES.push(newItem);
+      // const latestId = RESPONSES[RESPONSES.length - 1]?.id + 1 || 1;
+      // const newItem = {
+      //   id: latestId,
+      //   name: 'Maximilian Schwarzmüller',
+      //   date: new Date().toLocaleDateString('en-us', {
+      //     year: 'numeric',
+      //     month: 'short',
+      //     day: 'numeric',
+      //   }),
+      //   text: this.userResponse,
+      // };
+      // RESPONSES.push(newItem);
       this.userResponse = null;
 
       this.responseSubmitted = true;
@@ -94,6 +105,40 @@ export default {
       }
     },
   },
+  computed: {
+    periodStartDate() {
+      const [month, yearShortForm] = this.period
+        .split('-')[0]
+        .trim()
+        .split(' ');
+      const numericMonth = NUMERIC_MONTH_MAP[month];
+      return `20${yearShortForm}-${numericMonth}-01`;
+    },
+    periodEndDate() {
+      const [month, yearShortForm] = this.period
+        .split('-')[1]
+        .trim()
+        .split(' ');
+      const numericMonth = NUMERIC_MONTH_MAP[month];
+      return `20${yearShortForm}-${numericMonth}-01`;
+    },
+  },
+  async created() {
+    this.isFetching = true;
+    try {
+      this.reviews = await getReviews({
+        refreshDate: this.selectedFilters.marketSensingRefreshDate,
+        customer: this.selectedFilters.customer.replaceAll("'", "\\'"),
+        category: this.selectedFilters.category,
+        valueOrQuantity: this.selectedFilters.selectedValueORvolume,
+        periodStart: this.periodStartDate,
+        periodEnd: this.periodEndDate,
+      });
+    } catch (e) {
+      this.error = e;
+    }
+    this.isFetching = false;
+  },
 };
 </script>
 
@@ -107,21 +152,22 @@ export default {
         <div
           class="tw-col-span-1 tw-py-3 tw-px-4 tw-border-2 tw-border-solid tw-border-brand-secondary-10 tw-overflow-auto"
         >
-          <div class="tw-flex tw-flex-col tw-gap-y-7">
+          <div v-if="isFetching">Fetching Reviews...</div>
+          <div class="tw-flex tw-flex-col tw-gap-y-7" v-else>
             <div
-              v-for="response in RESPONSES"
-              :key="response.id"
+              v-for="review in reviews"
+              :key="review.id"
               class="tw-flex tw-flex-col tw-gap-y-2"
             >
               <div class="tw-flex tw-justify-between">
                 <span class="tw-text-base tw-font-medium tw-text-black">{{
-                  response.name
+                  review.name
                 }}</span>
                 <span class="tw-text-base tw-text-brand-gray-3">{{
-                  response.date
+                  review.date
                 }}</span>
               </div>
-              <p>{{ response.text }}</p>
+              <p>{{ review.text }}</p>
             </div>
           </div>
         </div>
@@ -129,9 +175,9 @@ export default {
           class="tw-col-span-1 tw-p-4 tw-border-2 tw-border-solid tw-border-brand-secondary-10"
         >
           <div class="tw-w-full tw-h-3/5">
-            <label for="response">Add Your Response</label>
+            <label for="review">Add Your Response</label>
             <textarea
-              id="response"
+              id="review"
               v-model="userResponse"
               placeholder="Please mention action items"
               class="tw-w-full tw-h-3/4 tw-max-h-72 tw-text-base tw-py-2 tw-px-4 tw-border-2 tw-border-solid tw-border-brand-secondary-20"

@@ -31,6 +31,9 @@ export default {
     isModelAccuracyHidden() {
       return this.options.isModelAccuracyHidden || false;
     },
+    selectedFilters() {
+      return this.options.selectedFilters;
+    },
   },
   methods: {
     showFormHandler() {
@@ -209,8 +212,11 @@ export default {
       </div>
     </div>
     <ActionForm
+      v-if="actionFormIsShown"
       :actionFormIsShown="actionFormIsShown"
       :variance="lodToNumber(lodGetNumeric(data, 'metrics.variance', false))"
+      :period="data.label"
+      :selectedFilters="selectedFilters"
       @close-form="hideFormHandler"
       @reviewed="reviewHandler"
     />

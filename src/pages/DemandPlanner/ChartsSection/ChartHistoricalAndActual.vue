@@ -19,7 +19,7 @@ const DATA_CONFIG = [
     color: '#570EAA',
   },
   {
-    key: 'Adjusted Internal',
+    key: 'Adjusted',
     label: 'Adjusted Internal',
     color: '#FFC107',
   },

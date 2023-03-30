@@ -16,6 +16,12 @@ export default {
     CardsList,
     ChartsSection,
   },
+  props: {
+    userdata: {
+      type: Object,
+      required: true
+    }
+  },
   data() {
     return {
       dataLoading: true,

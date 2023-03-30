@@ -12,7 +12,6 @@ export default {
       DownArrow,
       menuSelected: false, //todo
       optionSelected:'',
-      items:[{title:'Hi Admin!'},{title:'Logout'}]
     }
   },
   props: {
@@ -32,12 +31,9 @@ export default {
       //   element.dispatchEvent(event);
       // } catch (e){console.log(e)}
     },
-    handleLogout(optionSelected){
+    handleLogout(){
       //todo
-      console.log(optionSelected);
-      if(optionSelected == 'Logout'){
-        logout()
-      }      
+      logout()      
     },
     handleFocusOut(){
       //todo
@@ -59,22 +55,21 @@ export default {
           <!-- <option :selected="true">{{userdata.userName}}{{userdata.isAdmin ? '(Admin)' : ''}}</option>
           <option :selected="false">Logout</option> -->
         <!-- </v-select> -->
-        <v-menu>
-          <template v-slot:activator="{ props }">
-          <v-btn variant="text" prepend-icon="mdi-account" v-bind="props">
-            My Account
-          </v-btn>
-      </template>
-      <v-list v-model="optionSelected">
-        <v-list-item
-          v-for="(item, index) in items"
-          :key="index"
-          :value="index"
-        >
-          <v-list-item-title @click="handleLogout(item.title)">{{ item.title }}</v-list-item-title>
-        </v-list-item>
-      </v-list>
-    </v-menu>
+        <div class="dropdown">
+          <div style="display: flex;">
+            <div class="user-icon">
+              <img :src="AnyUser"/> 
+            </div>
+            <button class="dropbtn">
+              My Account
+            </button>
+          </div>
+          
+          <div class="dropdown-content">
+            <a>{{userdata.userName}}{{userdata.isAdmin ? '(Admin)' : ''}}</a>
+            <a @click="handleLogout">Logout</a>
+          </div>
+        </div>
       <!-- </div> -->
     </div>
   </div>
@@ -90,6 +85,7 @@ export default {
 .user-icon {
   height: 18px;
   width: 18px;
+  padding-top: 10px;
 }
 .control-section {
   display: flex;
@@ -103,5 +99,46 @@ export default {
 }
 .menu-options {
   margin-left: -60px;
+}
+
+.dropbtn {
+  background-color: #f5f5f5;
+  color: black;
+  padding: 10px;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+}
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f5f5f5;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 9999;
+  cursor: pointer;
+}
+
+.dropdown-content a {
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+
+.dropdown-content a:hover {background-color: #f5f5f5}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+.dropdown:hover .dropbtn {
+  background-color: #f1f1f1;
 }
 </style>

@@ -117,7 +117,7 @@ export default {
     <div v-if="!isLoading && apiData.length > 0">
       <div class="tw-flex tw-items-center tw-w-full">
         <h1 class="tw-text-xl tw-font-medium">
-          Demand Forecast : Category / Customer
+          Demand Forecast : {{ category }} / {{ customer }}
         </h1>
         <div class="tw-flex tw-items-center tw-ml-auto">
           <div

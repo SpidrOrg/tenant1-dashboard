@@ -3,7 +3,7 @@ import _ from 'lodash';
 import { format as formatFn } from 'date-fns';
 import addReview from '@/api/DemandPlanner/addReview';
 import getReviews from '@/api/DemandPlanner/getReviews';
-import { ACTION_STATUS_LABELS, NUMERIC_MONTH_MAP } from './constants';
+import { ACTION_STATUS_LABELS } from './constants';
 
 const {
   PENDING_ACTION,
@@ -24,6 +24,10 @@ export default {
       type: Boolean,
       required: true,
     },
+    initialReviews: {
+      type: Array,
+      required: true,
+    },
     variance: {
       type: Number,
       required: true,
@@ -36,7 +40,11 @@ export default {
       type: Object,
       required: true,
     },
-    period: {
+    periodStartDate: {
+      type: String,
+      required: true,
+    },
+    periodEndDate: {
       type: String,
       required: true,
     },
@@ -130,26 +138,8 @@ export default {
       this.isSubmitting = false;
     },
   },
-  computed: {
-    periodStartDate() {
-      const [month, yearShortForm] = this.period
-        .split('-')[0]
-        .trim()
-        .split(' ');
-      const numericMonth = NUMERIC_MONTH_MAP[month];
-      return `20${yearShortForm}-${numericMonth}-01`;
-    },
-    periodEndDate() {
-      const [month, yearShortForm] = this.period
-        .split('-')[1]
-        .trim()
-        .split(' ');
-      const numericMonth = NUMERIC_MONTH_MAP[month];
-      return `20${yearShortForm}-${numericMonth}-01`;
-    },
-  },
   created() {
-    this.fetchReviews();
+    this.reviews = this.initialReviews;
   },
 };
 </script>
@@ -183,7 +173,7 @@ export default {
             >
               <div class="tw-flex tw-justify-between">
                 <span class="tw-text-base tw-font-medium tw-text-black">{{
-                  lodGet(review, 'displayname')
+                  lodGet(review, 'user_display_name')
                 }}</span>
                 <span class="tw-text-base tw-text-brand-gray-3">{{
                   formatDate(lodGet(review, 'date'), 'MMM dd, yyyy')

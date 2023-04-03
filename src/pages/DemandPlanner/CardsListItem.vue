@@ -1,5 +1,9 @@
 <script>
 import _ from 'lodash';
+import { format as formatFn } from 'date-fns';
+import getReviews from '@/api/DemandPlanner/getReviews';
+import { MONTH_INDEX_MAP } from './constants';
+
 import ModelAccuracyChart from './ModelAccuracyChart.vue';
 import ActionButton from './ActionButton.vue';
 import ActionForm from './ActionForm.vue';
@@ -22,6 +26,9 @@ export default {
     return {
       actionFormIsShown: false,
       isReviewed: false,
+      isFetchingReviews: true,
+      getReviewsError: null,
+      reviews: [],
       //
       lodSubtract: _.subtract,
       lodToNumber: _.toNumber,
@@ -36,6 +43,27 @@ export default {
     },
     userData() {
       return _.get(this.options, 'userData');
+    },
+    period() {
+      return _.get(this.data, 'label');
+    },
+    periodStartDate() {
+      const [month, yearShortForm] = this.period
+        .split('-')[0]
+        .trim()
+        .split(' ');
+      const numericYear = _.toNumber(`20${yearShortForm}`);
+      const monthIndex = MONTH_INDEX_MAP[month];
+      return formatFn(new Date(numericYear, monthIndex), 'yyyy-MM-dd');
+    },
+    periodEndDate() {
+      const [month, yearShortForm] = this.period
+        .split('-')[1]
+        .trim()
+        .split(' ');
+      const numericYear = _.toNumber(`20${yearShortForm}`);
+      const monthIndex = MONTH_INDEX_MAP[month];
+      return formatFn(new Date(numericYear, monthIndex), 'yyyy-MM-dd');
     },
   },
   methods: {
@@ -67,6 +95,25 @@ export default {
         this.isReviewed = true;
       }
     },
+    async fetchReviews() {
+      this.isFetchingReviews = true;
+      try {
+        this.reviews = await getReviews({
+          refreshDate: this.selectedFilters.marketSensingRefreshDate,
+          customer: this.selectedFilters.customer.replaceAll("'", "\\'"),
+          category: this.selectedFilters.category,
+          valueOrQuantity: this.selectedFilters.valueOrQuantity,
+          periodStart: this.periodStartDate,
+          periodEnd: this.periodEndDate,
+        });
+      } catch (e) {
+        this.getReviewsError = e;
+      }
+      this.isFetchingReviews = false;
+    },
+  },
+  created() {
+    this.fetchReviews();
   },
 };
 </script>
@@ -76,7 +123,7 @@ export default {
     <div class="tw-flex tw-flex-col tw-py-2">
       <p style="color: #9291a5">Projected Period</p>
       <div class="tw-flex tw-gap-x-4 tw-items-center tw-w-full">
-        <p class="tw-text-lg tw-font-medium">{{ data.label }}</p>
+        <p class="tw-text-lg tw-font-medium">{{ period }}</p>
         <div class="tw-bg-brand-gray-4 tw-rounded">
           <p class="tw-p-1 tw-text-sm">Future {{ data.lag }} months</p>
         </div>
@@ -210,6 +257,7 @@ export default {
             lodToNumber(lodGetNumeric(data, 'metrics.variance', false))
           "
           :isReviewed="isReviewed"
+          :isFetchingReviews="isFetchingReviews"
           @click="showFormHandler"
         />
       </div>
@@ -218,8 +266,10 @@ export default {
       v-if="actionFormIsShown"
       :actionFormIsShown="actionFormIsShown"
       :variance="lodToNumber(lodGetNumeric(data, 'metrics.variance', false))"
+      :initialReviews="reviews"
       :userData="userData"
-      :period="data.label"
+      :periodStartDate="periodStartDate"
+      :periodEndDate="periodEndDate"
       :selectedFilters="selectedFilters"
       @close-form="hideFormHandler"
       @reviewed="reviewHandler"

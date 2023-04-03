@@ -25,6 +25,7 @@ export default {
   data() {
     return {
       dataLoading: true,
+      error: null,
       debounceUpdateFilters: _.debounce(this.updateFilters, 3000),
       dashboardData: {},
       selectedFilters: {
@@ -98,51 +99,58 @@ export default {
       const selectedCustomers = _.get(filtersData, 'customers.selected');
       const selectedValueORvolume = _.get(filtersData, 'valueOrQuantity');
 
-      const jsDateRefreshDate = new Date(
-        selectedMarketSensingRefreshDate.year,
-        selectedMarketSensingRefreshDate.month
-      );
+      try {
+        const jsDateRefreshDate = new Date(
+          selectedMarketSensingRefreshDate.year,
+          selectedMarketSensingRefreshDate.month
+        );
 
-      const marketSensingRefreshDate = new Date(
-        jsDateRefreshDate.getTime() -
-          jsDateRefreshDate.getTimezoneOffset() * 60000
-      )
-        .toISOString()
-        .split('T')[0];
+        const marketSensingRefreshDate = new Date(
+          jsDateRefreshDate.getTime() -
+            jsDateRefreshDate.getTimezoneOffset() * 60000
+        )
+          .toISOString()
+          .split('T')[0];
 
-      this.selectedFilters = {
-        marketSensingRefreshDate: marketSensingRefreshDate,
-        category: selectedCategories === ALL_OPTION ? '*' : selectedCategories,
-        customer: selectedCustomers === ALL_OPTION ? '*' : selectedCustomers,
-        valueOrQuantity: selectedValueORvolume,
-      };
+        this.selectedFilters = {
+          marketSensingRefreshDate: marketSensingRefreshDate,
+          category:
+            selectedCategories === ALL_OPTION ? '*' : selectedCategories,
+          customer: selectedCustomers === ALL_OPTION ? '*' : selectedCustomers,
+          valueOrQuantity: selectedValueORvolume,
+        };
 
-      const response = await fetchMainDashboardData({
-        marketSensingRefreshDate: marketSensingRefreshDate,
-        categories:
-          selectedCategories === ALL_OPTION ? '*' : selectedCategories,
-        customers: selectedCustomers === ALL_OPTION ? '*' : selectedCustomers,
-        valueORvolume: selectedValueORvolume,
-      });
-
-      if (!_.isEmpty(response)) {
-        this.dataLoading = false;
-        this.dashboardData.periodsData = response;
-        _.forEach(this.dashboardData.periodsData, (v, i) => {
-          v.label = _.get(_.keys(v), '[0]');
-          v.metrics = _.get(v, `${v.label}.metrics`, {});
-          v.lag = _.get(v, `${v.label}.futureLagMonths`, '');
-          v.modelAccuracy = _.get(v, `${v.label}.modelAccuracy`, null);
-          delete v[v.label];
-
-          v.metrics.variance = _.round(
-            _.subtract(v.metrics.jdaGrowth, v.metrics.marketSensingGrowth),
-            0
-          );
-          v.isChecked = true;
-          v.isActive = i === 0;
+        const response = await fetchMainDashboardData({
+          marketSensingRefreshDate: marketSensingRefreshDate,
+          categories:
+            selectedCategories === ALL_OPTION ? '*' : selectedCategories,
+          customers: selectedCustomers === ALL_OPTION ? '*' : selectedCustomers,
+          valueORvolume: selectedValueORvolume,
         });
+
+        if (!_.isEmpty(response)) {
+          this.dashboardData.periodsData = response;
+          _.forEach(this.dashboardData.periodsData, (v, i) => {
+            v.label = _.get(_.keys(v), '[0]');
+            v.metrics = _.get(v, `${v.label}.metrics`, {});
+            v.lag = _.get(v, `${v.label}.futureLagMonths`, '');
+            v.modelAccuracy = _.get(v, `${v.label}.modelAccuracy`, null);
+            delete v[v.label];
+
+            v.metrics.variance = _.round(
+              _.subtract(v.metrics.jdaGrowth, v.metrics.marketSensingGrowth),
+              0
+            );
+            v.isChecked = true;
+            v.isActive = i === 0;
+          });
+        } else {
+          throw new Error('Unable to fetch data');
+        }
+      } catch (error) {
+        this.error = error;
       }
+      this.dataLoading = false;
     },
   },
 };
@@ -175,7 +183,7 @@ export default {
         :width="10"
       />
     </div>
-    <div class="tw-w-full tw-p-4 tw-bg-white" v-else>
+    <div class="tw-w-full tw-p-4 tw-bg-white" v-if="!dataLoading && !error">
       <div
         class="tw-flex tw-flex-col tw-w-full tw-border-b tw-border-solid tw-border-brand-gray-2"
       >
@@ -253,6 +261,9 @@ export default {
           />
         </div>
       </div>
+    </div>
+    <div v-if="!dataLoading && error">
+      <v-alert type="error" :text="error.toString()"></v-alert>
     </div>
   </div>
 </template>

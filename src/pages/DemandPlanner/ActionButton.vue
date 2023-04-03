@@ -6,6 +6,10 @@ export default {
       type: Number,
       required: true,
     },
+    isFetchingReviews: {
+      type: Boolean,
+      default: false,
+    },
     isReviewed: {
       type: Boolean,
       required: true,
@@ -13,6 +17,7 @@ export default {
   },
   methods: {
     getIcon(n) {
+      if (this.isFetchingReviews) return 'mdi-circle';
       if (this.isReviewed) return 'mdi-circle-outline';
       return Math.abs(n) >= 20 ? 'mdi-alert-circle' : 'mdi-circle';
     },
@@ -26,6 +31,8 @@ export default {
       return '#04BB46';
     },
     getActionButtonLabel(n) {
+      if (this.isFetchingReviews) return 'Loading...';
+
       if (this.isReviewed) return 'Reviewed';
 
       if (Math.abs(n) >= 20) {
@@ -47,6 +54,7 @@ export default {
     size="large"
     :color="getColorCode(variance)"
     :ripple="false"
+    :disabled="isFetchingReviews"
   >
     <v-icon
       :icon="getIcon(variance)"

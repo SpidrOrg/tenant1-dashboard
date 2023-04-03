@@ -2,11 +2,18 @@
 import _ from 'lodash';
 import { format as formatFn } from 'date-fns';
 import getReviews from '@/api/DemandPlanner/getReviews';
-import { MONTH_INDEX_MAP } from './constants';
+import addReview from '@/api/DemandPlanner/addReview';
+import { ACTION_STATUS_LABELS, MONTH_INDEX_MAP } from './constants';
 
 import ModelAccuracyChart from './ModelAccuracyChart.vue';
 import ActionButton from './ActionButton.vue';
 import ActionForm from './ActionForm.vue';
+
+const {
+  PENDING_ACTION,
+  REVIEWED_AND_ACTION_TAKEN,
+  REVIEWED_AND_ACTION_NOT_TAKEN,
+} = ACTION_STATUS_LABELS;
 
 export default {
   name: 'CardsListItem',
@@ -24,11 +31,18 @@ export default {
   },
   data() {
     return {
+      reviews: [],
       actionFormIsShown: false,
+      actionStatus: PENDING_ACTION,
       isReviewed: false,
+
       isFetchingReviews: true,
       getReviewsError: null,
-      reviews: [],
+
+      isSubmittingReview: false,
+      submitReviewError: null,
+      responseSubmitted: false,
+
       //
       lodSubtract: _.subtract,
       lodToNumber: _.toNumber,
@@ -90,10 +104,36 @@ export default {
       }
       return '#04BB46';
     },
-    reviewHandler() {
-      if (!this.isReviewed) {
-        this.isReviewed = true;
+    handleSuccessfulSubmission() {
+      this.responseSubmitted = true;
+      setTimeout(() => {
+        this.responseSubmitted = false;
+      }, 5000);
+
+      this.fetchReviews();
+    },
+    async submitHandler({ selectedAction, userResponse }) {
+      this.isSubmittingReview = true;
+      try {
+        await addReview({
+          userId: _.get(this.userData, 'userId'),
+          userDisplayName: _.get(this.userData, 'userDisplayName'),
+          action: selectedAction,
+          asOn: this.selectedFilters.marketSensingRefreshDate,
+          comment: userResponse,
+          periodStartDate: this.periodStartDate,
+          periodEndDate: this.periodEndDate,
+          customer: this.selectedFilters.customer,
+          category: this.selectedFilters.category,
+          byValueOrByVolume: this.selectedFilters.valueOrQuantity,
+          forecastPeriodType: 'r3m',
+        });
+
+        this.handleSuccessfulSubmission();
+      } catch (error) {
+        this.submitReviewError = error;
       }
+      this.isSubmittingReview = false;
     },
     async fetchReviews() {
       this.isFetchingReviews = true;
@@ -106,6 +146,16 @@ export default {
           periodStart: this.periodStartDate,
           periodEnd: this.periodEndDate,
         });
+
+        this.actionStatus = _.get(this.reviews, '[0].action');
+        if (
+          this.actionStatus === REVIEWED_AND_ACTION_TAKEN ||
+          this.actionStatus === REVIEWED_AND_ACTION_NOT_TAKEN
+        ) {
+          this.isReviewed = true;
+        } else {
+          this.isReviewed = false;
+        }
       } catch (e) {
         this.getReviewsError = e;
       }
@@ -266,13 +316,14 @@ export default {
       v-if="actionFormIsShown"
       :actionFormIsShown="actionFormIsShown"
       :variance="lodToNumber(lodGetNumeric(data, 'metrics.variance', false))"
-      :initialReviews="reviews"
-      :userData="userData"
-      :periodStartDate="periodStartDate"
-      :periodEndDate="periodEndDate"
-      :selectedFilters="selectedFilters"
+      :reviews="reviews"
+      :actionStatus="actionStatus"
+      :isFetching="isFetchingReviews"
+      :isSubmitting="isSubmittingReview"
+      :responseSubmitted="responseSubmitted"
       @close-form="hideFormHandler"
-      @reviewed="reviewHandler"
+      @fetch-reviews="fetchReviews"
+      @submit-review="submitHandler"
     />
   </div>
 </template>

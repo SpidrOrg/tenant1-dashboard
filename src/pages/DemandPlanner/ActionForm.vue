@@ -1,8 +1,6 @@
 <script>
 import _ from 'lodash';
 import { format as formatFn } from 'date-fns';
-import addReview from '@/api/DemandPlanner/addReview';
-import getReviews from '@/api/DemandPlanner/getReviews';
 import { ACTION_STATUS_LABELS } from './constants';
 
 const {
@@ -24,42 +22,37 @@ export default {
       type: Boolean,
       required: true,
     },
-    initialReviews: {
-      type: Array,
-      required: true,
-    },
     variance: {
       type: Number,
       required: true,
     },
-    userData: {
-      type: Object,
+    reviews: {
+      type: Array,
       required: true,
     },
-    selectedFilters: {
-      type: Object,
-      required: true,
-    },
-    periodStartDate: {
+    actionStatus: {
       type: String,
+      default: PENDING_ACTION,
+    },
+    isFetching: {
+      type: Boolean,
       required: true,
     },
-    periodEndDate: {
-      type: String,
+    isSubmitting: {
+      type: Boolean,
       required: true,
+    },
+    responseSubmitted: {
+      type: Boolean,
+      default: false,
     },
   },
-  emits: ['closeForm', 'reviewed'],
+  emits: ['closeForm', 'fetchReviews', 'submitReview'],
   data() {
     return {
-      isFetching: false,
-      isSubmitting: false,
-      error: null,
-      reviews: [],
-      actionStatus: PENDING_ACTION,
+      selectedAction: this.actionStatus,
       userResponse: null,
       ACTION_STATUS_LIST,
-      responseSubmitted: false,
       lodGet: _.get,
     };
   },
@@ -76,70 +69,23 @@ export default {
       }
       return 'No Action';
     },
-    updateActionStatus(label) {
-      this.actionStatus = label;
+    updateActionStatus(action) {
+      this.selectedAction = action;
     },
     isSubmitButtonDisabled() {
-      return !(this.userResponse && this.actionStatus) || this.isSubmitting;
-    },
-    async fetchReviews() {
-      this.isFetching = true;
-      try {
-        this.reviews = await getReviews({
-          refreshDate: this.selectedFilters.marketSensingRefreshDate,
-          customer: this.selectedFilters.customer,
-          category: this.selectedFilters.category,
-          valueOrQuantity: this.selectedFilters.valueOrQuantity,
-          periodStart: this.periodStartDate,
-          periodEnd: this.periodEndDate,
-        });
-      } catch (e) {
-        this.error = e;
-      }
-      this.isFetching = false;
-    },
-    handleSuccessfulSubmission() {
-      this.userResponse = null;
-      this.responseSubmitted = true;
-      setTimeout(() => {
-        this.responseSubmitted = false;
-      }, 5000);
-
-      if (
-        this.actionStatus === REVIEWED_AND_ACTION_TAKEN ||
-        this.actionStatus === REVIEWED_AND_ACTION_NOT_TAKEN
-      ) {
-        this.$emit('reviewed');
-      }
-
-      this.fetchReviews();
+      return (
+        !(this.userResponse && this.selectedAction) ||
+        this.isSubmitting ||
+        this.isFetching
+      );
     },
     async submitHandler() {
-      this.isSubmitting = true;
-      try {
-        await addReview({
-          userId: _.get(this.userData, 'userId'),
-          userDisplayName: _.get(this.userData, 'userDisplayName'),
-          action: this.actionStatus,
-          asOn: this.selectedFilters.marketSensingRefreshDate,
-          comment: this.userResponse,
-          periodStartDate: this.periodStartDate,
-          periodEndDate: this.periodEndDate,
-          customer: this.selectedFilters.customer,
-          category: this.selectedFilters.category,
-          byValueOrByVolume: this.selectedFilters.valueOrQuantity,
-          forecastPeriodType: 'r3m',
-        });
-
-        this.handleSuccessfulSubmission();
-      } catch (error) {
-        this.error = error;
-      }
-      this.isSubmitting = false;
+      this.$emit('submitReview', {
+        selectedAction: this.selectedAction,
+        userResponse: this.userResponse,
+      });
+      this.userResponse = null;
     },
-  },
-  created() {
-    this.reviews = this.initialReviews;
   },
 };
 </script>
@@ -199,7 +145,7 @@ export default {
             <label for="status">Recommended Action Status</label>
             <v-select
               id="status"
-              :model-value="actionStatus"
+              :model-value="selectedAction"
               :items="ACTION_STATUS_LIST"
               @update:modelValue="(value) => updateActionStatus(value)"
               density="comfortable"

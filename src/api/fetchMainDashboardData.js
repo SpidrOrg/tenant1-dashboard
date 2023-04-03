@@ -1,398 +1,311 @@
 import _ from "lodash";
 import apiBase from "@/api/getApiBase";
-const apiResp1 = [
+const apiRes = [
   {
     "Mar 23 - May 23": {
       "metrics": {
-        "marketSensingGrowth": "-29.51854395211874",
-        "jdaGrowth": "5.996592046170912",
-        "pyGrowth": "20.166481724361805",
-        "impliedGrowth": "-7.619208399793104",
-        "keyDemandDrivers": [{
-          "Stock Market": 33
-        }, {
-          "Inflation": 23
-        }, {
-          "Per capita disposable income": 17
-        }, {
-          "Pandemic": 9
-        }, {
-          "Consumer behaviour": 4
-        }, {
-          "Loans consumption": 3
-        }],
-        "historical": [{
-          "period": "May22 - Jul22",
-          "Market Sensing": 17,
-          "Internal": 25,
-          "Actual": 21
-        },{
-          "period": "Jun22 - Aug22",
-          "Market Sensing": 23,
-          "Internal": 12,
-          "Actual": 19
-        },{
-          "period": "Jul22 - Sep22",
-          "Market Sensing": 9,
-          "Internal": 36,
-          "Actual": 12
-        },{
-          "period": "Aug22 - Oct22",
-          "Market Sensing": 13,
-          "Internal": 31,
-          "Actual": 14
-        },{
-          "period": "Sep22 - Nov22",
-          "Market Sensing": 18,
-          "Internal": 36,
-          "Actual": 34
-        },{
-          "period": "Oct22 - Dec22",
-          "Market Sensing": 10,
-          "Internal": 32,
-          "Actual": 21
-        }]
-      },
-      "futureLagMonths": "1-3",
-      "modelAccuracy": "99"
-    }
-  },
-  {
-    "Jun 23 - Aug 23": {
-      "metrics": {
-        "marketSensingGrowth": "-19.51854395211874",
-        "jdaGrowth": "5.996592046170912",
-        "pyGrowth": "20.166481724361805",
-        "impliedGrowth": "-7.619208399793104",
-        "keyDemandDrivers": [{
-          "Stock Market": 44
-        }, {
-          "Inflation": 23
-        }, {
-          "Per capita disposable income": 17
-        }, {
-          "Pandemic": 9
-        }, {
-          "Consumer behaviour": 4
-        }, {
-          "Loans consumption": 3
-        }],
-        "historical": [{
-          "period": "May22 - Jul22",
-          "Market Sensing": 17,
-          "Internal": 25,
-          "Actual": 21
-        },{
-          "period": "Jun22 - Aug22",
-          "Market Sensing": 23,
-          "Internal": 12,
-          "Actual": 19
-        },{
-          "period": "Jul22 - Sep22",
-          "Market Sensing": 9,
-          "Internal": 36,
-          "Actual": 12
-        },{
-          "period": "Aug22 - Oct22",
-          "Market Sensing": 13,
-          "Internal": 31,
-          "Actual": 14
-        },{
-          "period": "Sep22 - Nov22",
-          "Market Sensing": 18,
-          "Internal": 36,
-          "Actual": 34
-        },{
-          "period": "Oct22 - Dec22",
-          "Market Sensing": 10,
-          "Internal": 32,
-          "Actual": 21
-        }]
-      },
-      "futureLagMonths": "4-6",
-      "modelAccuracy": "63"
-    }
-  },
-  {
-    "Sep 23 - Nov 23": {
-      "metrics": {
-        "marketSensingGrowth": "-19.51854395211874",
-        "jdaGrowth": "5.996592046170912",
-        "pyGrowth": "20.166481724361805",
-        "impliedGrowth": "-7.619208399793104",
-        "keyDemandDrivers": [{
-          "Stock Market": 44
-        }, {
-          "Inflation": 23
-        }, {
-          "Per capita disposable income": 17
-        }, {
-          "Pandemic": 9
-        }, {
-          "Consumer behaviour": 4
-        }, {
-          "Loans consumption": 3
-        }],
-        "historical": [{
-          "period": "May22 - Jul22",
-          "Market Sensing": 17,
-          "Internal": 25,
-          "Actual": 21
-        },{
-          "period": "Jun22 - Aug22",
-          "Market Sensing": 23,
-          "Internal": 12,
-          "Actual": 19
-        },{
-          "period": "Jul22 - Sep22",
-          "Market Sensing": 9,
-          "Internal": 36,
-          "Actual": 12
-        },{
-          "period": "Aug22 - Oct22",
-          "Market Sensing": 13,
-          "Internal": 31,
-          "Actual": 14
-        },{
-          "period": "Sep22 - Nov22",
-          "Market Sensing": 18,
-          "Internal": 36,
-          "Actual": 34
-        },{
-          "period": "Oct22 - Dec22",
-          "Market Sensing": 10,
-          "Internal": 32,
-          "Actual": 21
-        }]
-      },
-      "futureLagMonths": "7-9",
-      "modelAccuracy": "12"
-    }
-  }
-]
-const apiResp = [
-  {
-    "Mar 23 - May 23": {
-      "metrics": {
-        "marketSensingGrowth": null,
-        "jdaGrowth": null,
-        "pyGrowth": null,
-        "impliedGrowth": null,
+        "marketSensingGrowth": 19.94,
+        "jdaGrowth": -20.92,
+        "pyGrowth": 21.16,
+        "impliedGrowth": -20.13,
         "keyDemandDrivers": [
           {
-            "": 0
+            "12m_Prices, Producer Price Index, PPI: Intermediate Demand, Stage 3, Foods (Nov. 2009), NSA - United States": 77.99
+          },
+          {
+            "Prices, Producer Price Index, PPI: Intermediate Demand, Stage 3, Foods (Nov. 2009), NSA - United States": 18.84
+          },
+          {
+            "12m_Prices, Producer Price Index, PPI: Intermediate Demand, Stage 3, Foods (Nov. 2009), NSA - United States": 17.52
+          },
+          {
+            "12m_Prices, Producer Price Index, PPI: Commodity Data, Securities Brokerage and Dealing Related Services (Dec. 2008), NSA - United States": 16.86
+          },
+          {
+            "Prices, Producer Price Index, PPI: Commodity Data, Final Demand, Pork (1982), NSA - United States": 15.35
+          },
+          {
+            "12m_Prices, Producer Price Index, PPI: Commodity Data, Final Demand, Pork (1982), NSA - United States": 12.6
           }
         ],
         "historical": [
           {
             "period": "Jan 23 - Nov 22",
-            "Market Sensing": null,
-            "Internal": null,
-            "Actual": null
+            "Market Sensing": 11.51,
+            "Internal": -64.87,
+            "Actual": 36.59,
+            "Adjusted": -64.87
           },
           {
             "period": "Dec 22 - Oct 22",
-            "Market Sensing": null,
+            "Market Sensing": 16.51,
             "Internal": null,
-            "Actual": null
+            "Actual": 36.59,
+            "Adjusted": null
           },
           {
             "period": "Nov 22 - Sep 22",
-            "Market Sensing": null,
+            "Market Sensing": 31.14,
             "Internal": null,
-            "Actual": null
+            "Actual": null,
+            "Adjusted": null
           },
           {
             "period": "Oct 22 - Aug 22",
-            "Market Sensing": null,
+            "Market Sensing": 27.93,
             "Internal": null,
-            "Actual": null
+            "Actual": null,
+            "Adjusted": null
           },
           {
             "period": "Sep 22 - Jul 22",
-            "Market Sensing": null,
+            "Market Sensing": 26.41,
             "Internal": null,
-            "Actual": null
+            "Actual": null,
+            "Adjusted": null
           },
           {
             "period": "Aug 22 - Jun 22",
-            "Market Sensing": null,
-            "Internal": null,
-            "Actual": null
+            "Market Sensing": 19.64,
+            "Internal": -71.2,
+            "Actual": -37.71,
+            "Adjusted": -71.2
           }
         ]
       },
       "futureLagMonths": "1-3",
+      "modelAccuracy": "87"
+    }
+  },
+  {
+    "Jun 23 - Aug 23": {
+      "metrics": {
+        "marketSensingGrowth": 19.86,
+        "jdaGrowth": null,
+        "pyGrowth": 22.91,
+        "impliedGrowth": null,
+        "keyDemandDrivers": [
+          {
+            "12m_Prices, Producer Price Index, PPI: Industry Data, Rendering and Meat Byproduct Processing, Lard, Inedible Tallow and other Greases excluding Wool Grease (Dec. 1982), NSA - United States": 50.67
+          },
+          {
+            "Prices, Producer Price Index, PPI: Industry Data, All other Petroleum and Coal Products Manufacturing, Primary Products (Dec. 2003), NSA - United States": 27.38
+          },
+          {
+            "6m_Prices, Producer Price Index, PPI: Industry Data, Rendering and Meat Byproduct Processing, Lard, Inedible Tallow and other Greases excluding Wool Grease (Dec. 1982), NSA - United States": 22.87
+          },
+          {
+            "12m_Prices, Producer Price Index, PPI: Commodity Data, Residential Natural Gas (Dec. 1990), NSA - United States": 19.53
+          },
+          {
+            "6m_Prices, Producer Price Index, PPI: Commodity Data, Chemicals and Allied Products, Mixed Fertilizers (1982), NSA - United States": 19.24
+          },
+          {
+            "12m_Prices, Producer Price Index, PPI: Commodity Data, Final Demand, Residential Natural Gas (Dec. 1990), NSA - United States": 19.06
+          }
+        ],
+        "historical": [
+          {
+            "period": "Jan 23 - Nov 22",
+            "Market Sensing": 9.46,
+            "Internal": null,
+            "Actual": null,
+            "Adjusted": null
+          },
+          {
+            "period": "Dec 22 - Oct 22",
+            "Market Sensing": 14.5,
+            "Internal": null,
+            "Actual": null,
+            "Adjusted": null
+          },
+          {
+            "period": "Nov 22 - Sep 22",
+            "Market Sensing": 24.39,
+            "Internal": null,
+            "Actual": 36.59,
+            "Adjusted": null
+          },
+          {
+            "period": "Oct 22 - Aug 22",
+            "Market Sensing": 25.14,
+            "Internal": -51.03,
+            "Actual": 36.59,
+            "Adjusted": -51.03
+          },
+          {
+            "period": "Sep 22 - Jul 22",
+            "Market Sensing": 25.56,
+            "Internal": -77.1,
+            "Actual": 36.59,
+            "Adjusted": -77.1
+          },
+          {
+            "period": "Aug 22 - Jun 22",
+            "Market Sensing": 17.17,
+            "Internal": null,
+            "Actual": null,
+            "Adjusted": null
+          }
+        ]
+      },
+      "futureLagMonths": "4-6",
       "modelAccuracy": "95"
     }
   },
   {
-    "Jun 23 - Aug 23": {
-      "metrics": {
-        "marketSensingGrowth": null,
-        "jdaGrowth": null,
-        "pyGrowth": null,
-        "impliedGrowth": null,
-        "keyDemandDrivers": [
-          {
-            "": 0
-          }
-        ],
-        "historical": [
-          {
-            "period": "Jan 23 - Nov 22",
-            "Market Sensing": null,
-            "Internal": null,
-            "Actual": null
-          },
-          {
-            "period": "Dec 22 - Oct 22",
-            "Market Sensing": null,
-            "Internal": null,
-            "Actual": null
-          },
-          {
-            "period": "Nov 22 - Sep 22",
-            "Market Sensing": null,
-            "Internal": null,
-            "Actual": null
-          },
-          {
-            "period": "Oct 22 - Aug 22",
-            "Market Sensing": null,
-            "Internal": null,
-            "Actual": null
-          },
-          {
-            "period": "Sep 22 - Jul 22",
-            "Market Sensing": null,
-            "Internal": null,
-            "Actual": null
-          },
-          {
-            "period": "Aug 22 - Jun 22",
-            "Market Sensing": null,
-            "Internal": null,
-            "Actual": null
-          }
-        ]
-      },
-      "futureLagMonths": "4-6",
-      "modelAccuracy": "88"
-    }
-  },
-  {
     "Sep 23 - Nov 23": {
       "metrics": {
-        "marketSensingGrowth": null,
-        "jdaGrowth": null,
-        "pyGrowth": null,
-        "impliedGrowth": null,
+        "marketSensingGrowth": 31.16,
+        "jdaGrowth": -58.74,
+        "pyGrowth": 19.22,
+        "impliedGrowth": -34.51,
         "keyDemandDrivers": [
           {
-            "": 0
+            "6m_Prices, Producer Price Index, PPI: Industry Data, Soybean and other Oilseed Processing, Soybean Oil (Dec. 1979), NSA - United States": 29.84
+          },
+          {
+            "12m_Prices, Producer Price Index, PPI: Commodity Data, Semifinished Steel Mill Products (Jun. 1982), NSA - United States": 19.16
+          },
+          {
+            "6m_Prices, Consumer Price Index, CPI: All Urban Consumers, Medical Care (1982-84), NSA - United States": 17.1
+          },
+          {
+            "6m_Prices, Producer Price Index, PPI: Commodity Data, Asphalt and other Petroleum and Coal Products, N.E.C. (Dec. 1984), NSA - United States": 14.11
+          },
+          {
+            "12m_Prices, Producer Price Index, PPI: Industry Data, Natural Gas Distribution, Primary Products (Dec. 1990), NSA - United States": 12.79
+          },
+          {
+            "12m_Prices, Producer Price Index, PPI: Industry Data, Natural Gas Distribution, Primary Products (Dec. 1990), NSA - United States": 11.64
           }
         ],
         "historical": [
           {
             "period": "Jan 23 - Nov 22",
-            "Market Sensing": null,
-            "Internal": null,
-            "Actual": null
+            "Market Sensing": 20.24,
+            "Internal": -91,
+            "Actual": null,
+            "Adjusted": -91
           },
           {
             "period": "Dec 22 - Oct 22",
-            "Market Sensing": null,
+            "Market Sensing": 18.36,
             "Internal": null,
-            "Actual": null
+            "Actual": null,
+            "Adjusted": null
           },
           {
             "period": "Nov 22 - Sep 22",
-            "Market Sensing": null,
+            "Market Sensing": 38.41,
             "Internal": null,
-            "Actual": null
+            "Actual": null,
+            "Adjusted": null
           },
           {
             "period": "Oct 22 - Aug 22",
-            "Market Sensing": null,
+            "Market Sensing": 30.13,
             "Internal": null,
-            "Actual": null
+            "Actual": null,
+            "Adjusted": null
           },
           {
             "period": "Sep 22 - Jul 22",
-            "Market Sensing": null,
+            "Market Sensing": 32.48,
             "Internal": null,
-            "Actual": null
+            "Actual": null,
+            "Adjusted": null
           },
           {
             "period": "Aug 22 - Jun 22",
-            "Market Sensing": null,
-            "Internal": null,
-            "Actual": null
+            "Market Sensing": 13.45,
+            "Internal": -20.92,
+            "Actual": 36.59,
+            "Adjusted": -20.92
           }
         ]
       },
       "futureLagMonths": "7-9",
-      "modelAccuracy": "92"
+      "modelAccuracy": "95"
     }
   },
   {
     "Dec 23 - Feb 24": {
       "metrics": {
-        "marketSensingGrowth": null,
+        "marketSensingGrowth": 33.47,
         "jdaGrowth": null,
-        "pyGrowth": null,
+        "pyGrowth": 22.55,
         "impliedGrowth": null,
         "keyDemandDrivers": [
           {
-            "": 0
+            "12m_Prices, Producer Price Index, PPI: Commodity Data, Fuels and Related Products and Power, Gas Fuels (1982), NSA - United States": 43.05
+          },
+          {
+            "12m_Prices, Producer Price Index, PPI: Industry Data, Natural Gas Distribution, Natural Gas to Ultimate Consumers (Dec. 1990), NSA - United States": 37.08
+          },
+          {
+            "Prices, Producer Price Index, PPI: Industry Data, Material Recyclers, Primary Products (Dec. 1986), NSA - United States": 35.23
+          },
+          {
+            "12m_Prices, Producer Price Index, PPI: Commodity Data, Fuels and Related Products and Power, Gas Fuels (1982), NSA - United States": 34.85
+          },
+          {
+            "6m_Prices, Producer Price Index, PPI: Industry Data, Natural Gas Liquids Extraction, Residue Gas Shipped from Natural Gas Liquids Plants (Jun. 1984), NSA - United States": 20.81
+          },
+          {
+            "12m_Prices, Producer Price Index, PPI: Industry Data, Natural Gas Distribution, Primary Products (Dec. 1990), NSA - United States": 19.53
           }
         ],
         "historical": [
           {
             "period": "Jan 23 - Nov 22",
-            "Market Sensing": null,
+            "Market Sensing": 15.29,
             "Internal": null,
-            "Actual": null
+            "Actual": null,
+            "Adjusted": null
           },
           {
             "period": "Dec 22 - Oct 22",
-            "Market Sensing": null,
+            "Market Sensing": 15.2,
             "Internal": null,
-            "Actual": null
+            "Actual": null,
+            "Adjusted": null
           },
           {
             "period": "Nov 22 - Sep 22",
-            "Market Sensing": null,
+            "Market Sensing": 34,
             "Internal": null,
-            "Actual": null
+            "Actual": null,
+            "Adjusted": null
           },
           {
             "period": "Oct 22 - Aug 22",
-            "Market Sensing": null,
-            "Internal": null,
-            "Actual": null
+            "Market Sensing": 35.56,
+            "Internal": -68.33,
+            "Actual": null,
+            "Adjusted": -68.33
           },
           {
             "period": "Sep 22 - Jul 22",
-            "Market Sensing": null,
-            "Internal": null,
-            "Actual": null
+            "Market Sensing": 37.19,
+            "Internal": -89.45,
+            "Actual": null,
+            "Adjusted": -89.45
           },
           {
             "period": "Aug 22 - Jun 22",
-            "Market Sensing": null,
+            "Market Sensing": 12.16,
             "Internal": null,
-            "Actual": null
+            "Actual": null,
+            "Adjusted": null
           }
         ]
       },
       "futureLagMonths": "10-12",
-      "modelAccuracy": "92"
+      "modelAccuracy": "93"
     }
   }
 ]
-
 export default async function (
   {
     marketSensingRefreshDate,
@@ -409,10 +322,10 @@ export default async function (
 
   // const data = await new Promise((res)=>{
   //   setTimeout(()=>{
-  //     res({result: apiResp})
+  //     res({result: apiRes})
   //   }, 100)
   // })
-  let dataForUi = _.get(data, "result", {})
+  let dataForUi = _.clone(_.get(data, "result", {}))
   _.forEach(dataForUi, v => {
     const periodData = _.get(_.values(v), "[0]");
     periodData.modelAccuracy = _.toNumber(periodData.modelAccuracy);

@@ -148,6 +148,7 @@ export default {
           throw new Error('Unable to fetch data');
         }
       } catch (error) {
+        console.error(error);
         this.error = error;
       }
       this.dataLoading = false;

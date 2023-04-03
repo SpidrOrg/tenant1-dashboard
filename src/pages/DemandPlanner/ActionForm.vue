@@ -87,7 +87,7 @@ export default {
       try {
         this.reviews = await getReviews({
           refreshDate: this.selectedFilters.marketSensingRefreshDate,
-          customer: this.selectedFilters.customer.replaceAll("'", "\\'"),
+          customer: this.selectedFilters.customer,
           category: this.selectedFilters.category,
           valueOrQuantity: this.selectedFilters.valueOrQuantity,
           periodStart: this.periodStartDate,

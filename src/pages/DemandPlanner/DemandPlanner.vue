@@ -1,5 +1,6 @@
 <script>
 import _ from 'lodash';
+import { format as formatFn } from 'date-fns';
 import EyeIcon from '@/images/eye-icon.svg';
 import EyeOffIcon from '@/images/eye-off-icon.svg';
 import FiltersSection, {
@@ -34,6 +35,8 @@ export default {
         customer: '',
         valueORvolume: null,
       },
+      latestRefreshDate: null,
+      selectedRefreshDate: null,
       isModelAccuracyHidden: false,
 
       //
@@ -69,6 +72,9 @@ export default {
     },
   },
   methods: {
+    latestRefreshDateUpdateHandler(dateObj) {
+      this.latestRefreshDate = formatFn(dateObj, 'MMM dd, yyyy');
+    },
     isCheckDisabled(isChecked) {
       return (
         isChecked &&
@@ -111,6 +117,8 @@ export default {
         )
           .toISOString()
           .split('T')[0];
+
+        this.selectedRefreshDate = formatFn(jsDateRefreshDate, 'MMM yyyy');
 
         this.selectedFilters = {
           marketSensingRefreshDate: marketSensingRefreshDate,
@@ -160,18 +168,25 @@ export default {
 <template>
   <div class="tw-h-full tw-w-full tw-bg-brand-gray-1">
     <div class="tw-flex tw-w-full tw-h-8 tw-bg-brand-gray-1">
-      <div class="tw-flex tw-h-full tw-items-center tw-font-bold tw-text-lg">
-        Demand Planner Dashboard as of Feb 2023
-      </div>
-      <div class="tw-ml-auto tw-h-full tw-flex tw-items-center">
-        Last refreshed on 01 Jan 2023
+      <h1 class="tw-flex tw-h-full tw-items-center tw-font-bold tw-text-lg">
+        Demand Planner Dashboard
+        {{ selectedRefreshDate ? `as of ${selectedRefreshDate}` : '' }}
+      </h1>
+      <div
+        class="tw-ml-auto tw-h-full tw-flex tw-items-center"
+        v-if="latestRefreshDate"
+      >
+        Last refreshed on {{ latestRefreshDate }}
       </div>
     </div>
     <div
       class="tw-flex tw-w-full tw-flex-auto tw-border-t tw-border-solid tw-border-brand-gray-2"
     />
     <div class="tw-py-5">
-      <FiltersSection @update-filters="debounceUpdateFilters" />
+      <FiltersSection
+        @update-filters="debounceUpdateFilters"
+        @latestRefreshDateUpdate="latestRefreshDateUpdateHandler"
+      />
     </div>
     <div
       class="tw-w-full tw-h-3/4 tw-flex tw-justify-center tw-items-center"

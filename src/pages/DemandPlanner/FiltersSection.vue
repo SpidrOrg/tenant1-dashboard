@@ -62,6 +62,7 @@ export default {
     const earliestRefreshDate = new Date(
       _.first(this.filters.refreshDates.items)
     );
+    this.updateLatestRefreshDate(earliestRefreshDate);
     this.refreshDateUpdated({
       month: earliestRefreshDate.getMonth(),
       year: earliestRefreshDate.getFullYear(),
@@ -71,9 +72,12 @@ export default {
     this.dataLoaded = true;
   },
 
-  emits: ['updateFilters'],
+  emits: ['updateFilters', 'latestRefreshDateUpdate'],
 
   methods: {
+    updateLatestRefreshDate(dateObj) {
+      this.$emit('latestRefreshDateUpdate', dateObj);
+    },
     selectFilterUpdated(filterName, currentSelection) {
       this.filters[filterName].selected = currentSelection;
       this.filtersUpdated();

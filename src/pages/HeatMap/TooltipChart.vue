@@ -1,7 +1,7 @@
 <script>
 import _ from 'lodash';
 import GoogleChart from '@/components/GoogleChart';
-import fetchDemandForecastData from '@/api/fetchDemandForecastData';
+import fetchDemandForecastData from '@/api/HeatMap/fetchDemandForecastData';
 
 const DATA_CONFIG = [
   {

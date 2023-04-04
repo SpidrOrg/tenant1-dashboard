@@ -1,6 +1,6 @@
 <script>
 import _ from 'lodash';
-import fetchHeatMapData from '@/api/fetchHeatMapData';
+import fetchHeatMapData from '@/api/HeatMap/fetchHeatMapData';
 import FiltersSection from '@/pages/HeatMap/FiltersSection.vue';
 import CardsList from '@/pages/HeatMap/CardsList.vue';
 export default {
@@ -57,10 +57,10 @@ export default {
   <div class="tw-h-full tw-w-full tw-px-4 tw-pt-2 tw-pb-10 tw-bg-brand-gray-1">
     <div class="tw-flex tw-w-full tw-h-8 tw-bg-brand-gray-1">
       <div class="tw-flex tw-h-full tw-items-center">
-        <h1 class="tw-font-bold tw-text-lg">Heat-map View -&nbsp;</h1>
-        <h2 class="tw-text-lg">
+        <h1 class="tw-text-lg">
+          <span class="tw-font-bold">Heat-map View -</span>
           Representation of variance across categories and stores
-        </h2>
+        </h1>
       </div>
       <div class="tw-ml-auto tw-h-full tw-flex tw-items-center">
         Last refreshed on 01 Jan 2023

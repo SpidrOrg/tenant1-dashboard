@@ -1,4 +1,4 @@
-import getApiBase from './getApiBase';
+import getApiBase from '../getApiBase';
 
 let cachedData = [
   ['Jun 22 - Aug 22', 12, 33, 44],

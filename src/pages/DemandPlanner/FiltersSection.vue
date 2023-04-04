@@ -1,6 +1,6 @@
 <script>
 import _ from 'lodash';
-import fetchMainDashboardOptions from '@/api/fetchMainDashboardOptions';
+import fetchMainDashboardOptions from '@/api/DemandPlanner/fetchMainDashboardOptions';
 
 const BY_VALUE = 'BY_VALUE';
 const BY_QUANTITY = 'BY_QUANTITY';

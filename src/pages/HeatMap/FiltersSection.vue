@@ -1,6 +1,6 @@
 <script>
 import _ from 'lodash';
-import fetchHeatMapOptions from '@/api/fetchHeatMapOptions';
+import fetchHeatMapOptions from '@/api/HeatMap/fetchHeatMapOptions';
 
 import InfoIcon from '@/images/info-icon.svg';
 import HeatMapScaleIcon from '@/images/heatmap-scale.svg';

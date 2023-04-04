@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import getApiBase from './getApiBase';
+import getApiBase from '../getApiBase';
 
 // let cachedData = [
 //   {
@@ -80,7 +80,12 @@ import getApiBase from './getApiBase';
 //   },
 // ];
 let cachedData;
-export default async function ({ marketSensingRefreshDate, valueORvolume, customers, categories }) {
+export default async function ({
+  marketSensingRefreshDate,
+  valueORvolume,
+  customers,
+  categories,
+}) {
   if (cachedData) {
     return await new Promise((res) => {
       setTimeout(() => {
@@ -91,22 +96,22 @@ export default async function ({ marketSensingRefreshDate, valueORvolume, custom
   const data = await getApiBase('heatmapdashboard', {
     marketSensingRefreshDate,
     valueORvolume,
-    customers: _.join(customers, ","),
-    categories: _.join(categories, ",")
+    customers: _.join(customers, ','),
+    categories: _.join(categories, ','),
   });
 
-  let dataForUi = _.get(data, "result", {});
-  dataForUi = _.map(dataForUi, v => {
-    const records = _.map(_.get(v, "records"), record => {
+  let dataForUi = _.get(data, 'result', {});
+  dataForUi = _.map(dataForUi, (v) => {
+    const records = _.map(_.get(v, 'records'), (record) => {
       return _.map(record, (r, i) => {
         if (i === 0) return r;
-        return _.isNaN(_.toNumber(r)) ? 0 : _.round(_.toNumber(r), 0)
+        return _.isNaN(_.toNumber(r)) ? 0 : _.round(_.toNumber(r), 0);
       });
     });
     return {
       ...v,
-      records
-    }
-  })
+      records,
+    };
+  });
   return dataForUi;
 }

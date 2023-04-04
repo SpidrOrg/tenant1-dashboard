@@ -6,7 +6,7 @@ import FiltersSection, {
   ALL_OPTION,
 } from '@/pages/DemandPlanner/FiltersSection.vue';
 import CardsList from './CardsList.vue';
-import fetchMainDashboardData from '@/api/fetchMainDashboardData';
+import fetchMainDashboardData from '@/api/DemandPlanner/fetchMainDashboardData';
 import ChartsSection from '@/pages/DemandPlanner/ChartsSection/ChartsSection.vue';
 
 export default {

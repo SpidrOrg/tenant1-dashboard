@@ -1,9 +1,9 @@
 <script>
 import _ from 'lodash';
-import { format as formatFn } from 'date-fns';
+import { getPeriodStartDate, getPeriodEndDate } from '@/utils/dateHelpers';
 import getReviews from '@/api/DemandPlanner/getReviews';
 import addReview from '@/api/DemandPlanner/addReview';
-import { ACTION_STATUS_LABELS, MONTH_INDEX_MAP } from './constants';
+import { ACTION_STATUS_LABELS } from './constants';
 
 import ModelAccuracyChart from './ModelAccuracyChart.vue';
 import ActionButton from './ActionButton.vue';
@@ -54,25 +54,13 @@ export default {
       return _.get(this.options, 'userData');
     },
     period() {
-      return _.get(this.data, 'label');
+      return _.get(this.data, 'period');
     },
     periodStartDate() {
-      const [month, yearShortForm] = this.period
-        .split('-')[0]
-        .trim()
-        .split(' ');
-      const numericYear = _.toNumber(`20${yearShortForm}`);
-      const monthIndex = MONTH_INDEX_MAP[month];
-      return formatFn(new Date(numericYear, monthIndex), 'yyyy-MM-dd');
+      return getPeriodStartDate(this.period);
     },
     periodEndDate() {
-      const [month, yearShortForm] = this.period
-        .split('-')[1]
-        .trim()
-        .split(' ');
-      const numericYear = _.toNumber(`20${yearShortForm}`);
-      const monthIndex = MONTH_INDEX_MAP[month];
-      return formatFn(new Date(numericYear, monthIndex), 'yyyy-MM-dd');
+      return getPeriodEndDate(this.period);
     },
     variance() {
       return _.toNumber(
@@ -84,6 +72,10 @@ export default {
     },
   },
   methods: {
+    getPeriodLabel() {
+      const label = _.get(this.data, 'label');
+      return label === this.period ? label : `${label}, ${this.period}`;
+    },
     showFormHandler() {
       this.actionFormIsShown = true;
     },
@@ -176,8 +168,8 @@ export default {
     <div class="tw-flex tw-flex-col tw-py-2">
       <p style="color: #9291a5">Projected Period</p>
       <div class="tw-flex tw-gap-x-4 tw-items-center tw-w-full">
-        <p class="tw-text-lg tw-font-medium">{{ period }}</p>
-        <div class="tw-bg-brand-gray-4 tw-rounded">
+        <p class="tw-text-lg tw-font-medium">{{ getPeriodLabel() }}</p>
+        <div class="tw-bg-brand-gray-4 tw-rounded tw-text-center">
           <p class="tw-p-1 tw-text-sm">Future {{ data.lag }} months</p>
         </div>
       </div>

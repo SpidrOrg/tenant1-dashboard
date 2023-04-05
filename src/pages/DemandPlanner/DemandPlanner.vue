@@ -1,6 +1,7 @@
 <script>
 import _ from 'lodash';
 import { format as formatFn } from 'date-fns';
+import { getQuarterLabel } from '@/utils/dateHelpers';
 import EyeIcon from '@/images/eye-icon.svg';
 import EyeOffIcon from '@/images/eye-off-icon.svg';
 import { FORECAST_PERIOD_TYPES } from './constants';
@@ -93,6 +94,10 @@ export default {
     latestRefreshDateUpdateHandler(dateObj) {
       this.latestRefreshDate = formatFn(dateObj, 'MMM dd, yyyy');
     },
+    getPeriodDataLabel(period) {
+      if (this.forecastPeriodType === R3M_VIEW) return period;
+      return getQuarterLabel(period);
+    },
     isCheckDisabled(isChecked) {
       return (
         isChecked &&
@@ -127,11 +132,12 @@ export default {
         if (!_.isEmpty(response)) {
           this.dashboardData.periodsData = response;
           _.forEach(this.dashboardData.periodsData, (v, i) => {
-            v.label = _.get(_.keys(v), '[0]');
-            v.metrics = _.get(v, `${v.label}.metrics`, {});
-            v.lag = _.get(v, `${v.label}.futureLagMonths`, '');
-            v.modelAccuracy = _.get(v, `${v.label}.modelAccuracy`, null);
-            delete v[v.label];
+            v.period = _.get(_.keys(v), '[0]');
+            v.label = this.getPeriodDataLabel(v.period);
+            v.metrics = _.get(v, `${v.period}.metrics`, {});
+            v.lag = _.get(v, `${v.period}.futureLagMonths`, '');
+            v.modelAccuracy = _.get(v, `${v.period}.modelAccuracy`, null);
+            delete v[v.period];
 
             v.metrics.variance = _.round(
               _.subtract(v.metrics.jdaGrowth, v.metrics.marketSensingGrowth),
@@ -289,23 +295,11 @@ export default {
           }"
         />
       </div>
-      <div class="tw-p-4" style="border: 1px solid #7823dc">
-        <div class="tw-flex tw-gap-x-4 tw-items-center tw-w-full tw-py-2">
-          <p class="tw-font-medium tw-text-2xl">
-            More details for {{ activePeriodData.label }}
-          </p>
-          <div class="tw-bg-brand-gray-4 tw-rounded">
-            <p class="tw-p-1 tw-text-sm">
-              Future {{ activePeriodData.lag }} months
-            </p>
-          </div>
-        </div>
-        <div class="tw-py-3 tw-w-full" v-if="activePeriodData">
-          <ChartsSection
-            :data="activePeriodData.metrics"
-            :projectedPeriod="activePeriodData.label"
-          />
-        </div>
+      <div class="tw-p-4 tw-border tw-border-solid tw-border-brand-primary">
+        <ChartsSection
+          v-if="activePeriodData"
+          :activePeriodData="activePeriodData"
+        />
       </div>
     </div>
     <div v-if="!dataLoading && error">

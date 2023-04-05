@@ -325,7 +325,7 @@ export default async function (
   //     res({result: apiRes})
   //   }, 100)
   // })
-  let dataForUi = _.clone(_.get(data, "result", {}))
+  let dataForUi = _.get(data, "result", {})
   _.forEach(dataForUi, v => {
     const periodData = _.get(_.values(v), "[0]");
     periodData.modelAccuracy = _.toNumber(periodData.modelAccuracy);

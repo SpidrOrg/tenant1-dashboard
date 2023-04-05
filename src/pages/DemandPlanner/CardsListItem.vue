@@ -38,14 +38,9 @@ export default {
 
       isFetchingReviews: true,
       getReviewsError: null,
-
       isSubmittingReview: false,
       submitReviewError: null,
       responseSubmitted: false,
-
-      //
-      lodSubtract: _.subtract,
-      lodToNumber: _.toNumber,
     };
   },
   computed: {
@@ -78,6 +73,14 @@ export default {
       const numericYear = _.toNumber(`20${yearShortForm}`);
       const monthIndex = MONTH_INDEX_MAP[month];
       return formatFn(new Date(numericYear, monthIndex), 'yyyy-MM-dd');
+    },
+    variance() {
+      return _.toNumber(
+        this.lodGetNumeric(this.data, 'metrics.variance', false)
+      );
+    },
+    modelAccuracy() {
+      return _.toNumber(this.lodGetNumeric(this.data, 'modelAccuracy', false));
     },
   },
   methods: {
@@ -126,7 +129,7 @@ export default {
           customer: this.selectedFilters.customer,
           category: this.selectedFilters.category,
           byValueOrByVolume: this.selectedFilters.valueOrQuantity,
-          forecastPeriodType: 'r3m',
+          forecastPeriodType: this.options.forecastPeriodType,
         });
 
         this.handleSuccessfulSubmission();
@@ -182,7 +185,7 @@ export default {
     <div class="tw-w-full tw-border-t tw-border-solid tw-border-brand-gray-2" />
     <div
       :class="`tw-grid tw-py-2 ${
-        isModelAccuracyHidden ? 'tw-grid-cols-3' : 'tw-grid-cols-5 '
+        isModelAccuracyHidden ? 'tw-grid-cols-3' : 'tw-grid-cols-5'
       }`"
     >
       <div class="tw-col-span-3">
@@ -262,11 +265,7 @@ export default {
             </p>
           </div>
         </v-menu>
-        <ModelAccuracyChart
-          :modelAccuracy="
-            lodToNumber(lodGetNumeric(data, 'modelAccuracy', false))
-          "
-        />
+        <ModelAccuracyChart :modelAccuracy="modelAccuracy" />
       </div>
     </div>
     <div
@@ -277,11 +276,7 @@ export default {
           <div v-bind="props" class="tw-flex tw-flex-col tw-items-center">
             <span
               class="tw-text-4xl tw-font-semibold"
-              :style="{
-                color: getColorCode(
-                  lodGetNumeric(data, 'metrics.variance', false)
-                ),
-              }"
+              :style="{ color: getColorCode(variance) }"
             >
               {{ `${lodGetNumeric(data, 'metrics.variance')}` }}
             </span>
@@ -289,23 +284,19 @@ export default {
           </div>
         </template>
         <div
-          class="tw-w-80 tw-h-14 tw-p-2 tw-bg-white tw-border tw-rounded tw-border-[#D9D9D9] tw-shadow-2xl"
+          class="tw-w-80 tw-h-20 tw-p-2 tw-bg-white tw-border tw-rounded tw-border-[#D9D9D9] tw-shadow-2xl"
         >
           <p class="tw-text-sm tw-text-center">
             {{
-              `The difference between market sensing and the internal forecast results in a ${lodGetNumeric(
-                data,
-                'metrics.variance'
-              )} variance.`
+              `The difference between market sensing and the internal forecast results in a 
+              ${lodGetNumeric(data, 'metrics.variance')} variance.`
             }}
           </p>
         </div>
       </v-menu>
       <div>
         <ActionButton
-          :variance="
-            lodToNumber(lodGetNumeric(data, 'metrics.variance', false))
-          "
+          :variance="variance"
           :isReviewed="isReviewed"
           :isFetchingReviews="isFetchingReviews"
           @click="showFormHandler"
@@ -315,7 +306,7 @@ export default {
     <ActionForm
       v-if="actionFormIsShown"
       :actionFormIsShown="actionFormIsShown"
-      :variance="lodToNumber(lodGetNumeric(data, 'metrics.variance', false))"
+      :variance="variance"
       :reviews="reviews"
       :actionStatus="actionStatus"
       :isFetching="isFetchingReviews"

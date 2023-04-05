@@ -3,12 +3,17 @@ import _ from 'lodash';
 import { format as formatFn } from 'date-fns';
 import EyeIcon from '@/images/eye-icon.svg';
 import EyeOffIcon from '@/images/eye-off-icon.svg';
+import { FORECAST_PERIOD_TYPES } from './constants';
+import fetchR3MData from '@/api/DemandPlanner/fetchR3MData';
+import fetchQuarterlyData from '@/api/DemandPlanner/fetchQuarterlyData';
+
 import FiltersSection, {
   ALL_OPTION,
 } from '@/pages/DemandPlanner/FiltersSection.vue';
 import CardsList from './CardsList.vue';
-import fetchMainDashboardData from '@/api/DemandPlanner/fetchMainDashboardData';
 import ChartsSection from '@/pages/DemandPlanner/ChartsSection/ChartsSection.vue';
+
+const { R3M_VIEW, QUARTERLY_VIEW } = FORECAST_PERIOD_TYPES;
 
 export default {
   name: 'DemandPlanner',
@@ -38,8 +43,9 @@ export default {
       latestRefreshDate: null,
       selectedRefreshDate: null,
       isModelAccuracyHidden: false,
+      forecastPeriodType: R3M_VIEW,
 
-      //
+      R3M_VIEW,
       EyeIcon,
       EyeOffIcon,
       lodGet: _.get,
@@ -70,8 +76,20 @@ export default {
       }
       return userDisplayName;
     },
+    fetchApi() {
+      if (this.forecastPeriodType === QUARTERLY_VIEW) {
+        return fetchQuarterlyData;
+      }
+      return fetchR3MData;
+    },
   },
   methods: {
+    toggleForecastPeriodType() {
+      this.forecastPeriodType =
+        this.forecastPeriodType === R3M_VIEW ? QUARTERLY_VIEW : R3M_VIEW;
+
+      this.fetchDashboardData();
+    },
     latestRefreshDateUpdateHandler(dateObj) {
       this.latestRefreshDate = formatFn(dateObj, 'MMM dd, yyyy');
     },
@@ -95,45 +113,15 @@ export default {
         );
       });
     },
-    async updateFilters(filtersData) {
+    async fetchDashboardData() {
       this.dataLoading = true;
-      const selectedMarketSensingRefreshDate = _.get(
-        filtersData,
-        'refreshDates.selected'
-      );
-      const selectedCategories = _.get(filtersData, 'categories.selected');
-      const selectedCustomers = _.get(filtersData, 'customers.selected');
-      const selectedValueORvolume = _.get(filtersData, 'valueOrQuantity');
-
       try {
-        const jsDateRefreshDate = new Date(
-          selectedMarketSensingRefreshDate.year,
-          selectedMarketSensingRefreshDate.month
-        );
-
-        const marketSensingRefreshDate = new Date(
-          jsDateRefreshDate.getTime() -
-            jsDateRefreshDate.getTimezoneOffset() * 60000
-        )
-          .toISOString()
-          .split('T')[0];
-
-        this.selectedRefreshDate = formatFn(jsDateRefreshDate, 'MMM yyyy');
-
-        this.selectedFilters = {
-          marketSensingRefreshDate: marketSensingRefreshDate,
-          category:
-            selectedCategories === ALL_OPTION ? '*' : selectedCategories,
-          customer: selectedCustomers === ALL_OPTION ? '*' : selectedCustomers,
-          valueOrQuantity: selectedValueORvolume,
-        };
-
-        const response = await fetchMainDashboardData({
-          marketSensingRefreshDate: marketSensingRefreshDate,
-          categories:
-            selectedCategories === ALL_OPTION ? '*' : selectedCategories,
-          customers: selectedCustomers === ALL_OPTION ? '*' : selectedCustomers,
-          valueORvolume: selectedValueORvolume,
+        const response = await this.fetchApi({
+          marketSensingRefreshDate:
+            this.selectedFilters.marketSensingRefreshDate,
+          categories: this.selectedFilters.category,
+          customers: this.selectedFilters.customer,
+          valueORvolume: this.selectedFilters.valueOrQuantity,
         });
 
         if (!_.isEmpty(response)) {
@@ -155,11 +143,45 @@ export default {
         } else {
           throw new Error('Unable to fetch data');
         }
-      } catch (error) {
-        console.error(error);
-        this.error = error;
+      } catch (e) {
+        this.error = e;
       }
       this.dataLoading = false;
+    },
+    async updateFilters(filtersData) {
+      const selectedMarketSensingRefreshDate = _.get(
+        filtersData,
+        'refreshDates.selected'
+      );
+      const selectedCategories = _.get(filtersData, 'categories.selected');
+      const selectedCustomers = _.get(filtersData, 'customers.selected');
+      const selectedValueORvolume = _.get(filtersData, 'valueOrQuantity');
+
+      try {
+        const jsDateRefreshDate = new Date(
+          selectedMarketSensingRefreshDate.year,
+          selectedMarketSensingRefreshDate.month
+        );
+        const marketSensingRefreshDate = new Date(
+          jsDateRefreshDate.getTime() -
+            jsDateRefreshDate.getTimezoneOffset() * 60000
+        )
+          .toISOString()
+          .split('T')[0];
+
+        this.selectedRefreshDate = formatFn(jsDateRefreshDate, 'MMM yyyy');
+
+        this.selectedFilters = {
+          marketSensingRefreshDate: marketSensingRefreshDate,
+          category: selectedCategories,
+          customer: selectedCustomers === ALL_OPTION ? '*' : selectedCustomers,
+          valueOrQuantity: selectedValueORvolume,
+        };
+
+        this.fetchDashboardData();
+      } catch (e) {
+        this.error = e;
+      }
     },
   },
 };
@@ -224,27 +246,34 @@ export default {
           </div>
           <div class="tw-flex tw-gap-x-3 tw-ml-auto">
             <button
-              class="tw-px-2 tw-py-1.5"
-              style="border: 1px solid #7823dc"
+              class="tw-px-2 tw-py-1.5 tw-border tw-border-solid tw-border-brand-primary"
               @click="isModelAccuracyHidden = !isModelAccuracyHidden"
             >
               <div class="tw-flex tw-gap-x-2">
                 <img :src="isModelAccuracyHidden ? EyeIcon : EyeOffIcon" />
-                <span class="tw-text-sm"
-                  >{{ isModelAccuracyHidden ? 'Show' : 'Hide' }} Model
-                  Accuracy</span
-                >
+                <span class="tw-text-sm">
+                  {{ isModelAccuracyHidden ? 'Show' : 'Hide' }} Model Accuracy
+                </span>
               </div>
             </button>
-            <button class="tw-px-3 tw-py-1.5" style="background: #7823dc">
-              <span class="tw-text-white tw-text-sm"
-                >Switch to Fixed/Quarterly View</span
-              >
+            <button
+              class="tw-px-3 tw-py-1.5 tw-bg-brand-primary"
+              @click="toggleForecastPeriodType"
+              :disabled="dataLoading"
+            >
+              <span class="tw-text-white tw-text-sm">
+                Switch to
+                {{
+                  forecastPeriodType === R3M_VIEW
+                    ? 'Fixed/Quarterly'
+                    : 'Rolling 3 Months'
+                }}
+                View
+              </span>
             </button>
           </div>
         </div>
       </div>
-
       <div
         class="tw-flex tw-justify-center tw-gap-2.5 tw-w-full tw-py-5"
         v-if="lodGet(dashboardData, 'periodsData.length')"
@@ -256,6 +285,7 @@ export default {
             isModelAccuracyHidden,
             selectedFilters,
             userData: { userId, userDisplayName },
+            forecastPeriodType,
           }"
         />
       </div>

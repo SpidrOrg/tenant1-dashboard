@@ -26,7 +26,7 @@ export default {
           selected: null,
           filterlabel: 'Customers',
         },
-        valueOrQuantity: BY_VALUE,
+        valueOrQuantity: BY_QUANTITY,
       },
       currency: 'USD',
       dataLoaded: false,
@@ -47,11 +47,7 @@ export default {
       this.filters.refreshDates.items = options.marketSensingRefreshDates;
     }
 
-    // Add all option to the categories and customers filters
-    this.filters.categories.items = _.concat(
-      ALL_OPTION,
-      this.filters.categories.items
-    );
+    // Add all option to the customers filters
     this.filters.customers.items = _.concat(
       ALL_OPTION,
       this.filters.customers.items
@@ -67,7 +63,7 @@ export default {
       month: earliestRefreshDate.getMonth(),
       year: earliestRefreshDate.getFullYear(),
     });
-    this.selectFilterUpdated('categories', ALL_OPTION);
+    this.selectFilterUpdated('categories', this.filters.categories.items[0]);
     this.selectFilterUpdated('customers', this.filters.customers.items[1]);
     this.dataLoaded = true;
   },

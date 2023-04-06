@@ -94,6 +94,11 @@ export default {
     },
   },
   methods: {
+    formatHorizon(value) {
+      if (!value) return '';
+      const formattedValue = value.replaceAll('_', '-').replaceAll('m', '');
+      return formattedValue;
+    },
     toggleForecastPeriodType() {
       this.forecastPeriodType =
         this.forecastPeriodType === R3M_VIEW ? QUARTERLY_VIEW : R3M_VIEW;
@@ -144,8 +149,8 @@ export default {
             v.period = _.get(_.keys(v), '[0]');
             v.label = this.getPeriodDataLabel(v.period);
             v.metrics = _.get(v, `${v.period}.metrics`, {});
-            v.lag = _.get(v, `${v.period}.futureLagMonths`, '');
-            v.modelAccuracy = _.get(v, `${v.period}.modelAccuracy`, null);
+            v.horizon = _.get(v, `${v.period}.horizon`, '');
+            v.formattedHorizon = this.formatHorizon(v.horizon);
             delete v[v.period];
 
             v.metrics.historical = _.map(

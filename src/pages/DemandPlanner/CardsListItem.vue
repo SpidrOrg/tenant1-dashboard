@@ -5,7 +5,7 @@ import getReviews from '@/api/DemandPlanner/getReviews';
 import addReview from '@/api/DemandPlanner/addReview';
 import { ACTION_STATUS_LABELS } from './constants';
 
-import ModelAccuracyChart from './ModelAccuracyChart.vue';
+import ModelAccuracySection from './ModelAccuracySection/ModelAccuracySection.vue';
 import ActionButton from './ActionButton.vue';
 import ActionForm from './ActionForm.vue';
 
@@ -18,7 +18,7 @@ const {
 export default {
   name: 'CardsListItem',
   components: {
-    ModelAccuracyChart,
+    ModelAccuracySection,
     ActionButton,
     ActionForm,
   },
@@ -67,8 +67,11 @@ export default {
         this.lodGetNumeric(this.data, 'metrics.variance', false)
       );
     },
-    modelAccuracy() {
-      return _.toNumber(this.lodGetNumeric(this.data, 'modelAccuracy', false));
+    horizon() {
+      return _.get(this.data, 'horizon');
+    },
+    forecastPeriodType() {
+      return _.get(this.options, 'forecastPeriodType');
     },
   },
   methods: {
@@ -121,7 +124,7 @@ export default {
           customer: this.selectedFilters.customer,
           category: this.selectedFilters.category,
           byValueOrByVolume: this.selectedFilters.valueOrQuantity,
-          forecastPeriodType: this.options.forecastPeriodType,
+          forecastPeriodType: this.forecastPeriodType,
         });
 
         this.handleSuccessfulSubmission();
@@ -140,7 +143,7 @@ export default {
           valueOrQuantity: this.selectedFilters.valueOrQuantity,
           periodStart: this.periodStartDate,
           periodEnd: this.periodEndDate,
-          forecastPeriodType: this.options.forecastPeriodType,
+          forecastPeriodType: this.forecastPeriodType,
         });
 
         this.actionStatus = _.get(this.reviews, '[0].action');
@@ -171,7 +174,9 @@ export default {
       <div class="tw-flex tw-gap-x-4 tw-items-center tw-w-full">
         <p class="tw-text-lg tw-font-medium">{{ getPeriodLabel() }}</p>
         <div class="tw-bg-brand-gray-4 tw-rounded tw-text-center">
-          <p class="tw-p-1 tw-text-sm">Future {{ data.lag }} months</p>
+          <p class="tw-p-1 tw-text-sm">
+            Future {{ data.formattedHorizon }} months
+          </p>
         </div>
       </div>
     </div>
@@ -240,25 +245,14 @@ export default {
         class="tw-flex tw-flex-col tw-items-center tw-col-span-2"
         v-if="!isModelAccuracyHidden"
       >
-        <v-menu open-on-hover location="top">
-          <template v-slot:activator="{ props }">
-            <p
-              v-bind="props"
-              class="tw-text-sm tw-font-medium tw-text-center tw-pb-2"
-            >
-              ML Model Accuracy
-            </p>
-          </template>
-          <div
-            class="tw-w-96 tw-h-14 tw-p-2 tw-bg-white tw-border tw-rounded tw-border-[#D9D9D9] tw-shadow-2xl"
-          >
-            <p class="tw-text-sm tw-text-center">
-              ML Model accuracy is the percentage of correctness of prediction
-              by ML Model for the given dataset.
-            </p>
-          </div>
-        </v-menu>
-        <ModelAccuracyChart :modelAccuracy="modelAccuracy" />
+        <ModelAccuracySection
+          :marketSensingRefreshDate="
+            this.selectedFilters.marketSensingRefreshDate
+          "
+          :category="this.selectedFilters.category"
+          :horizon="horizon"
+          :forecastPeriodType="forecastPeriodType"
+        />
       </div>
     </div>
     <div

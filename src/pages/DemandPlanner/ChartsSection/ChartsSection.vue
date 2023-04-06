@@ -40,7 +40,9 @@ export default {
       More details for {{ getPeriodLabel() }}
     </p>
     <div class="tw-bg-brand-gray-4 tw-rounded">
-      <p class="tw-p-1 tw-text-sm">Future {{ activePeriodData.lag }} months</p>
+      <p class="tw-p-1 tw-text-sm">
+        Future {{ activePeriodData.formattedHorizon }} months
+      </p>
     </div>
   </div>
   <div class="tw-py-3 tw-w-full">

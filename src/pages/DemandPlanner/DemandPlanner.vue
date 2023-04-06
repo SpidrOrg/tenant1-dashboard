@@ -1,13 +1,20 @@
 <script>
 import _ from 'lodash';
+import { format as formatFn } from 'date-fns';
+import { getQuarterLabel } from '@/utils/dateHelpers';
 import EyeIcon from '@/images/eye-icon.svg';
 import EyeOffIcon from '@/images/eye-off-icon.svg';
+import { FORECAST_PERIOD_TYPES } from './constants';
+import fetchR3MData from '@/api/DemandPlanner/fetchR3MData';
+import fetchQuarterlyData from '@/api/DemandPlanner/fetchQuarterlyData';
+
 import FiltersSection, {
   ALL_OPTION,
 } from '@/pages/DemandPlanner/FiltersSection.vue';
 import CardsList from './CardsList.vue';
-import fetchMainDashboardData from '@/api/DemandPlanner/fetchMainDashboardData';
 import ChartsSection from '@/pages/DemandPlanner/ChartsSection/ChartsSection.vue';
+
+const { R3M_VIEW, QUARTERLY_VIEW } = FORECAST_PERIOD_TYPES;
 
 export default {
   name: 'DemandPlanner',
@@ -34,9 +41,12 @@ export default {
         customer: '',
         valueORvolume: null,
       },
+      latestRefreshDate: null,
+      selectedRefreshDate: null,
       isModelAccuracyHidden: false,
+      forecastPeriodType: R3M_VIEW,
 
-      //
+      R3M_VIEW,
       EyeIcon,
       EyeOffIcon,
       lodGet: _.get,
@@ -67,8 +77,27 @@ export default {
       }
       return userDisplayName;
     },
+    fetchApi() {
+      if (this.forecastPeriodType === QUARTERLY_VIEW) {
+        return fetchQuarterlyData;
+      }
+      return fetchR3MData;
+    },
   },
   methods: {
+    toggleForecastPeriodType() {
+      this.forecastPeriodType =
+        this.forecastPeriodType === R3M_VIEW ? QUARTERLY_VIEW : R3M_VIEW;
+
+      this.fetchDashboardData();
+    },
+    latestRefreshDateUpdateHandler(dateObj) {
+      this.latestRefreshDate = formatFn(dateObj, 'MMM dd, yyyy');
+    },
+    getPeriodDataLabel(period) {
+      if (this.forecastPeriodType === R3M_VIEW) return period;
+      return getQuarterLabel(period);
+    },
     isCheckDisabled(isChecked) {
       return (
         isChecked &&
@@ -89,8 +118,43 @@ export default {
         );
       });
     },
-    async updateFilters(filtersData) {
+    async fetchDashboardData() {
       this.dataLoading = true;
+      try {
+        const response = await this.fetchApi({
+          marketSensingRefreshDate:
+            this.selectedFilters.marketSensingRefreshDate,
+          categories: this.selectedFilters.category,
+          customers: this.selectedFilters.customer,
+          valueORvolume: this.selectedFilters.valueOrQuantity,
+        });
+
+        if (!_.isEmpty(response)) {
+          this.dashboardData.periodsData = response;
+          _.forEach(this.dashboardData.periodsData, (v, i) => {
+            v.period = _.get(_.keys(v), '[0]');
+            v.label = this.getPeriodDataLabel(v.period);
+            v.metrics = _.get(v, `${v.period}.metrics`, {});
+            v.lag = _.get(v, `${v.period}.futureLagMonths`, '');
+            v.modelAccuracy = _.get(v, `${v.period}.modelAccuracy`, null);
+            delete v[v.period];
+
+            v.metrics.variance = _.round(
+              _.subtract(v.metrics.jdaGrowth, v.metrics.marketSensingGrowth),
+              0
+            );
+            v.isChecked = true;
+            v.isActive = i === 0;
+          });
+        } else {
+          throw new Error('Unable to fetch data');
+        }
+      } catch (e) {
+        this.error = e;
+      }
+      this.dataLoading = false;
+    },
+    async updateFilters(filtersData) {
       const selectedMarketSensingRefreshDate = _.get(
         filtersData,
         'refreshDates.selected'
@@ -104,7 +168,6 @@ export default {
           selectedMarketSensingRefreshDate.year,
           selectedMarketSensingRefreshDate.month
         );
-
         const marketSensingRefreshDate = new Date(
           jsDateRefreshDate.getTime() -
             jsDateRefreshDate.getTimezoneOffset() * 60000
@@ -112,46 +175,19 @@ export default {
           .toISOString()
           .split('T')[0];
 
+        this.selectedRefreshDate = formatFn(jsDateRefreshDate, 'MMM yyyy');
+
         this.selectedFilters = {
           marketSensingRefreshDate: marketSensingRefreshDate,
-          category:
-            selectedCategories === ALL_OPTION ? '*' : selectedCategories,
+          category: selectedCategories,
           customer: selectedCustomers === ALL_OPTION ? '*' : selectedCustomers,
           valueOrQuantity: selectedValueORvolume,
         };
 
-        const response = await fetchMainDashboardData({
-          marketSensingRefreshDate: marketSensingRefreshDate,
-          categories:
-            selectedCategories === ALL_OPTION ? '*' : selectedCategories,
-          customers: selectedCustomers === ALL_OPTION ? '*' : selectedCustomers,
-          valueORvolume: selectedValueORvolume,
-        });
-
-        if (!_.isEmpty(response)) {
-          this.dashboardData.periodsData = response;
-          _.forEach(this.dashboardData.periodsData, (v, i) => {
-            v.label = _.get(_.keys(v), '[0]');
-            v.metrics = _.get(v, `${v.label}.metrics`, {});
-            v.lag = _.get(v, `${v.label}.futureLagMonths`, '');
-            v.modelAccuracy = _.get(v, `${v.label}.modelAccuracy`, null);
-            delete v[v.label];
-
-            v.metrics.variance = _.round(
-              _.subtract(v.metrics.jdaGrowth, v.metrics.marketSensingGrowth),
-              0
-            );
-            v.isChecked = true;
-            v.isActive = i === 0;
-          });
-        } else {
-          throw new Error('Unable to fetch data');
-        }
-      } catch (error) {
-        console.error(error);
-        this.error = error;
+        this.fetchDashboardData();
+      } catch (e) {
+        this.error = e;
       }
-      this.dataLoading = false;
     },
   },
 };
@@ -160,18 +196,25 @@ export default {
 <template>
   <div class="tw-h-full tw-w-full tw-bg-brand-gray-1">
     <div class="tw-flex tw-w-full tw-h-8 tw-bg-brand-gray-1">
-      <div class="tw-flex tw-h-full tw-items-center tw-font-bold tw-text-lg">
-        Demand Planner Dashboard as of Feb 2023
-      </div>
-      <div class="tw-ml-auto tw-h-full tw-flex tw-items-center">
-        Last refreshed on 01 Jan 2023
+      <h1 class="tw-flex tw-h-full tw-items-center tw-font-bold tw-text-lg">
+        Demand Planner Dashboard
+        {{ selectedRefreshDate ? `as of ${selectedRefreshDate}` : '' }}
+      </h1>
+      <div
+        class="tw-ml-auto tw-h-full tw-flex tw-items-center"
+        v-if="latestRefreshDate"
+      >
+        Last refreshed on {{ latestRefreshDate }}
       </div>
     </div>
     <div
       class="tw-flex tw-w-full tw-flex-auto tw-border-t tw-border-solid tw-border-brand-gray-2"
     />
     <div class="tw-py-5">
-      <FiltersSection @update-filters="debounceUpdateFilters" />
+      <FiltersSection
+        @update-filters="debounceUpdateFilters"
+        @latestRefreshDateUpdate="latestRefreshDateUpdateHandler"
+      />
     </div>
     <div
       class="tw-w-full tw-h-3/4 tw-flex tw-justify-center tw-items-center"
@@ -209,27 +252,34 @@ export default {
           </div>
           <div class="tw-flex tw-gap-x-3 tw-ml-auto">
             <button
-              class="tw-px-2 tw-py-1.5"
-              style="border: 1px solid #7823dc"
+              class="tw-px-2 tw-py-1.5 tw-border tw-border-solid tw-border-brand-primary"
               @click="isModelAccuracyHidden = !isModelAccuracyHidden"
             >
               <div class="tw-flex tw-gap-x-2">
                 <img :src="isModelAccuracyHidden ? EyeIcon : EyeOffIcon" />
-                <span class="tw-text-sm"
-                  >{{ isModelAccuracyHidden ? 'Show' : 'Hide' }} Model
-                  Accuracy</span
-                >
+                <span class="tw-text-sm">
+                  {{ isModelAccuracyHidden ? 'Show' : 'Hide' }} Model Accuracy
+                </span>
               </div>
             </button>
-            <button class="tw-px-3 tw-py-1.5" style="background: #7823dc">
-              <span class="tw-text-white tw-text-sm"
-                >Switch to Fixed/Quarterly View</span
-              >
+            <button
+              class="tw-px-3 tw-py-1.5 tw-bg-brand-primary"
+              @click="toggleForecastPeriodType"
+              :disabled="dataLoading"
+            >
+              <span class="tw-text-white tw-text-sm">
+                Switch to
+                {{
+                  forecastPeriodType === R3M_VIEW
+                    ? 'Fixed/Quarterly'
+                    : 'Rolling 3 Months'
+                }}
+                View
+              </span>
             </button>
           </div>
         </div>
       </div>
-
       <div
         class="tw-flex tw-justify-center tw-gap-2.5 tw-w-full tw-py-5"
         v-if="lodGet(dashboardData, 'periodsData.length')"
@@ -241,26 +291,15 @@ export default {
             isModelAccuracyHidden,
             selectedFilters,
             userData: { userId, userDisplayName },
+            forecastPeriodType,
           }"
         />
       </div>
-      <div class="tw-p-4" style="border: 1px solid #7823dc">
-        <div class="tw-flex tw-gap-x-4 tw-items-center tw-w-full tw-py-2">
-          <p class="tw-font-medium tw-text-2xl">
-            More details for {{ activePeriodData.label }}
-          </p>
-          <div class="tw-bg-brand-gray-4 tw-rounded">
-            <p class="tw-p-1 tw-text-sm">
-              Future {{ activePeriodData.lag }} months
-            </p>
-          </div>
-        </div>
-        <div class="tw-py-3 tw-w-full" v-if="activePeriodData">
-          <ChartsSection
-            :data="activePeriodData.metrics"
-            :projectedPeriod="activePeriodData.label"
-          />
-        </div>
+      <div class="tw-p-4 tw-border tw-border-solid tw-border-brand-primary">
+        <ChartsSection
+          v-if="activePeriodData"
+          :activePeriodData="activePeriodData"
+        />
       </div>
     </div>
     <div v-if="!dataLoading && error">

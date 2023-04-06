@@ -1,5 +1,6 @@
 <script>
 import _ from 'lodash';
+import { format as formatFn } from 'date-fns';
 import fetchHeatMapData from '@/api/HeatMap/fetchHeatMapData';
 import FiltersSection from '@/pages/HeatMap/FiltersSection.vue';
 import CardsList from '@/pages/HeatMap/CardsList.vue';
@@ -15,9 +16,13 @@ export default {
       isLoading: true,
       error: null,
       debounceUpdateFilters: _.debounce(this.updateFilters, 3000),
+      latestRefreshDate: null,
     };
   },
   methods: {
+    latestRefreshDateUpdateHandler(dateObj) {
+      this.latestRefreshDate = formatFn(dateObj, 'MMM dd, yyyy');
+    },
     async updateFilters(filtersData, metaData) {
       this.isLoading = true;
       const selectedMarketSensingRefreshDate = _.get(
@@ -62,15 +67,21 @@ export default {
           Representation of variance across categories and stores
         </h1>
       </div>
-      <div class="tw-ml-auto tw-h-full tw-flex tw-items-center">
-        Last refreshed on 01 Jan 2023
+      <div
+        class="tw-ml-auto tw-h-full tw-flex tw-items-center"
+        v-if="latestRefreshDate"
+      >
+        Last refreshed on {{ latestRefreshDate }}
       </div>
     </div>
     <div
       class="tw-flex tw-w-full tw-flex-auto tw-border-t tw-border-solid tw-border-brand-gray-2"
     />
     <div class="tw-py-5">
-      <FiltersSection @update-filters="debounceUpdateFilters" />
+      <FiltersSection
+        @update-filters="debounceUpdateFilters"
+        @latestRefreshDateUpdate="latestRefreshDateUpdateHandler"
+      />
     </div>
     <div
       class="tw-w-full tw-h-3/4 tw-flex tw-justify-center tw-items-center"

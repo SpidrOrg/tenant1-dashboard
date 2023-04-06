@@ -59,36 +59,50 @@ export default {
       _.first(this.filters.refreshDates.items)
     );
     this.updateLatestRefreshDate(earliestRefreshDate);
-    this.refreshDateUpdated({
-      month: earliestRefreshDate.getMonth(),
-      year: earliestRefreshDate.getFullYear(),
-    });
-    this.selectFilterUpdated('categories', this.filters.categories.items[0]);
-    this.selectFilterUpdated('customers', this.filters.customers.items[1]);
+    this.refreshDateUpdated(
+      {
+        month: earliestRefreshDate.getMonth(),
+        year: earliestRefreshDate.getFullYear(),
+      },
+      true
+    );
+    this.selectFilterUpdated(
+      'categories',
+      this.filters.categories.items[0],
+      true
+    );
+    this.selectFilterUpdated(
+      'customers',
+      this.filters.customers.items[0],
+      true
+    );
     this.dataLoaded = true;
   },
 
-  emits: ['updateFilters', 'latestRefreshDateUpdate'],
+  emits: ['updateFilters', 'updateFiltersInstant', 'latestRefreshDateUpdate'],
 
   methods: {
     updateLatestRefreshDate(dateObj) {
       this.$emit('latestRefreshDateUpdate', dateObj);
     },
-    selectFilterUpdated(filterName, currentSelection) {
+    selectFilterUpdated(filterName, currentSelection, isInstant = false) {
       this.filters[filterName].selected = currentSelection;
-      this.filtersUpdated();
+      isInstant ? this.filterUpdatedInstant() : this.filtersUpdated();
     },
-    refreshDateUpdated({ month, year }) {
+    refreshDateUpdated({ month, year }, isInstant = false) {
       this.filters.refreshDates.selected = { month, year };
-      this.filtersUpdated();
+      isInstant ? this.filterUpdatedInstant() : this.filtersUpdated();
     },
-    valueOrQuantityUpdate() {
+    valueOrQuantityUpdate(isInstant = false) {
       this.filters.valueOrQuantity =
         this.filters.valueOrQuantity === BY_VALUE ? BY_QUANTITY : BY_VALUE;
-      this.filtersUpdated();
+      isInstant ? this.filterUpdatedInstant() : this.filtersUpdated();
     },
     filtersUpdated() {
       this.$emit('updateFilters', this.filters);
+    },
+    filterUpdatedInstant() {
+      this.$emit('updateFiltersInstant', this.filters);
     },
   },
 };

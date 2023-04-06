@@ -140,6 +140,7 @@ export default {
           valueOrQuantity: this.selectedFilters.valueOrQuantity,
           periodStart: this.periodStartDate,
           periodEnd: this.periodEndDate,
+          forecastPeriodType: this.options.forecastPeriodType,
         });
 
         this.actionStatus = _.get(this.reviews, '[0].action');

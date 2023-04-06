@@ -1,7 +1,9 @@
 import _ from 'lodash';
+import { format as formatFn, startOfQuarter, startOfMonth, add } from 'date-fns';
+import apiBase from "@/api/getApiBase";
 // import apiBase from '@/api/getApiBase';
 
-const cachedData = [
+const apiRes = [
   {
     'Jan 23 - Mar 23': {
       metrics: {
@@ -308,23 +310,23 @@ const cachedData = [
   },
 ];
 
-export default async function () {
-  const data = await new Promise((res) => {
-    setTimeout(() => {
-      res({ result: cachedData });
-    }, 1000);
+export default async function ({
+                                 categories,
+                                 customers,
+                                 valueORvolume,
+                               }) {
+  const data = await apiBase('maindashboard', {
+    marketSensingRefreshDate: formatFn(startOfMonth(add(startOfQuarter(new Date()), {days: -1})), "yyyy-MM-dd"),
+    categories,
+    customers,
+    valueORvolume,
   });
 
-  // const data = await apiBase('maindashboard', {
-  //   marketSensingRefreshDate,
-  //   categories,
-  //   customers,
-  //   valueORvolume,
-  // });
-
-  // _.getQuarter(_.parse('Jan 23', 'MMM dd', new Date()))
-  // _.endOfQuarter(_.parse('2023-Q1', 'yyyy-QQQ', new Date()))
-
+  // const data = await new Promise((res)=>{
+  //   setTimeout(()=>{
+  //     res({result: apiRes})
+  //   }, 100)
+  // })
   let dataForUi = _.get(data, 'result', {});
   _.forEach(dataForUi, (v) => {
     const periodData = _.get(_.values(v), '[0]');

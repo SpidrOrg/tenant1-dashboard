@@ -15,6 +15,8 @@ import CardsList from './CardsList.vue';
 import ChartsSection from '@/pages/DemandPlanner/ChartsSection/ChartsSection.vue';
 
 const { R3M_VIEW, QUARTERLY_VIEW } = FORECAST_PERIOD_TYPES;
+const FILTER_UPDATE_GAP_MS = 3000;
+const FILTER_INSTANT_UPDATE_GAP_MS = 500;
 
 export default {
   name: 'DemandPlanner',
@@ -33,7 +35,14 @@ export default {
     return {
       dataLoading: true,
       error: null,
-      debounceUpdateFilters: _.debounce(this.updateFilters, 3000),
+      debounceUpdateFilters: _.debounce(
+        this.updateFilters,
+        FILTER_UPDATE_GAP_MS
+      ),
+      debounceUpdateFiltersInstant: _.debounce(
+        this.updateFilters,
+        FILTER_INSTANT_UPDATE_GAP_MS
+      ),
       dashboardData: {},
       selectedFilters: {
         marketSensingRefreshDate: null,
@@ -139,8 +148,16 @@ export default {
             v.modelAccuracy = _.get(v, `${v.period}.modelAccuracy`, null);
             delete v[v.period];
 
+            v.metrics.historical = _.map(
+              _.get(v.metrics, 'historical'),
+              (el) => {
+                const historicalPeriod = _.get(el, 'period');
+                const periodLabel = this.getPeriodDataLabel(historicalPeriod);
+                return { ...el, period: periodLabel };
+              }
+            );
             v.metrics.variance = _.round(
-              _.subtract(v.metrics.jdaGrowth, v.metrics.marketSensingGrowth),
+              _.subtract(v.metrics.marketSensingGrowth, v.metrics.jdaGrowth),
               0
             );
             v.isChecked = true;
@@ -213,6 +230,7 @@ export default {
     <div class="tw-py-5">
       <FiltersSection
         @update-filters="debounceUpdateFilters"
+        @update-filters-instant="debounceUpdateFiltersInstant"
         @latestRefreshDateUpdate="latestRefreshDateUpdateHandler"
       />
     </div>

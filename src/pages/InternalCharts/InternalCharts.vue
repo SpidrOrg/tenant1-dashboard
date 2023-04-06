@@ -90,24 +90,27 @@ export default {
           const selectedCategories = _.get(filtersData, "categories.selected");
           const selectedCustomers = _.get(filtersData, "customers.selected");
           const selectedValueORvolume = _.get(filtersData, "valueOrQuantity");
+          const selectedTimeHorizon = _.get(filtersData, "time_horizon.selected");
+          const selectedInternalModel = _.get(filtersData, "internal_model.selected");
 
           const response = await fetchInternalChartsData({categories: selectedCategories === ALL_OPTION ? "*" : selectedCategories,
             customers: selectedCustomers === ALL_OPTION ? "*" : selectedCustomers,
-            valueORvolume: selectedValueORvolume});
+            valueORvolume: selectedValueORvolume,msTimeHorizon:selectedTimeHorizon,internalModel:selectedInternalModel});
             if (!_.isEmpty(response)){
               this.apiData = response;
               this.isLoading = false;
               let v = this;
               if(!this.columnChartData.length){
-                this.columnChartData.push(this.apiData[0].internal_forecast.identifiers);
-                _.forEach(this.apiData[0].internal_forecast.data, function (data) {
-                v.columnChartData.push(data);
+                
+                this.columnChartData.push(['period','Internal','Actual']);
+                _.forEach(this.apiData, function (data) {
+                v.columnChartData.push([data.timeline,data.forecastSales,data.actualSales]);
               });
               }
               if(!this.lineChartData.length){
-                this.lineChartData.push(this.apiData[0].projections.identifiers);
-                _.forEach(this.apiData[0].projections.data, function (data) {
-                v.lineChartData.push(data);
+                this.lineChartData.push(['period','Market Sensing Forecast','Internal Forecast','Sales']);
+                _.forEach(this.apiData, function (data) {
+                v.lineChartData.push([data.timeline,data.msProjectedGrowth,data.forecastGrowth,data.actualGrowth]);
               });
               }
         }       
@@ -126,8 +129,13 @@ export default {
     top: 35%;
   z-index: 1000;"/>
   <div class="tw-w-full tw-h-full tw-bg-brand-gray-1">
-    <div class="tw-flex tw-h-8 tw-items-center tw-font-bold">
+    <div class="tw-flex tw-w-full tw-h-8 tw-bg-brand-gray-1">
+      <div class="tw-flex tw-h-full tw-items-center tw-font-bold tw-text-lg">
       Internal Charts
+    </div>
+    <div class="tw-ml-auto tw-h-full tw-flex tw-items-center">
+      Last refreshed on 01 Jan 2023
+    </div>
     </div>
     <div class="tw-flex tw-w-full tw-flex-auto tw-border-t tw-border-solid tw-border-brand-gray-2" />
     <div class="tw-py-5 tw-bg-brand-gray-1">

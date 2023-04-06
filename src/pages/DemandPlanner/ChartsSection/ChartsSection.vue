@@ -44,8 +44,8 @@ export default {
     </div>
   </div>
   <div class="tw-py-3 tw-w-full">
-    <div class="tw-grid tw-grid-cols-4 tw-gap-4" v-if="metrics">
-      <div class="tw-col-span-1">
+    <div class="tw-grid tw-grid-cols-7 tw-gap-4" v-if="metrics">
+      <div class="tw-col-span-2">
         <ChartKeyDemandDrivers :data="metrics.keyDemandDrivers" />
       </div>
       <div class="tw-col-span-1">
@@ -55,7 +55,7 @@ export default {
           :impliedVal="metrics.impliedGrowth"
         />
       </div>
-      <div class="tw-col-span-2">
+      <div class="tw-col-span-4">
         <ChartHistoricalAndActual :data="metrics.historical" />
       </div>
     </div>

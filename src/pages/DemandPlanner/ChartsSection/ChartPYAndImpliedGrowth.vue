@@ -93,10 +93,10 @@ export default {
 <template>
   <v-menu open-on-hover location="top">
     <template v-slot:activator="{ props }">
-      <div class="tw-flex tw-flex-col tw-items-center tw-gap-y-2">
+      <div class="tw-flex tw-flex-col tw-gap-y-2">
         <span
           v-bind="props"
-          class="tw-font-medium tw-text-lg tw-text-center tw-cursor-default"
+          class="tw-font-medium tw-text-lg tw-cursor-default"
         >
           Implied Market Share
         </span>

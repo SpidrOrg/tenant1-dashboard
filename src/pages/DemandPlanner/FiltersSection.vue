@@ -59,12 +59,23 @@ export default {
       _.first(this.filters.refreshDates.items)
     );
     this.updateLatestRefreshDate(earliestRefreshDate);
-    this.refreshDateUpdated({
-      month: earliestRefreshDate.getMonth(),
-      year: earliestRefreshDate.getFullYear(),
-    }, true);
-    this.selectFilterUpdated('categories', this.filters.categories.items[0], true);
-    this.selectFilterUpdated('customers', this.filters.customers.items[1], true);
+    this.refreshDateUpdated(
+      {
+        month: earliestRefreshDate.getMonth(),
+        year: earliestRefreshDate.getFullYear(),
+      },
+      true
+    );
+    this.selectFilterUpdated(
+      'categories',
+      this.filters.categories.items[0],
+      true
+    );
+    this.selectFilterUpdated(
+      'customers',
+      this.filters.customers.items[0],
+      true
+    );
     this.dataLoaded = true;
   },
 
@@ -90,9 +101,9 @@ export default {
     filtersUpdated() {
       this.$emit('updateFilters', this.filters);
     },
-    filterUpdatedInstant(){
-      this.$emit('updateFiltersInstant', this.filters)
-    }
+    filterUpdatedInstant() {
+      this.$emit('updateFiltersInstant', this.filters);
+    },
   },
 };
 </script>

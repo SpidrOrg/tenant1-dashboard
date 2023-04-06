@@ -35,8 +35,14 @@ export default {
     return {
       dataLoading: true,
       error: null,
-      debounceUpdateFilters: _.debounce(this.updateFilters, FILTER_UPDATE_GAP_MS),
-      debounceUpdateFiltersInstant: _.debounce(this.updateFilters, FILTER_INSTANT_UPDATE_GAP_MS),
+      debounceUpdateFilters: _.debounce(
+        this.updateFilters,
+        FILTER_UPDATE_GAP_MS
+      ),
+      debounceUpdateFiltersInstant: _.debounce(
+        this.updateFilters,
+        FILTER_INSTANT_UPDATE_GAP_MS
+      ),
       dashboardData: {},
       selectedFilters: {
         marketSensingRefreshDate: null,
@@ -142,8 +148,16 @@ export default {
             v.modelAccuracy = _.get(v, `${v.period}.modelAccuracy`, null);
             delete v[v.period];
 
+            v.metrics.historical = _.map(
+              _.get(v.metrics, 'historical'),
+              (el) => {
+                const historicalPeriod = _.get(el, 'period');
+                const periodLabel = this.getPeriodDataLabel(historicalPeriod);
+                return { ...el, period: periodLabel };
+              }
+            );
             v.metrics.variance = _.round(
-              _.subtract(v.metrics.jdaGrowth, v.metrics.marketSensingGrowth),
+              _.subtract(v.metrics.marketSensingGrowth, v.metrics.jdaGrowth),
               0
             );
             v.isChecked = true;

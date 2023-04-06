@@ -31,8 +31,7 @@ export default {
           selected: null,
           filterlabel: "Internal Model"
         },
-
-
+        refreshDate: null,
         valueOrQuantity: BY_QUANTITY
       },
       currency: "USD",
@@ -50,11 +49,12 @@ export default {
     
     if (options){
       console.log(options);
-      this.filters.categories.items = options.categories;
-      this.filters.customers.items = options.customers;
-      this.filters.time_horizon.items = options.msTimeHorizon;
-      this.filters.internal_model.items = options.msModel;
+      this.filters.categories.items = options.ms.categories;
+      this.filters.customers.items = options.ms.customers;
+      this.filters.time_horizon.items = options.ms.msTimeHorizon;
+      this.filters.internal_model.items = options.ms.msModel;
     }
+    this.filters.refreshDate = options.updateDates[0];
     // Add all option to the categories and customers filters
     this.filters.categories.items = this.filters.categories.items;
     this.filters.customers.items = this.filters.customers.items;

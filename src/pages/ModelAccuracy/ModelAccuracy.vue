@@ -1,6 +1,7 @@
 <script>
 import { GChart }  from 'vue-google-charts'
 import fetchModelAccuracyData from "@/api/fetchModelAccuracyData";
+import fetchCVRollingAccuracyData from '@/api/fetchCVRollingAccuracyData';
 import _ from "lodash";
 import fetchModelAccuracyOptions from "@/api/fetchModelAccuracyOptions";
 export const ALL_OPTION = "All";
@@ -167,19 +168,16 @@ export default {
     async filtersUpdated(){
       let v = this;
       this.isHistoricPerformanceLoading = true;
-      const selectedAccuracyCategories = _.get(this.filtersTestAccuracy, "categories.selected");
       const selectedHistoricCategories = _.get(this.filtersCharts, "categories.selected");
       const selectedprojectedPeriod = _.get(this.filtersCharts, "projected_period.selected");
-      const response = await fetchModelAccuracyData({categoriesAccuracy: selectedAccuracyCategories === ALL_OPTION ? "*" : selectedAccuracyCategories,
-      categoriesHistoric: selectedHistoricCategories === ALL_OPTION ? "*" : selectedHistoricCategories,
-            projected_period: selectedprojectedPeriod});
+      const response = await fetchModelAccuracyData({categoriesHistoric: selectedHistoricCategories === ALL_OPTION ? "*" : selectedHistoricCategories,projected_period: selectedprojectedPeriod});
       if (!_.isEmpty(response)){
         this.apiData = response;
 
         //Historic Performance data
         if(!this.columnChartData.length){
-          this.columnChartData.push(this.apiData[0].historic_performance.identifiers);
-          _.forEach(this.apiData[0].historic_performance.data, function (data) {
+          this.columnChartData.push(['Period','Predicted Values', 'Actual Values']);
+          _.forEach(this.apiData.historicPredicted, function (data) {
           v.columnChartData.push(data);
           });
         }
@@ -188,48 +186,49 @@ export default {
 
      //Historic Performance accuracy data
      if(!this.lineChartData.length){
-        if(!this.apiData[0].historic_performance_accuracy.identifiers.includes({role: 'annotation', type: 'string'})){
-          this.apiData[0].historic_performance_accuracy.identifiers.push({role: 'annotation', type: 'string'});
-        }
-        this.lineChartData.push(this.apiData[0].historic_performance_accuracy.identifiers);
-        _.forEach(this.apiData[0].historic_performance_accuracy.data, function (data) {
-          data.push(data[1])
+        this.lineChartData.push(['Time Period','Prediction Accuracy',{role: 'annotation', type: 'string'}]);
+        //this.lineChartData.push(this.apiData.accuracyData);
+        _.forEach(this.apiData.accuracyData, function (data) {
+          v.lineChartData.push([data[0],data[1],data[1]]);
         });
-        _.forEach(this.apiData[0].historic_performance_accuracy.data, function (data) {
-          v.lineChartData.push(data);
-        });
+        // this.lineChartData.push(this.apiData[0].historic_performance_accuracy.identifiers);
+        // _.forEach(this.apiData[0].historic_performance_accuracy.data, function (data) {
+        //   data.push(data[1])
+        // });
+        // _.forEach(this.apiData[0].historic_performance_accuracy.data, function (data) {
+        //   v.lineChartData.push(data);
+        // });
      }
       
       //Historic Performance accuracy data --end
 
       //CV Accuracy Data
       if(!this.cvAccuracyData.length){
-        if(!this.apiData[0].cv_accuracy.identifiers.includes({ role: 'style' })){
-          this.apiData[0].cv_accuracy.identifiers.push({ role: 'style' });
-        }
-        this.cvAccuracyData.push(this.apiData[0].cv_accuracy.identifiers);
-
-        _.forEach(this.apiData[0].cv_accuracy.data, function (data) {
-        data.push(`color: ${v.getColorCode(data[1])}`);
+        // if(!this.apiData[0].cv_accuracy.identifiers.includes({ role: 'style' })){
+        //   this.apiData[0].cv_accuracy.identifiers.push({ role: 'style' });
+        // }
+        this.cvAccuracyData.push(['Period','Predicted Values',{ role: 'style' }]);
+        
+        // _.forEach(this.apiData.cvAccuracyData, function (data) {
+        // data.push(`color: ${v.getColorCode(data['value'])}`);
+        // });
+        _.forEach(this.apiData.cvAccuracyData, function (data) {
+          v.cvAccuracyData.push([data['period'],data['value'],`color: ${v.getColorCode(data['value'])}`]);
         });
-        _.forEach(this.apiData[0].cv_accuracy.data, function (data) {
-          v.cvAccuracyData.push(data);
-        });
+        
       }
       //CV Accuracy Data --end
 
         //Rolling Test Accuracy Data
         if(!this.rollingTestAccuracyData.length){
-          if(!this.apiData[0].rolling_test_accuracy.identifiers.includes({ role: 'style' })){
-          this.apiData[0].rolling_test_accuracy.identifiers.push({ role: 'style' });
-          }
-          this.rollingTestAccuracyData.push(this.apiData[0].rolling_test_accuracy.identifiers);
-          _.forEach(this.apiData[0].rolling_test_accuracy.data, function (data) {
-            data.push(`color: ${v.getColorCode(data[1])}`);
+          this.rollingTestAccuracyData.push(['Period','Predicted Values',{ role: 'style' }]);
+        
+        // _.forEach(this.apiData.cvAccuracyData, function (data) {
+        // data.push(`color: ${v.getColorCode(data['value'])}`);
+        // });
+          _.forEach(this.apiData.rollingAccuracyData, function (data) {
+            v.rollingTestAccuracyData.push([data['period'],data['value'],`color: ${v.getColorCode(data['value'])}`]);
           });
-          _.forEach(this.apiData[0].rolling_test_accuracy.data, function (data) {
-              v.rollingTestAccuracyData.push(data);
-            });
         }
         //Rolling Test Accuracy Data --end
     }
@@ -239,71 +238,73 @@ export default {
       let v = this;
       this.isCVAccuracyLoading = true;
       const selectedAccuracyCategories = _.get(this.filtersTestAccuracy, "categories.selected");
-      const selectedHistoricCategories = _.get(this.filtersCharts, "categories.selected");
-      const selectedprojectedPeriod = _.get(this.filtersCharts, "projected_period.selected");
-      const response = await fetchModelAccuracyData({categoriesAccuracy: selectedAccuracyCategories === ALL_OPTION ? "*" : selectedAccuracyCategories,
-      categoriesHistoric: selectedHistoricCategories === ALL_OPTION ? "*" : selectedHistoricCategories,
-            projected_period: selectedprojectedPeriod});
+      const response = await fetchCVRollingAccuracyData({categoriesAccuracy: selectedAccuracyCategories === ALL_OPTION ? "*" : selectedAccuracyCategories});
             if (!_.isEmpty(response)){
         this.apiData = response;
 
         //Historic Performance data
         if(!this.columnChartData.length){
-          this.columnChartData.push(this.apiData[0].historic_performance.identifiers);
-          _.forEach(this.apiData[0].historic_performance.data, function (data) {
+          this.columnChartData.push(['Period','Predicted Values', 'Actual Values']);
+          _.forEach(this.apiData.historicPredicted, function (data) {
           v.columnChartData.push(data);
           });
         }
-        
       //Historic performance end
 
      //Historic Performance accuracy data
      if(!this.lineChartData.length){
-        if(!this.apiData[0].historic_performance_accuracy.identifiers.includes({role: 'annotation', type: 'string'})){
-          this.apiData[0].historic_performance_accuracy.identifiers.push({role: 'annotation', type: 'string'});
-        }
-        this.lineChartData.push(this.apiData[0].historic_performance_accuracy.identifiers);
-        _.forEach(this.apiData[0].historic_performance_accuracy.data, function (data) {
-          data.push(data[1])
+        this.lineChartData.push(['Time Period','Prediction Accuracy',{role: 'annotation', type: 'string'}]);
+        //this.lineChartData.push(this.apiData.accuracyData);
+        _.forEach(this.apiData.accuracyData, function (data) {
+          v.lineChartData.push([data[0],data[1],data[1]]);
         });
-        _.forEach(this.apiData[0].historic_performance_accuracy.data, function (data) {
-          v.lineChartData.push(data);
-        });
+        
+     }
+     console.log(this.columnChartData)
+    console.log(this.lineChartData)
+        // this.lineChartData.push(this.apiData[0].historic_performance_accuracy.identifiers);
+        // _.forEach(this.apiData[0].historic_performance_accuracy.data, function (data) {
+        //   data.push(data[1])
+        // });
+        // _.forEach(this.apiData[0].historic_performance_accuracy.data, function (data) {
+        //   v.lineChartData.push(data);
+        // });
      }
       
       //Historic Performance accuracy data --end
 
       //CV Accuracy Data
       if(!this.cvAccuracyData.length){
-        if(!this.apiData[0].cv_accuracy.identifiers.includes({ role: 'style' })){
-          this.apiData[0].cv_accuracy.identifiers.push({ role: 'style' });
-        }
-        this.cvAccuracyData.push(this.apiData[0].cv_accuracy.identifiers);
-
-        _.forEach(this.apiData[0].cv_accuracy.data, function (data) {
-        data.push(`color: ${v.getColorCode(data[1])}`);
+        // if(!this.apiData[0].cv_accuracy.identifiers.includes({ role: 'style' })){
+        //   this.apiData[0].cv_accuracy.identifiers.push({ role: 'style' });
+        // }
+        this.cvAccuracyData.push(['Period','Predicted Values',{ role: 'style' }]);
+        
+        // _.forEach(this.apiData.cvAccuracyData, function (data) {
+        // data.push(`color: ${v.getColorCode(data['value'])}`);
+        // });
+        _.forEach(this.apiData.cvAccuracyData, function (data) {
+          v.cvAccuracyData.push([data['period'],data['value'],`color: ${v.getColorCode(data['value'])}`]);
         });
-        _.forEach(this.apiData[0].cv_accuracy.data, function (data) {
-          v.cvAccuracyData.push(data);
-        });
+        
       }
       //CV Accuracy Data --end
 
         //Rolling Test Accuracy Data
-        if(!this.rollingTestAccuracyData.length){
-          if(!this.apiData[0].rolling_test_accuracy.identifiers.includes({ role: 'style' })){
-          this.apiData[0].rolling_test_accuracy.identifiers.push({ role: 'style' });
-          }
-          this.rollingTestAccuracyData.push(this.apiData[0].rolling_test_accuracy.identifiers);
-          _.forEach(this.apiData[0].rolling_test_accuracy.data, function (data) {
-            data.push(`color: ${v.getColorCode(data[1])}`);
+       //Rolling Test Accuracy Data
+       if(!this.rollingTestAccuracyData.length){
+          this.rollingTestAccuracyData.push(['Period','Predicted Values',{ role: 'style' }]);
+        
+        // _.forEach(this.apiData.cvAccuracyData, function (data) {
+        // data.push(`color: ${v.getColorCode(data['value'])}`);
+        // });
+          _.forEach(this.apiData.rollingAccuracyData, function (data) {
+            v.rollingTestAccuracyData.push([data['period'],data['value'],`color: ${v.getColorCode(data['value'])}`]);
           });
-          _.forEach(this.apiData[0].rolling_test_accuracy.data, function (data) {
-              v.rollingTestAccuracyData.push(data);
-            });
         }
         //Rolling Test Accuracy Data --end
-    }
+        //Rolling Test Accuracy Data --end
+    
         this.isCVAccuracyLoading = false;
     },
   },
@@ -380,8 +381,8 @@ export default {
     this.filtersCharts.categories.items = this.filtersCharts.categories.items;
     this.filtersTestAccuracy.categories.items =this.filtersTestAccuracy.categories.items;
 
-    this.selectFilterUpdated("categories", ALL_OPTION);
-    this.selectAccuracyFilterUpdated("categories", ALL_OPTION);
+    this.selectFilterUpdated("categories", this.filtersCharts.categories.items[0]);
+    this.selectAccuracyFilterUpdated("categories", this.filtersTestAccuracy.categories.items[0]);
     this.selectFilterUpdated("projected_period", this.filtersCharts.projected_period.items[0]);
   },
 }

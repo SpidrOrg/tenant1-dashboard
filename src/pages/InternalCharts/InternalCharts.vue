@@ -2,6 +2,7 @@
 import { GChart }  from 'vue-google-charts'
 import TheHeader, {ALL_OPTION} from './TheHeader'
 import fetchInternalChartsData from "@/api/fetchInternalChartsData";
+import { format as formatFn } from 'date-fns';
 import _ from "lodash";
 
 export default {
@@ -13,6 +14,7 @@ export default {
   data(){
     return {
       isLoading:false,
+      refreshDate:null,
       apiData:[],
       columnChartData:[],
       debounceUpdateFilters: _.debounce(this.updateFilters, 500),
@@ -86,16 +88,19 @@ export default {
   methods:{
     async updateFilters(filtersData){
       try{
+          //this.refreshDate = formatFn(new Date(refreshDate));
           this.isLoading = true;
           const selectedCategories = _.get(filtersData, "categories.selected");
           const selectedCustomers = _.get(filtersData, "customers.selected");
           const selectedValueORvolume = _.get(filtersData, "valueOrQuantity");
           const selectedTimeHorizon = _.get(filtersData, "time_horizon.selected");
           const selectedInternalModel = _.get(filtersData, "internal_model.selected");
+          const refreshDate = _.get(filtersData, "refreshDate");
+          this.refreshDate = formatFn(new Date(_.get(filtersData, "refreshDate")),'MMM dd,yyyy');
 
           const response = await fetchInternalChartsData({categories: selectedCategories === ALL_OPTION ? "*" : selectedCategories,
             customers: selectedCustomers === ALL_OPTION ? "*" : selectedCustomers,
-            valueORvolume: selectedValueORvolume,msTimeHorizon:selectedTimeHorizon,internalModel:selectedInternalModel});
+            valueORvolume: selectedValueORvolume,msTimeHorizon:selectedTimeHorizon,internalModel:selectedInternalModel, refreshDate:refreshDate});
             if (!_.isEmpty(response)){
               this.apiData = response;
               this.isLoading = false;
@@ -134,7 +139,7 @@ export default {
       Internal Charts
     </div>
     <div class="tw-ml-auto tw-h-full tw-flex tw-items-center">
-      Last refreshed on 01 Jan 2023
+      Last refreshed on {{refreshDate}}
     </div>
     </div>
     <div class="tw-flex tw-w-full tw-flex-auto tw-border-t tw-border-solid tw-border-brand-gray-2" />

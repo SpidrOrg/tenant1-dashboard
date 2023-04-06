@@ -1,7 +1,7 @@
 <script>
 import _ from 'lodash';
 import GoogleChart from '@/components/GoogleChart';
-import fetchDemandForecastData from '@/api/fetchDemandForecastData';
+import fetchDemandForecastData from '@/api/HeatMap/fetchDemandForecastData';
 
 const DATA_CONFIG = [
   {
@@ -33,7 +33,7 @@ export default {
   props: {
     category: { type: String, required: true },
     customer: { type: String, required: true },
-    period: { type: String, required: true }
+    period: { type: String, required: true },
   },
   components: {
     GoogleChart,
@@ -85,10 +85,11 @@ export default {
     }
     this.isLoading = false;
   },
-  methods:{
+  emits: ['closeEvent'],
+  methods: {
     clickClose() {
       this.$emit('closeEvent');
-    }
+    },
   },
   computed: {
     chartData() {
@@ -116,20 +117,18 @@ export default {
     <div v-if="!isLoading && apiData.length > 0">
       <div class="tw-flex tw-items-center tw-w-full">
         <h1 class="tw-text-xl tw-font-medium">
-          Demand Forecast : Category / Customer
+          Demand Forecast : {{ category }} / {{ customer }}
         </h1>
-        <div class="tw-flex tw-items-center tw-pl-10">
-          <div class="tw-flex tw-items-center tw-gap-x-1 tw-pl-3">
-            <span style="height: 12px; width: 12px; background: #570eaa" />
-            <span class="tw-text-xs">Market Sensing Forecast</span>
-          </div>
-          <div class="tw-flex tw-items-center tw-gap-x-1 tw-pl-3">
-            <span style="height: 12px; width: 12px; background: #787878" />
-            <span class="tw-text-xs">Internal Forecast</span>
-          </div>
-          <div class="tw-flex tw-items-center tw-gap-x-1 tw-pl-3">
-            <span style="height: 12px; width: 12px; background: #c8a5f0" />
-            <span class="tw-text-xs">Sales</span>
+        <div class="tw-flex tw-items-center tw-ml-auto">
+          <div
+            v-for="item in legendData"
+            :key="item.key"
+            class="tw-flex tw-items-center tw-gap-x-1 tw-pl-3"
+          >
+            <span
+              :style="`height: 12px; width: 12px; background: ${item.color}`"
+            />
+            <span class="tw-text-xs">{{ item.label }}</span>
           </div>
           <v-btn variant="plain" icon="mdi-close" @click="clickClose"></v-btn>
         </div>

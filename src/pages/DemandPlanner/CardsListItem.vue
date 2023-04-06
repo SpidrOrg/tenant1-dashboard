@@ -1,8 +1,19 @@
 <script>
 import _ from 'lodash';
+import { getPeriodStartDate, getPeriodEndDate } from '@/utils/dateHelpers';
+import getReviews from '@/api/DemandPlanner/getReviews';
+import addReview from '@/api/DemandPlanner/addReview';
+import { ACTION_STATUS_LABELS } from './constants';
+
 import ModelAccuracyChart from './ModelAccuracyChart.vue';
 import ActionButton from './ActionButton.vue';
 import ActionForm from './ActionForm.vue';
+
+const {
+  PENDING_ACTION,
+  REVIEWED_AND_ACTION_TAKEN,
+  REVIEWED_AND_ACTION_NOT_TAKEN,
+} = ACTION_STATUS_LABELS;
 
 export default {
   name: 'CardsListItem',
@@ -20,19 +31,51 @@ export default {
   },
   data() {
     return {
+      reviews: [],
       actionFormIsShown: false,
+      actionStatus: PENDING_ACTION,
       isReviewed: false,
-      //
-      lodSubtract: _.subtract,
-      lodToNumber: _.toNumber,
+
+      isFetchingReviews: true,
+      getReviewsError: null,
+      isSubmittingReview: false,
+      submitReviewError: null,
+      responseSubmitted: false,
     };
   },
   computed: {
     isModelAccuracyHidden() {
       return this.options.isModelAccuracyHidden || false;
     },
+    selectedFilters() {
+      return _.get(this.options, 'selectedFilters');
+    },
+    userData() {
+      return _.get(this.options, 'userData');
+    },
+    period() {
+      return _.get(this.data, 'period');
+    },
+    periodStartDate() {
+      return getPeriodStartDate(this.period);
+    },
+    periodEndDate() {
+      return getPeriodEndDate(this.period);
+    },
+    variance() {
+      return _.toNumber(
+        this.lodGetNumeric(this.data, 'metrics.variance', false)
+      );
+    },
+    modelAccuracy() {
+      return _.toNumber(this.lodGetNumeric(this.data, 'modelAccuracy', false));
+    },
   },
   methods: {
+    getPeriodLabel() {
+      const label = _.get(this.data, 'label');
+      return label === this.period ? label : `${label}, ${this.period}`;
+    },
     showFormHandler() {
       this.actionFormIsShown = true;
     },
@@ -56,11 +99,66 @@ export default {
       }
       return '#04BB46';
     },
-    reviewHandler() {
-      if (!this.isReviewed) {
-        this.isReviewed = true;
-      }
+    handleSuccessfulSubmission() {
+      this.responseSubmitted = true;
+      setTimeout(() => {
+        this.responseSubmitted = false;
+      }, 5000);
+
+      this.fetchReviews();
     },
+    async submitHandler({ selectedAction, userResponse }) {
+      this.isSubmittingReview = true;
+      try {
+        await addReview({
+          userId: _.get(this.userData, 'userId'),
+          userDisplayName: _.get(this.userData, 'userDisplayName'),
+          action: selectedAction,
+          asOn: this.selectedFilters.marketSensingRefreshDate,
+          comment: userResponse,
+          periodStartDate: this.periodStartDate,
+          periodEndDate: this.periodEndDate,
+          customer: this.selectedFilters.customer,
+          category: this.selectedFilters.category,
+          byValueOrByVolume: this.selectedFilters.valueOrQuantity,
+          forecastPeriodType: this.options.forecastPeriodType,
+        });
+
+        this.handleSuccessfulSubmission();
+      } catch (error) {
+        this.submitReviewError = error;
+      }
+      this.isSubmittingReview = false;
+    },
+    async fetchReviews() {
+      this.isFetchingReviews = true;
+      try {
+        this.reviews = await getReviews({
+          refreshDate: this.selectedFilters.marketSensingRefreshDate,
+          customer: this.selectedFilters.customer,
+          category: this.selectedFilters.category,
+          valueOrQuantity: this.selectedFilters.valueOrQuantity,
+          periodStart: this.periodStartDate,
+          periodEnd: this.periodEndDate,
+        });
+
+        this.actionStatus = _.get(this.reviews, '[0].action');
+        if (
+          this.actionStatus === REVIEWED_AND_ACTION_TAKEN ||
+          this.actionStatus === REVIEWED_AND_ACTION_NOT_TAKEN
+        ) {
+          this.isReviewed = true;
+        } else {
+          this.isReviewed = false;
+        }
+      } catch (e) {
+        this.getReviewsError = e;
+      }
+      this.isFetchingReviews = false;
+    },
+  },
+  created() {
+    this.fetchReviews();
   },
 };
 </script>
@@ -70,8 +168,8 @@ export default {
     <div class="tw-flex tw-flex-col tw-py-2">
       <p style="color: #9291a5">Projected Period</p>
       <div class="tw-flex tw-gap-x-4 tw-items-center tw-w-full">
-        <p class="tw-text-lg tw-font-medium">{{ data.label }}</p>
-        <div class="tw-bg-brand-gray-4 tw-rounded">
+        <p class="tw-text-lg tw-font-medium">{{ getPeriodLabel() }}</p>
+        <div class="tw-bg-brand-gray-4 tw-rounded tw-text-center">
           <p class="tw-p-1 tw-text-sm">Future {{ data.lag }} months</p>
         </div>
       </div>
@@ -79,7 +177,7 @@ export default {
     <div class="tw-w-full tw-border-t tw-border-solid tw-border-brand-gray-2" />
     <div
       :class="`tw-grid tw-py-2 ${
-        isModelAccuracyHidden ? 'tw-grid-cols-3' : 'tw-grid-cols-5 '
+        isModelAccuracyHidden ? 'tw-grid-cols-3' : 'tw-grid-cols-5'
       }`"
     >
       <div class="tw-col-span-3">
@@ -159,11 +257,7 @@ export default {
             </p>
           </div>
         </v-menu>
-        <ModelAccuracyChart
-          :modelAccuracy="
-            lodToNumber(lodGetNumeric(data, 'modelAccuracy', false))
-          "
-        />
+        <ModelAccuracyChart :modelAccuracy="modelAccuracy" />
       </div>
     </div>
     <div
@@ -174,11 +268,7 @@ export default {
           <div v-bind="props" class="tw-flex tw-flex-col tw-items-center">
             <span
               class="tw-text-4xl tw-font-semibold"
-              :style="{
-                color: getColorCode(
-                  lodGetNumeric(data, 'metrics.variance', false)
-                ),
-              }"
+              :style="{ color: getColorCode(variance) }"
             >
               {{ `${lodGetNumeric(data, 'metrics.variance')}` }}
             </span>
@@ -186,33 +276,37 @@ export default {
           </div>
         </template>
         <div
-          class="tw-w-80 tw-h-14 tw-p-2 tw-bg-white tw-border tw-rounded tw-border-[#D9D9D9] tw-shadow-2xl"
+          class="tw-w-80 tw-h-20 tw-p-2 tw-bg-white tw-border tw-rounded tw-border-[#D9D9D9] tw-shadow-2xl"
         >
           <p class="tw-text-sm tw-text-center">
             {{
-              `The difference between market sensing and the internal forecast results in a ${lodGetNumeric(
-                data,
-                'metrics.variance'
-              )} variance.`
+              `The difference between market sensing and the internal forecast results in a 
+              ${lodGetNumeric(data, 'metrics.variance')} variance.`
             }}
           </p>
         </div>
       </v-menu>
       <div>
         <ActionButton
-          :variance="
-            lodToNumber(lodGetNumeric(data, 'metrics.variance', false))
-          "
+          :variance="variance"
           :isReviewed="isReviewed"
+          :isFetchingReviews="isFetchingReviews"
           @click="showFormHandler"
         />
       </div>
     </div>
     <ActionForm
+      v-if="actionFormIsShown"
       :actionFormIsShown="actionFormIsShown"
-      :variance="lodToNumber(lodGetNumeric(data, 'metrics.variance', false))"
+      :variance="variance"
+      :reviews="reviews"
+      :actionStatus="actionStatus"
+      :isFetching="isFetchingReviews"
+      :isSubmitting="isSubmittingReview"
+      :responseSubmitted="responseSubmitted"
       @close-form="hideFormHandler"
-      @reviewed="reviewHandler"
+      @fetch-reviews="fetchReviews"
+      @submit-review="submitHandler"
     />
   </div>
 </template>

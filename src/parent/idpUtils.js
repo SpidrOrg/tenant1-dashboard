@@ -1,71 +1,76 @@
 import 'regenerator-runtime';
-import {Amplify, Auth} from "aws-amplify";
-import axios from "axios";
+import { Amplify, Auth } from 'aws-amplify';
+import axios from 'axios';
 // import {fromCognitoIdentityPool} from "@aws-sdk/credential-provider-cognito-identity";
 // import {CognitoIdentityClient} from "@aws-sdk/client-cognito-identity";
 // import { LambdaClient, InvokeCommand } from "@aws-sdk/client-lambda";
 
 let idpData;
-export function setIdpData(data){
+export function setIdpData(data) {
   idpData = data;
-  configureAuth({...data})
+  configureAuth({ ...data });
 }
 
-export function getIndentityPoolId(){
+export function getIndentityPoolId() {
   return idpData.identityPoolId;
 }
 
-const configureAuth = ({region, userPoolId, userPoolWebClientId, oauthDomain, redirectSignIn, redirectSignOut, clientId})=> {
+const configureAuth = ({
+  region,
+  userPoolId,
+  userPoolWebClientId,
+  oauthDomain,
+  redirectSignIn,
+  redirectSignOut,
+  clientId,
+}) => {
   Amplify.configure({
-    "aws_project_region": region,
-    "aws_cognito_region": region,
-    "aws_user_pools_id": userPoolId,
-    "aws_user_pools_web_client_id": userPoolWebClientId,
+    aws_project_region: region,
+    aws_cognito_region: region,
+    aws_user_pools_id: userPoolId,
+    aws_user_pools_web_client_id: userPoolWebClientId,
     Auth: {
       oauth: {
         domain: oauthDomain,
-        scope: [
-          "email",
-          "openid",
-          "profile",
-          `tenant/${clientId}`
-        ],
-        "redirectSignIn": redirectSignIn,
-        "redirectSignOut": redirectSignOut,
-        "responseType": 'code'
-      }
-    }
-  })
+        scope: ['email', 'openid', 'profile', `tenant/${clientId}`],
+        redirectSignIn: redirectSignIn,
+        redirectSignOut: redirectSignOut,
+        responseType: 'code',
+      },
+    },
+  });
+};
+
+export async function getAuthDetails() {
+  const { token, userPoolId, accessToken } = (await authenticate()) || {};
+  return { token, userPoolId, accessToken };
 }
 
-export async function getAuthDetails(){
-  const {token, userPoolId, accessToken} = await authenticate() || {};
-  return {token, userPoolId, accessToken}
-}
-
-async function authenticate(){
+async function authenticate() {
   let authSession;
   try {
     authSession = await Auth.currentSession();
-  } catch (e){}
+  } catch (e) {}
 
-  if (authSession){
+  if (authSession) {
     const session = await authSession;
-    const idToken = await session.getIdToken()
-    const accessToken = await session.getAccessToken()
+    const idToken = await session.getIdToken();
+    const accessToken = await session.getAccessToken();
     return {
-      token: idToken.jwtToken, userPoolId: idpData.userPoolId, accessToken: accessToken.jwtToken
-    }
+      token: idToken.jwtToken,
+      userPoolId: idpData.userPoolId,
+      accessToken: accessToken.jwtToken,
+    };
   } else {
-    return {}
+    return {};
   }
 }
 
-export async function doFederatedSignIn(){
-  await Auth.federatedSignIn()
+export async function doFederatedSignIn() {
+  await Auth.federatedSignIn();
 }
 
-export async function logout(){
+export async function logout() {
   try {
     await Auth.signOut();
     return true;
@@ -98,14 +103,31 @@ export async function logout(){
 //   return responseResult;
 // }
 
+export async function invokeGetApi(apiName, payload) {
+  const { accessToken } = await getAuthDetails();
+  const response = await axios.get(
+    `https://${idpData.apiPrefix}/${idpData.stage}/${apiName}`,
+    {
+      headers: {
+        Authorization: accessToken,
+      },
+      params: payload,
+    }
+  );
+  return response?.data?.body;
+}
 
-export async function invokeGetApi(apiName, payload){
-  const {accessToken} = await getAuthDetails();
-  const response = await axios.get(`https://${idpData.apiPrefix}/${idpData.stage}/${apiName}`, {
-    headers: {
-      Authorization: accessToken
-    },
-    params: payload
-  })
+export async function invokePostApi(apiName, payload) {
+  const { accessToken } = await getAuthDetails();
+  const response = await axios.post(
+    `https://${idpData.apiPrefix}/${idpData.stage}/${apiName}`,
+    payload,
+    {
+      headers: {
+        Authorization: accessToken,
+        'Content-Type': 'application/json',
+      },
+    }
+  );
   return response?.data?.body;
 }

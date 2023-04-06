@@ -1,11 +1,24 @@
 <template>
   <v-app class="gp-full-height" >
-    <default-view />
+    <default-view :userdata="userdata"/>
   </v-app>
 </template>
 
-<script setup>
+<script>
   import DefaultView from './View.vue'
+
+  export default {
+    name: "default-p",
+    props: {
+      userdata: {
+        type: Object,
+        require: true
+      }
+    },
+    components: {
+      DefaultView
+    }
+  }
 </script>
 
 <style>

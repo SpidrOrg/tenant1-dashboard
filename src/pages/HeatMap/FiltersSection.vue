@@ -1,6 +1,6 @@
 <script>
 import _ from 'lodash';
-import fetchHeatMapOptions from '@/api/fetchHeatMapOptions';
+import fetchHeatMapOptions from '@/api/HeatMap/fetchHeatMapOptions';
 
 import InfoIcon from '@/images/info-icon.svg';
 import HeatMapScaleIcon from '@/images/heatmap-scale.svg';
@@ -40,6 +40,7 @@ export default {
     const earliestRefreshDate = new Date(
       _.first(this.filters.refreshDates.items)
     );
+    this.updateLatestRefreshDate(earliestRefreshDate);
     this.refreshDateUpdated({
       month: earliestRefreshDate.getMonth(),
       year: earliestRefreshDate.getFullYear(),
@@ -47,9 +48,12 @@ export default {
     this.dataLoaded = true;
   },
 
-  emits: ['updateFilters'],
+  emits: ['updateFilters', 'latestRefreshDateUpdate'],
 
   methods: {
+    updateLatestRefreshDate(dateObj) {
+      this.$emit('latestRefreshDateUpdate', dateObj);
+    },
     refreshDateUpdated({ month, year }) {
       this.filters.refreshDates.selected = { month, year };
       this.filtersUpdated();

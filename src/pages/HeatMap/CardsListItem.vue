@@ -17,9 +17,7 @@ export default {
     return {
       lodGet: _.get,
       lodSize: _.size,
-      menu:{
-            number:[]
-          }
+      menu: {},
     };
   },
   methods: {
@@ -32,11 +30,9 @@ export default {
 
       return styles;
     },
-    closeMenu(data){
-      //alert('yess')
-      console.log(this.menu.number[data])
-      this.menu.number[data] = false
-    }
+    closeMenu(data) {
+      this.menu[data] = false;
+    },
   },
 };
 </script>
@@ -79,11 +75,16 @@ export default {
             v-for="(cellValue, index) in rowData"
             :key="`${rowData[0]}-${cellValue}`"
           >
-            <v-menu location="right" :close-on-content-click="false" :persistent="true" v-model="menu.number[`${rowData[0]}${cellValue}${index}`]">
+            <v-menu
+              location="right"
+              :close-on-content-click="false"
+              :persistent="true"
+              v-model="menu[`${rowData[0]}${index}`]"
+            >
               <template v-slot:activator="{ props }">
                 <div
                   v-bind="index > 0 && props"
-                  @click="menu.number[`${rowData[0]}${cellValue}${index}`]=true"
+                  @click="menu[`${rowData[0]}${index}`] = true"
                   :class="`tw-py-3 tw-font-medium ${
                     index > 0 ? getCellStyling(cellValue) : 'tw-text-sm'
                   }`"
@@ -95,7 +96,7 @@ export default {
                 :category="data.columnHeaders[index]"
                 :customer="rowData[0]"
                 :period="data.period"
-                @closeEvent="closeMenu([`${rowData[0]}${cellValue}${index}`])"
+                @closeEvent="closeMenu(`${rowData[0]}${index}`)"
               />
             </v-menu>
           </div>

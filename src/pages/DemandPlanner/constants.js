@@ -1,6 +1,6 @@
 export const FORECAST_PERIOD_TYPES = {
   R3M_VIEW: 'r3m',
-  QUARTERLY_VIEW: 'quarterly',
+  QUARTERLY_VIEW: 'fixed',
 };
 
 export const ACTION_STATUS_LABELS = {

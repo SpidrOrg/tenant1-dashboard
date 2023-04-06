@@ -8,6 +8,7 @@ export default async function ({
   valueOrQuantity,
   periodStart,
   periodEnd,
+  forecastPeriodType,
 }) {
   const data = await getApiBase('reviews', {
     refreshDate,
@@ -16,6 +17,7 @@ export default async function ({
     valueOrQuantity,
     periodStart,
     periodEnd,
+    forecastPeriodType,
   });
 
   const headers = _.get(data, 'result.headers');

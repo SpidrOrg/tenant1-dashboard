@@ -31,8 +31,7 @@ export default {
           selected: null,
           filterlabel: "Internal Model"
         },
-
-
+        refreshDate: null,
         valueOrQuantity: BY_QUANTITY
       },
       currency: "USD",
@@ -49,15 +48,17 @@ export default {
     const options = await fetchInternalChartsOptions().catch(() => null);
     
     if (options){
-      this.filters.categories.items = options.categories;
-      this.filters.customers.items = options.customers;
-      this.filters.time_horizon.items = options.time_horizons;
-      this.filters.internal_model.items = options.internal_model;
+      console.log(options);
+      this.filters.categories.items = options.ms.categories;
+      this.filters.customers.items = options.ms.customers;
+      this.filters.time_horizon.items = options.ms.msTimeHorizon;
+      this.filters.internal_model.items = options.ms.msModel;
     }
+    this.filters.refreshDate = options.updateDates[0];
     // Add all option to the categories and customers filters
-    this.filters.categories.items = _.concat(ALL_OPTION, this.filters.categories.items);
-    this.filters.customers.items = _.concat(ALL_OPTION, this.filters.customers.items);
-    this.selectFilterUpdated("categories", ALL_OPTION);
+    this.filters.categories.items = this.filters.categories.items;
+    this.filters.customers.items = this.filters.customers.items;
+    this.selectFilterUpdated("categories", this.filters.categories.items[1]);
     this.selectFilterUpdated("time_horizon", this.filters.time_horizon.items[0]);
     this.selectFilterUpdated("internal_model", this.filters.internal_model.items[0]);
     this.selectFilterUpdated("customers", this.filters.customers.items[1])

@@ -60,7 +60,7 @@ const routes = [
       {
         path: "/model-accuracy",
         name: "ModelAccuracy",
-        label: "Model Accuracy",
+        label: "Accuracy",
         icon: ModelAccuracyIcon,
         icon_active:ModelAccuracyIconActive,
         component: ModelAccuracy,

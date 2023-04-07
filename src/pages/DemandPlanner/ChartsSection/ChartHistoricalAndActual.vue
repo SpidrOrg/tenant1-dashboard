@@ -44,13 +44,24 @@ export default {
     },
   },
   computed: {
+    chartColumns() {
+      const columns = [];
+      _.forEach(dataKeys, (key, i) => {
+        columns.push(key);
+        if (i > 0) columns.push({ role: 'annotation' });
+      });
+      return columns;
+    },
     chartData() {
       return [
-        [...dataKeys],
+        [...this.chartColumns],
         ..._.map(this.data, (v) => {
-          return _.map(dataKeys, (k) =>
-            v[k] === null || v[k] === undefined ? 0 : v[k]
-          );
+          return _.map(this.chartColumns, (column, i) => {
+            let key = column;
+            if (_.get(key, 'role') === 'annotation')
+              key = this.chartColumns[i - 1];
+            return v[key] === null || v[key] === undefined ? 0 : v[key];
+          });
         }),
       ];
     },
@@ -67,6 +78,13 @@ export default {
           2: { color: DATA_CONFIG[3].color },
           3: { color: DATA_CONFIG[4].color },
         },
+        annotations: {
+          textStyle: {
+            color: '#000000',
+            fontSize: 10,
+          },
+          alwaysOutside: true,
+        },
         hAxis: {
           textStyle: {
             color: '#323232',
@@ -74,11 +92,16 @@ export default {
             fontSize: 13,
           },
         },
+        vAxis: {
+          gridlines: {
+            count: 0,
+          },
+          textPosition: 'none',
+        },
         chartArea: {
-          left: '4%',
-          top: '10%',
+          top: '6%',
           width: '100%',
-          height: '80%',
+          height: '84%',
         },
       },
     };

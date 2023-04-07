@@ -26,10 +26,14 @@ export default {
   computed: {
     chartData() {
       return [
-        ['period', 'modelAccuracy', { role: 'style' }],
+        ['period', 'modelAccuracy', { role: 'style' }, { role: 'annotation' }],
         ..._.map(this.data, (el) => {
           const modelAccuracy = _.toNumber(_.last(el));
-          return [...el, `color: ${this.getColorCode(modelAccuracy)}`];
+          return [
+            ...el,
+            `color: ${this.getColorCode(modelAccuracy)}`,
+            `${modelAccuracy}%`,
+          ];
         }),
       ];
     },
@@ -56,7 +60,16 @@ export default {
         tooltip: { trigger: 'none' },
         height: 240,
         width: 560,
+        annotations: {
+          textStyle: {
+            color: '#000000',
+            fontSize: 16,
+          },
+        },
         vAxis: {
+          gridlines: {
+            count: 0,
+          },
           viewWindow: {
             max: 100,
             min: 0,

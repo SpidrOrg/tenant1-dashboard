@@ -42,15 +42,29 @@ export default {
     };
   },
   computed: {
+    pyValNumeric() {
+      return _.isNaN(_.toNumber(this.pyVal)) ? 0 : _.toNumber(this.pyVal);
+    },
+    impliedValNumeric() {
+      return _.isNaN(_.toNumber(this.impliedVal))
+        ? 0
+        : _.toNumber(this.impliedVal);
+    },
     chartData() {
       return [
-        ['', ...dataKeys],
+        [
+          '',
+          dataKeys[0],
+          { role: 'annotation' },
+          dataKeys[1],
+          { role: 'annotation' },
+        ],
         [
           this.projectedPeriod,
-          _.isNaN(_.toNumber(this.pyVal)) ? 0 : _.toNumber(this.pyVal),
-          _.isNaN(_.toNumber(this.impliedVal))
-            ? 0
-            : _.toNumber(this.impliedVal),
+          this.pyValNumeric,
+          `${this.pyValNumeric}%`,
+          this.impliedValNumeric,
+          `${this.impliedValNumeric}%`,
         ],
       ];
     },
@@ -58,7 +72,18 @@ export default {
       return {
         legend: { position: 'none' },
         tooltip: { trigger: 'none' },
+        annotations: {
+          textStyle: {
+            color: '#000000',
+            fontSize: 12,
+          },
+          alwaysOutside: true,
+        },
         vAxis: {
+          gridlines: {
+            count: 0,
+          },
+          textPosition: 'none',
           viewWindow: {
             max: _.add(
               _.max([_.toNumber(this.pyVal), _.toNumber(this.impliedVal)]),
@@ -78,7 +103,6 @@ export default {
           },
         },
         chartArea: {
-          left: '16%',
           top: '10%',
           width: '70%',
           height: '80%',

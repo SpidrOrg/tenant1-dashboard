@@ -52,7 +52,7 @@ export default {
         });
 
         const performance = _.get(response, 'performance');
-        this.chartData = _.take(performance, _.size(performance) - 2);
+        this.chartData = _.take(performance, _.size(performance) - 1);
         this.modelAccuracy = _.toNumber(_.last(_.last(performance)));
       } catch (e) {
         this.error = e;

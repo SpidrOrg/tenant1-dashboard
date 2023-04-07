@@ -16,9 +16,9 @@ export default {
   computed: {
     chartData() {
       return [
-        ['X', 'Y'],
+        ['X', 'Y', { role: 'annotation' }],
         ..._.map(this.data, (v) => {
-          return [_.keys(v)[0], _.values(v)[0]];
+          return [_.keys(v)[0], _.values(v)[0], `${_.values(v)[0]}%`];
         }),
       ];
     },
@@ -29,6 +29,13 @@ export default {
         legend: 'none',
         tooltip: { trigger: 'none' },
         colors: ['#646F79'],
+        annotations: {
+          textStyle: {
+            color: '#000000',
+            fontSize: 12,
+          },
+          alwaysOutside: true,
+        },
         vAxis: {
           textStyle: {
             color: '#1E1E1E',
@@ -36,11 +43,16 @@ export default {
             fontSize: 12,
           },
         },
+        hAxis: {
+          gridlines: {
+            count: 0,
+          },
+          textPosition: 'none',
+        },
         chartArea: {
-          top: '8%',
           right: '4%',
           width: '60%',
-          height: '82%',
+          height: '90%',
         },
       },
     };

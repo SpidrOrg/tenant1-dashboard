@@ -153,7 +153,7 @@ export default {
           filters.valueOrQuantity === BY_VALUE ? 'tw-font-medium' : ''
         }`"
       >
-        Value {{ currency }}
+        Value ({{ currency }})
       </span>
       <div class="tw-flex tw-pt-8" style="color: #7823dc">
         <v-switch

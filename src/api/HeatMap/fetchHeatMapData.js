@@ -12,11 +12,11 @@ function getPeriodLabel(dateString, lag) {
   const year = getYear(parsedDateObj);
   const periodStartDate = format(
     add(new Date(year, monthIndex), { months: lag }),
-    'MMM yy'
+    'MMM ‘yy'
   );
   const periodEndDate = format(
     add(new Date(year, monthIndex), { months: lag + 2 }),
-    'MMM yy'
+    'MMM ‘yy'
   );
 
   return `${periodStartDate} - ${periodEndDate}`;

@@ -35,6 +35,9 @@ export default {
     valueORvolume() {
       return _.get(this.selectedFilters, 'valueORvolume');
     },
+    formattedHorizon() {
+      return `${this.lag}-${this.lag + 2}`;
+    },
   },
   methods: {
     getCellStyling(cellValue) {
@@ -69,7 +72,12 @@ export default {
   <div
     class="tw-flex tw-flex-col tw-gap-3 tw-w-full tw-h-full tw-bg-white tw-p-4"
   >
-    <p class="tw-text-xl tw-font-medium">{{ data.period }}</p>
+    <div class="tw-flex tw-gap-x-4 tw-items-center tw-w-full">
+      <p class="tw-text-xl tw-font-medium">{{ data.period }}</p>
+      <div class="tw-bg-brand-gray-4 tw-rounded tw-text-center">
+        <p class="tw-p-1 tw-text-sm">Future {{ formattedHorizon }} months</p>
+      </div>
+    </div>
     <div class="tw-w-full tw-border tw-border-solid tw-border-brand-gray-2" />
     <div class="tw-w-full tw-h-full tw-overflow-auto">
       <div

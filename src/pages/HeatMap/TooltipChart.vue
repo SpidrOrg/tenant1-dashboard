@@ -31,9 +31,11 @@ const dataKeys = _.map(DATA_CONFIG, (el) => el.key);
 export default {
   name: 'TooltipChart',
   props: {
+    marketSensingRefreshDate: { type: String, required: true },
+    valueORvolume: { type: String, required: true },
     category: { type: String, required: true },
     customer: { type: String, required: true },
-    period: { type: String, required: true },
+    lag: { type: Number, required: true },
   },
   components: {
     GoogleChart,
@@ -49,7 +51,7 @@ export default {
         curveType: 'none',
         legend: { position: 'none' },
         tooltip: { trigger: 'none' },
-        width: 800,
+        width: 850,
         height: 350,
         hAxis: {
           textStyle: {
@@ -76,18 +78,21 @@ export default {
     this.isLoading = true;
     try {
       this.apiData = await fetchDemandForecastData({
+        marketSensingRefreshDate: this.marketSensingRefreshDate,
+        valueORvolume: this.valueORvolume,
         category: this.category,
         customer: this.customer,
-        period: this.period,
+        lag: this.lag,
       });
     } catch (e) {
       this.error = e;
+      this.closeMenu();
     }
     this.isLoading = false;
   },
   emits: ['closeEvent'],
   methods: {
-    clickClose() {
+    closeMenu() {
       this.$emit('closeEvent');
     },
   },
@@ -130,7 +135,7 @@ export default {
             />
             <span class="tw-text-xs">{{ item.label }}</span>
           </div>
-          <v-btn variant="plain" icon="mdi-close" @click="clickClose"></v-btn>
+          <v-btn variant="plain" icon="mdi-close" @click="closeMenu"></v-btn>
         </div>
       </div>
       <div class="tw-w-full tw-border tw-border-solid tw-border-brand-gray-2" />

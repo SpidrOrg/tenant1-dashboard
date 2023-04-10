@@ -1,4 +1,14 @@
+import _ from 'lodash';
+import { ALL_CUSTOMERS } from './fetchHeatMapData';
+
 import getApiBase from '../getApiBase';
+
+const getNumericValue = (value) => {
+  if (value === null || _.isNaN(_.toNumber(value))) {
+    return 0;
+  }
+  return _.toNumber(value);
+};
 
 let cachedData = [
   ['Jun 22 - Aug 22', 12, 33, 44],
@@ -14,7 +24,13 @@ let cachedData = [
   ['May 23 - Jul 23', 13, 10, 4],
 ];
 
-export default async function ({ category, customer, period }) {
+export default async function ({
+  marketSensingRefreshDate,
+  valueORvolume,
+  category,
+  customer,
+  lag,
+}) {
   if (cachedData) {
     return await new Promise((res) => {
       setTimeout(() => {
@@ -23,11 +39,25 @@ export default async function ({ category, customer, period }) {
     });
   }
 
-  const data = getApiBase('demandforecast', {
+  const data = await getApiBase('heat_map_historical', {
+    marketSensingRefreshDate,
+    valueORvolume,
     category,
-    customer,
-    period,
+    customer: customer === ALL_CUSTOMERS ? '*' : customer,
+    lag,
   });
 
-  return data;
+  const dataKeys = _.keys(data);
+  let dataForUi = _.map(dataKeys, (key) => {
+    const values = _.get(data, `${key}`);
+    const msForecastGrowth = getNumericValue(_.get(values, 'msForecastGrwoth'));
+    const internalForecastGrowth = getNumericValue(
+      _.get(values, 'internalForecastGrowth')
+    );
+    const actualGrowth = getNumericValue(_.get(values, 'actualGrowth'));
+
+    return [key, msForecastGrowth, internalForecastGrowth, actualGrowth];
+  });
+
+  return dataForUi;
 }

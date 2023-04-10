@@ -13,7 +13,7 @@ export default {
   },
   data(){
     return {
-      isLoading:false,
+      isLoading:true,
       refreshDate:null,
       apiData:[],
       columnChartData:[],
@@ -31,10 +31,6 @@ export default {
           left: '3%',
           width:'90%'
         },
-        // vAxis: {
-        //   baselineColor: 'none',
-        //   textPosition: 'none'
-        // }
       },
       lineChartData:[],
       lineChartOptions:{
@@ -50,10 +46,6 @@ export default {
             fontSize: 10
           }
         },
-        // vAxis: {
-        //   baselineColor: 'none',
-        //   textPosition: 'none'
-        // },
         chartArea:{
           left: '3%',
           width:'90%'
@@ -61,34 +53,9 @@ export default {
       }
     }
   },
-
-   //created() {
-     //this.isLoading = true;
-  //   //try {
-  //     const selectedCategories = _.get(filtersData, "categories.selected");
-  //     const selectedCustomers = _.get(filtersData, "customers.selected");
-  //     const selectedValueORvolume = _.get(filtersData, "valueOrQuantity");
-  //     this.apiData = await fetchInternalChartsData({categories: selectedCategories === ALL_OPTION ? "*" : selectedCategories,
-  //       customers: selectedCustomers === ALL_OPTION ? "*" : selectedCustomers,
-  //       valueORvolume: selectedValueORvolume});
-  //     this.columnChartData.push(this.apiData[0].internal_forecast.identifiers);
-  //     this.lineChartData.push(this.apiData[0].projections.identifiers);
-  //     let v = this;
-  //     _.forEach(this.apiData[0].internal_forecast.data, function (data) {
-  //       v.columnChartData.push(data);
-  //     });
-  //     _.forEach(this.apiData[0].projections.data, function (data) {
-  //       v.lineChartData.push(data);
-  //     });
-  //   // } catch (e) {
-  //   //   this.error = e;
-  //   // }
-  //   this.isLoading = false;
-   //},
   methods:{
     async updateFilters(filtersData){
       try{
-          //this.refreshDate = formatFn(new Date(refreshDate));
           this.isLoading = true;
           const selectedCategories = _.get(filtersData, "categories.selected");
           const selectedCustomers = _.get(filtersData, "customers.selected");
@@ -166,13 +133,4 @@ export default {
     </div>
   </div>
   <v-divider/>
-<!--  <div class="tw-w-full tw-h-8 tw-bg-brand-gray-1">-->
-<!--    <div class="tw-w-full tw-border-t tw-border-solid tw-border-brand-gray-2" v-if="chartDataLoaded">-->
-<!--      <div class="tw-align-center tw-grid tw-grid-cols-1">-->
-<!--        <div>-->
-<!--          <GChart type="LineChart" :options="lineChartOptions" :data="lineChartData"/>-->
-<!--        </div>-->
-<!--      </div>-->
-<!--    </div>-->
-<!--  </div>-->
 </template>

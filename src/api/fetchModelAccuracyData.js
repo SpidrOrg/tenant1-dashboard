@@ -23,6 +23,7 @@ export default async function ({categoriesAccuracy, categoriesHistoric, projecte
   // const data = await invokeApi('modelaccuracy'); // apidatacleint2 //maindashboard
   // let dataForUi = _.get(data, 'projectionsData.projections', []);
   let cvAccuracyDataObject = _.get(data, 'performance.current', []);
+  let unit = _.get(data, 'unit', []);
   let forecastDataObject = _.get(data, 'forecast', []);
   let actualDataObject = _.get(data, 'actual', []);
   let accuracy = _.get(data, 'performance.past', []);
@@ -44,7 +45,7 @@ export default async function ({categoriesAccuracy, categoriesHistoric, projecte
     }));
     let historicPredicted = [];
     _.forEach(historicActualData,function(v,k){
-      historicPredicted.push([v.period,historicData[k].value1,v.value2])
+      historicPredicted.push([v.period,historicData[k].value1,historicData[k].value1+unit,v.value2,v.value2+unit])
     })
     let accuracyData = [];
     _.forEach(accuracy,function(v,k){

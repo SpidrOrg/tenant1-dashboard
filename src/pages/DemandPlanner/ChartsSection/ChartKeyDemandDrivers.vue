@@ -18,7 +18,11 @@ export default {
       return [
         ['X', 'Y', { role: 'annotation' }],
         ..._.map(this.data, (v) => {
-          return [_.keys(v)[0], _.values(v)[0], `${_.values(v)[0]}%`];
+          return [
+            _.keys(v)[0],
+            _.values(v)[0],
+            `${_.round(_.values(v)[0], 1)}%`,
+          ];
         }),
       ];
     },
@@ -34,6 +38,7 @@ export default {
             color: '#000000',
             fontSize: 12,
           },
+          datum: { stem: { length: 2 } },
           alwaysOutside: true,
         },
         vAxis: {

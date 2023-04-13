@@ -73,12 +73,11 @@ export default {
     forecastPeriodType() {
       return _.get(this.options, 'forecastPeriodType');
     },
+    periodLabel() {
+      return _.get(this.data, 'label');
+    },
   },
   methods: {
-    getPeriodLabel() {
-      const label = _.get(this.data, 'label');
-      return label === this.period ? label : `${label}, ${this.period}`;
-    },
     showFormHandler() {
       this.actionFormIsShown = true;
     },
@@ -172,7 +171,7 @@ export default {
     <div class="tw-flex tw-flex-col tw-py-2">
       <p style="color: #9291a5">Projected Period</p>
       <div class="tw-flex tw-gap-x-4 tw-items-center tw-w-full">
-        <p class="tw-text-lg tw-font-medium">{{ getPeriodLabel() }}</p>
+        <p class="tw-text-lg tw-font-medium">{{ periodLabel }}</p>
         <div class="tw-bg-brand-gray-4 tw-rounded tw-text-center">
           <p class="tw-p-1 tw-text-sm">
             Future {{ data.formattedHorizon }} months

@@ -1,7 +1,7 @@
 <script>
 import _ from 'lodash';
 import { format as formatFn } from 'date-fns';
-import { getQuarterLabel } from '@/utils/dateHelpers';
+import { getPeriodDataLabel, getConcisePeriodLabel } from './helpers';
 import EyeIcon from '@/images/eye-icon.svg';
 import EyeOffIcon from '@/images/eye-off-icon.svg';
 import { FORECAST_PERIOD_TYPES } from './constants';
@@ -54,6 +54,9 @@ export default {
       selectedRefreshDate: null,
       isModelAccuracyHidden: false,
       forecastPeriodType: R3M_VIEW,
+
+      getPeriodDataLabel,
+      getConcisePeriodLabel,
 
       R3M_VIEW,
       EyeIcon,
@@ -108,10 +111,6 @@ export default {
     latestRefreshDateUpdateHandler(dateObj) {
       this.latestRefreshDate = formatFn(dateObj, 'MMM dd, yyyy');
     },
-    getPeriodDataLabel(period) {
-      if (this.forecastPeriodType === R3M_VIEW) return period;
-      return getQuarterLabel(period);
-    },
     isCheckDisabled(isChecked) {
       return (
         isChecked &&
@@ -147,7 +146,10 @@ export default {
           this.dashboardData.periodsData = response;
           _.forEach(this.dashboardData.periodsData, (v, i) => {
             v.period = _.get(_.keys(v), '[0]');
-            v.label = this.getPeriodDataLabel(v.period);
+            v.label = this.getPeriodDataLabel(
+              v.period,
+              this.forecastPeriodType
+            );
             v.metrics = _.get(v, `${v.period}.metrics`, {});
             v.horizon = _.get(v, `${v.period}.horizon`, '');
             v.formattedHorizon = this.formatHorizon(v.horizon);
@@ -157,13 +159,20 @@ export default {
               _.get(v.metrics, 'historical'),
               (el) => {
                 const historicalPeriod = _.get(el, 'period');
-                const periodLabel = this.getPeriodDataLabel(historicalPeriod);
+                const periodLabel = this.getConcisePeriodLabel(
+                  historicalPeriod,
+                  this.forecastPeriodType
+                );
                 return { ...el, period: periodLabel };
               }
             );
             v.metrics.variance = _.round(
               _.subtract(v.metrics.marketSensingGrowth, v.metrics.jdaGrowth),
               0
+            );
+            v.checkboxLabel = this.getConcisePeriodLabel(
+              v.period,
+              this.forecastPeriodType
             );
             v.isChecked = true;
             v.isActive = i === 0;
@@ -260,18 +269,19 @@ export default {
           <div
             v-for="periodData in dashboardData.periodsData"
             :key="periodData.label"
-            class="tw-flex tw-items-center"
+            class="tw-flex tw-items-center tw-text-brand-primary"
           >
             <v-checkbox
-              :id="`period${periodData.label}`"
-              color="#7823DC"
+              :id="`period${periodData.checkboxLabel}`"
               hide-details
               :disabled="isCheckDisabled(periodData.isChecked)"
               v-model="periodData.isChecked"
             />
-            <label :for="`period${periodData.label}`">{{
-              periodData.label
-            }}</label>
+            <label
+              :for="`period${periodData.checkboxLabel}`"
+              class="tw-text-black"
+              >{{ periodData.checkboxLabel }}
+            </label>
           </div>
           <div class="tw-flex tw-gap-x-3 tw-ml-auto">
             <button

@@ -17,18 +17,12 @@ export default {
       required: true,
     },
   },
-  methods: {
-    getPeriodLabel() {
-      const label = _.get(this.activePeriodData, 'label');
-      return label === this.period ? label : `${label}, ${this.period}`;
-    },
-  },
   computed: {
     metrics() {
       return this.activePeriodData.metrics;
     },
-    period() {
-      return _.get(this.activePeriodData, 'period');
+    periodLabel() {
+      return _.get(this.activePeriodData, 'label');
     },
   },
 };
@@ -36,9 +30,7 @@ export default {
 
 <template>
   <div class="tw-flex tw-gap-x-4 tw-items-center tw-w-full tw-py-2">
-    <p class="tw-font-medium tw-text-2xl">
-      More details for {{ getPeriodLabel() }}
-    </p>
+    <p class="tw-font-medium tw-text-2xl">More details for {{ periodLabel }}</p>
     <div class="tw-bg-brand-gray-4 tw-rounded">
       <p class="tw-p-1 tw-text-sm">
         Future {{ activePeriodData.formattedHorizon }} months
@@ -52,7 +44,7 @@ export default {
       </div>
       <div class="tw-col-span-1">
         <ChartPYandImpliedGrowth
-          :projectedPeriod="getPeriodLabel()"
+          :projectedPeriod="periodLabel"
           :pyVal="metrics.pyGrowth"
           :impliedVal="metrics.impliedGrowth"
         />

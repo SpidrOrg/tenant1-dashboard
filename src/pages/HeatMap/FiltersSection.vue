@@ -110,7 +110,7 @@ export default {
       >
         Value ({{ currency }})
       </span>
-      <div class="tw-flex tw-pt-8" style="color: #7823dc">
+      <div class="tw-flex tw-pt-8 tw-text-brand-primary">
         <v-switch
           :model-value="filters.valueOrQuantity === BY_QUANTITY"
           inset

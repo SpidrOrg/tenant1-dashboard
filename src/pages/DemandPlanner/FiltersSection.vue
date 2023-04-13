@@ -1,5 +1,6 @@
 <script>
 import _ from 'lodash';
+import {parse} from "date-fns";
 import fetchMainDashboardOptions from '@/api/DemandPlanner/fetchMainDashboardOptions';
 
 const BY_VALUE = 'BY_VALUE';
@@ -55,9 +56,7 @@ export default {
 
     // Set default option on filters
     // this.filters.refreshDates.selected = new Date(_.first(this.filters.refreshDates.items));
-    const earliestRefreshDate = new Date(
-      _.first(this.filters.refreshDates.items)
-    );
+    const earliestRefreshDate = parse(_.first(this.filters.refreshDates.items), 'yyyy-MM-dd', new Date())
     this.updateLatestRefreshDate(earliestRefreshDate);
     this.refreshDateUpdated(
       {

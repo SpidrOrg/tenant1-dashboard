@@ -117,6 +117,12 @@ export default {
           width:'100%',
           height:'70%'
         },
+        vAxis: {
+        gridlines: {
+            count: 0
+        },
+        textPosition: 'none',
+      }
       },
       // rollingTestAccuracyData:[
       //   ['Period','Predicted Values',{role:'style'}],
@@ -135,6 +141,12 @@ export default {
         legend:{
           position:'none'
         },
+        vAxis: {
+          gridlines: {
+            count: 0
+        },
+        textPosition: 'none',
+      },
         tooltip: { trigger: 'none' },
         chartArea:{
           left: '3%',
@@ -353,14 +365,14 @@ export default {
             <div class="tw-flex tw-w-full tw-flex-auto tw-border-t tw-border-solid tw-border-brand-gray-2" />
             <div class="tw-flex tw-gap-x-4 tw-w-full tw-bg-white tw-px-3">
               <div class="tw-pl-2 tw-pt-5 tw-w-1/6">
+                <label for="category" class="tw-text-sm">Category</label>
                 <v-select
-                  label="Categories"
                   :items="filtersTestAccuracy.categories.items"
                   :model-value="filtersTestAccuracy.categories.selected"
                   @update:modelValue="value=>selectAccuracyFilterUpdated('categories', value)"
                 ></v-select>
               </div>
-              <div class="tw-flex tw-items-center tw-gap-1.5">
+              <div class="tw-flex tw-items-center tw-gap-1.5 tw-mt-3">
                 <p :class="`${!cvAccuracy ? 'tw-font-medium' : ''}`" >Rolling Test Accuracy</p>
                 <div class="tw-flex tw-pt-5" style="color: #7823DC;">
                   <v-switch inset @click="cvAccuracy = !cvAccuracy"></v-switch>
@@ -399,14 +411,15 @@ export default {
             <div class="tw-flex tw-w-full tw-flex-auto tw-border-t tw-border-solid tw-border-brand-gray-2" />
             <div class="tw-flex tw-gap-x-4 tw-w-full tw-bg-white tw-px-3">
               <div class="tw-pl-2 tw-pt-5 tw-w-1/6">
+                <label for="category" class="tw-text-sm">Category</label>
                 <v-select
-                  label="Categories"
                   :items="filtersCharts.categories.items"
                   :model-value="filtersCharts.categories.selected"
                   @update:modelValue="value=>selectFilterUpdated('categories', value)"
                 ></v-select>
               </div>
               <div class="tw-pl-2 tw-pt-5 tw-w-1/6">
+                <label for="projection_period" class="tw-text-sm">Projection Period</label>
                 <v-select
                   :items="filtersCharts.projected_period.items"
                   :model-value="filtersCharts.projected_period.selected"

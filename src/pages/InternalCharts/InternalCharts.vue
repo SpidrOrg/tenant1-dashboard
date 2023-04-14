@@ -19,8 +19,11 @@ export default {
       columnChartData:[],
       debounceUpdateFilters: _.debounce(this.updateFilters, 500),
       columnChartOptions:{
-        height:370,
-        legend: {position: 'top'},
+        height:320,
+        explorer: {
+          axis:'horizontal'
+        },
+        legend: {position: 'none'},
         colors: ['#787878', '#B991EB'],
         hAxis : {
           textStyle : {
@@ -29,12 +32,15 @@ export default {
         },
         chartArea:{
           left: '3%',
-          width:'90%'
+          width:'100%'
         },
       },
       lineChartData:[],
       lineChartOptions:{
         curveType: 'none',
+        explorer: {
+          axis:'horizontal'
+        },
         legend: { position: 'top' },
         colors: ['#570EAA', '#787878', '#C8A5F0'],
         height:370,
@@ -48,7 +54,7 @@ export default {
         },
         chartArea:{
           left: '3%',
-          width:'90%'
+          width:'100%'
         },
       }
     }
@@ -56,6 +62,8 @@ export default {
   methods:{
     async updateFilters(filtersData){
       try{
+        this.columnChartData = [];
+        this.lineChartData = [];
           this.isLoading = true;
           const selectedCategories = _.get(filtersData, "categories.selected");
           const selectedCustomers = _.get(filtersData, "customers.selected");
@@ -110,21 +118,31 @@ export default {
     </div>
     </div>
     <div class="tw-flex tw-w-full tw-flex-auto tw-border-t tw-border-solid tw-border-brand-gray-2" />
-    <div class="tw-py-5 tw-bg-brand-gray-1">
+    <div class="tw-py-5 tw-bg-brand-gray-1"  style="width: 1600px;">
       <TheHeader  @update-filters="debounceUpdateFilters"/>
     </div>
     <div class="tw-w-full tw-border-t tw-border-solid tw-border-brand-gray-2" v-if="!isLoading">
       <div class="tw-grid tw-grid-rows-2 tw-gap-6">
         <div>
-          <v-card style="height: 370px">
-            <h3 class="tw-font-bold  tw-py-2 tw-pl-2">Internal Forecast vs Sales</h3>
-            <div class="tw-w-full tw-items-left tw-border-t tw-border-solid tw-border-brand-gray-2" />
+          <v-card style="width:3500px;height: 370px;overflow-x: auto;">
+            <p class="tw-font-medium tw-text-2xl tw-pl-2 tw-pt-2 tw-mb-2">Internal Forecast vs Sales</p>
+            <div class="overflow-x-auto tw-w-full tw-items-left tw-border-t tw-border-solid tw-border-brand-gray-2" />
+            <div class="tw-flex tw-mt-3">
+                <div style="width:21px;height:21px;background: #787878;" class="tw-ml-3">
+                </div>
+                <div style="height:21px" class="tw-ml-1">Internal Forecast</div>
+                <div class="tw-flex">
+                <div style="width:21px;height:21px;background: #b991eb;" class="tw-ml-3">
+                </div>
+                <div style="height:21px" class="tw-ml-1">Sales</div>
+                </div>
+              </div>
             <GChart type="ColumnChart" :data="columnChartData" :options="columnChartOptions" height="370"/>
           </v-card>
         </div>
         <div>
           <v-card style="height: 370px">
-            <h3 class="tw-font-bold tw-py-2 tw-pl-2">Projections of Market Sensing Forecast vs Internal Forecast vs Sales</h3>
+            <p class="tw-font-medium tw-text-2xl tw-pl-2 tw-pt-2 tw-mb-2">Projections of Market Sensing Forecast vs Internal Forecast vs Sales</p>
             <div class="tw-flex tw-w-full tw-flex-auto tw-border-t tw-border-solid tw-border-brand-gray-2" />
             <GChart type="LineChart" :options="lineChartOptions" :data="lineChartData"/>
           </v-card>

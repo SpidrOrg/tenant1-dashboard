@@ -58,8 +58,12 @@ export default {
         ..._.map(this.data, (v) => {
           return _.map(this.chartColumns, (column, i) => {
             let key = column;
-            if (_.get(key, 'role') === 'annotation')
+            if (_.get(key, 'role') === 'annotation') {
               key = this.chartColumns[i - 1];
+              return v[key] === null || v[key] === undefined
+                ? 'NA'
+                : `${_.round(_.toNumber(v[key]), 0)}%`;
+            }
             return v[key] === null || v[key] === undefined ? 0 : v[key];
           });
         }),
@@ -81,10 +85,12 @@ export default {
         annotations: {
           textStyle: {
             color: '#000000',
-            fontSize: 10,
+            fontSize: 12,
           },
+          datum: { stem: { length: 0 } },
           alwaysOutside: true,
         },
+        bar: { groupWidth: '76%' },
         hAxis: {
           textStyle: {
             color: '#323232',

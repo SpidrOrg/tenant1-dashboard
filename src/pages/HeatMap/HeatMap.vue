@@ -1,9 +1,14 @@
 <script>
 import _ from 'lodash';
-import { format as formatFn } from 'date-fns';
+import { format as formatFn, parse } from 'date-fns';
 import fetchHeatMapData from '@/api/HeatMap/fetchHeatMapData';
 import FiltersSection from '@/pages/HeatMap/FiltersSection.vue';
 import CardsList from '@/pages/HeatMap/CardsList.vue';
+
+export const LAG_VALUES = [1, 4, 7, 10];
+const FILTER_UPDATE_GAP_MS = 3000;
+const FILTER_INSTANT_UPDATE_GAP_MS = 500;
+
 export default {
   name: 'HeatMap',
   components: {
@@ -13,9 +18,20 @@ export default {
   data() {
     return {
       apiData: [],
-      isLoading: true,
+      isFetchingData: true,
       error: null,
-      debounceUpdateFilters: _.debounce(this.updateFilters, 3000),
+      selectedFilters: {
+        marketSensingRefreshDate: null,
+        valueORvolume: null,
+      },
+      debounceUpdateFilters: _.debounce(
+        this.updateFilters,
+        FILTER_UPDATE_GAP_MS
+      ),
+      debounceUpdateFiltersInstant: _.debounce(
+        this.updateFilters,
+        FILTER_INSTANT_UPDATE_GAP_MS
+      ),
       latestRefreshDate: null,
     };
   },
@@ -23,36 +39,58 @@ export default {
     latestRefreshDateUpdateHandler(dateObj) {
       this.latestRefreshDate = formatFn(dateObj, 'MMM dd, yyyy');
     },
-    async updateFilters(filtersData, metaData) {
-      this.isLoading = true;
-      const selectedMarketSensingRefreshDate = _.get(
-        filtersData,
-        'refreshDates.selected'
-      );
-      const selectedValueORvolume = _.get(filtersData, 'valueOrQuantity');
-
-      const jsDateRefreshDate = new Date(
-        selectedMarketSensingRefreshDate.year,
-        selectedMarketSensingRefreshDate.month
-      );
+    async fetchDashboardData(metaData) {
+      this.isFetchingData = true;
       try {
-        this.apiData = await fetchHeatMapData({
-          ...metaData,
-          marketSensingRefreshDate: new Date(
-            jsDateRefreshDate.getTime() -
-              jsDateRefreshDate.getTimezoneOffset() * 60000
-          )
-            .toISOString()
-            .split('T')[0],
-          valueORvolume: selectedValueORvolume,
-        });
+        this.apiData = await Promise.all(
+          _.map(LAG_VALUES, (lag) => {
+            return fetchHeatMapData({
+              ...metaData,
+              marketSensingRefreshDate:
+                this.selectedFilters.marketSensingRefreshDate,
+              valueORvolume: this.selectedFilters.valueORvolume,
+              lag: lag,
+            });
+          })
+        );
+
         if (_.isEmpty(this.apiData)) {
           this.error = 'Error: Unable to fetch data';
         }
       } catch (e) {
         this.error = e;
       }
-      this.isLoading = false;
+      this.isFetchingData = false;
+    },
+    async updateFilters(filtersData, metaData) {
+      const selectedMarketSensingRefreshDate = _.get(
+        filtersData,
+        'refreshDates.selected'
+      );
+      const selectedValueORvolume = _.get(filtersData, 'valueOrQuantity');
+
+      try {
+        const marketSensingRefreshDateP = parse(
+          `${selectedMarketSensingRefreshDate.year}-${
+            selectedMarketSensingRefreshDate.month + 1
+          }`,
+          'yyyy-M',
+          new Date()
+        );
+        const marketSensingRefreshDate = formatFn(
+          marketSensingRefreshDateP,
+          'yyyy-MM-dd'
+        );
+
+        this.selectedFilters = {
+          marketSensingRefreshDate: marketSensingRefreshDate,
+          valueORvolume: selectedValueORvolume,
+        };
+
+        this.fetchDashboardData(metaData);
+      } catch (e) {
+        this.error = e;
+      }
     },
   },
 };
@@ -80,12 +118,13 @@ export default {
     <div class="tw-py-5">
       <FiltersSection
         @update-filters="debounceUpdateFilters"
+        @update-filters-instant="debounceUpdateFiltersInstant"
         @latestRefreshDateUpdate="latestRefreshDateUpdateHandler"
       />
     </div>
     <div
       class="tw-w-full tw-h-3/4 tw-flex tw-justify-center tw-items-center"
-      v-if="isLoading"
+      v-if="isFetchingData"
     >
       <v-progress-circular
         indeterminate
@@ -94,10 +133,10 @@ export default {
         :width="10"
       />
     </div>
-    <div v-if="!isLoading && !error">
-      <CardsList :data="apiData" />
+    <div v-if="!isFetchingData && !error">
+      <CardsList :data="apiData" :selectedFilters="selectedFilters" />
     </div>
-    <div v-if="!isLoading && error">
+    <div v-if="!isFetchingData && error">
       <v-alert type="error" :text="error.toString()"></v-alert>
     </div>
   </div>

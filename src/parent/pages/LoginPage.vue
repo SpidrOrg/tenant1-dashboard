@@ -1,5 +1,6 @@
 <script>
 import KearneyHomeLogo from '../public/kearneyHomeLogo.png';
+import kearneyInfographicImage from '../public/kearneyInfographic.png';
 import LoginButton from '../components/LoginButton.vue';
 import { doFederatedSignIn } from '../idpUtils';
 
@@ -11,6 +12,7 @@ export default {
   data() {
     return {
       KearneyHomeLogo,
+      kearneyInfographicImage,
     };
   },
   methods: {
@@ -24,23 +26,28 @@ export default {
 <template>
   <section class="tw-flex tw-h-screen tw-flex-col">
     <div class="tw-grid tw-grid-cols-12 tw-my-auto">
-      <div class="tw-col-span-1 tw-col-start-1" />
       <div
-        class="tw-col-span-5 tw-col-start-2 tw-self-center tw-justify-self-center"
+        class="tw-col-span-6 tw-col-start-1 tw-self-center tw-justify-self-center"
       >
-        <img class="imageClass" :src="KearneyHomeLogo" />
+        <img class="kearney-home-logo" :src="KearneyHomeLogo" />
       </div>
-      <div class="tw-col-span-5 tw-col-start-7 tw-my-auto tw-px-24">
-        <div class="tw-flex tw-flex-col">
-          <h1 class="tw-text-4xl tw-font-medium tw-pb-8">
+      <div class="tw-col-span-6 tw-col-start-7 tw-px-20">
+        <div class="tw-flex tw-flex-col tw-h-full">
+          <h1 class="tw-text-4xl tw-text-black tw-font-medium">
             Kearney’s Sensing Solution
           </h1>
-          <p class="tw-text-xl tw-break-words tw-pb-8">
-            Demand Dashboard compares projected growth for demand against
-            expected market demand. The goal is to help users to identify
-            “triggers” necessitating review for projection calibration.
+          <div class="tw-py-6">
+            <img
+              class="kearney-infographic-image"
+              :src="kearneyInfographicImage"
+            />
+          </div>
+          <p class="tw-text-lg tw-text-black tw-break-words">
+            Demand Dashboard uses rigorous analytics to project demand growth
+            and compare against internal forecasts. The goal is to help users
+            identify “triggers” to review projection calibration.
           </p>
-          <div class="tw-pt-12">
+          <div class="tw-pt-8">
             <LoginButton
               label="Proceed to Sign In"
               type="primary"
@@ -49,7 +56,6 @@ export default {
           </div>
         </div>
       </div>
-      <div class="tw-col-span-1 tw-col-start-12" />
     </div>
     <footer class="footer">
       <div class="footer-copy-right">Copyright @ Kearney 2023</div>
@@ -58,9 +64,14 @@ export default {
 </template>
 
 <style scoped>
-.imageClass {
-  height: 630px;
-  width: 571px;
+.kearney-home-logo {
+  height: 708px;
+  width: 630px;
+  object-fit: contain;
+}
+.kearney-infographic-image {
+  height: 456px;
+  width: 706px;
   object-fit: contain;
 }
 .footer {

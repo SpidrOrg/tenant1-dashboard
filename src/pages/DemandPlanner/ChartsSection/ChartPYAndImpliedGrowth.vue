@@ -28,11 +28,11 @@ export default {
       required: true,
     },
     pyVal: {
-      type: Number,
+      type: [Number, String],
       required: true,
     },
     impliedVal: {
-      type: Number,
+      type: [Number, String],
       required: true,
     },
   },
@@ -77,6 +77,7 @@ export default {
             color: '#000000',
             fontSize: 12,
           },
+          datum: { stem: { length: 0 } },
           alwaysOutside: true,
         },
         vAxis: {

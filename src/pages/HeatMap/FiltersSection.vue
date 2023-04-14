@@ -1,5 +1,6 @@
 <script>
 import _ from 'lodash';
+import { parse } from 'date-fns';
 import fetchHeatMapOptions from '@/api/HeatMap/fetchHeatMapOptions';
 
 import InfoIcon from '@/images/info-icon.svg';
@@ -37,34 +38,45 @@ export default {
 
     // Set default option on filters
     // this.filters.refreshDates.selected = new Date(_.first(this.filters.refreshDates.items));
-    const earliestRefreshDate = new Date(
-      _.first(this.filters.refreshDates.items)
+    const earliestRefreshDate = parse(
+      _.first(this.filters.refreshDates.items),
+      'yyyy-MM-dd',
+      new Date()
     );
     this.updateLatestRefreshDate(earliestRefreshDate);
-    this.refreshDateUpdated({
-      month: earliestRefreshDate.getMonth(),
-      year: earliestRefreshDate.getFullYear(),
-    });
+    this.refreshDateUpdated(
+      {
+        month: earliestRefreshDate.getMonth(),
+        year: earliestRefreshDate.getFullYear(),
+      },
+      true
+    );
     this.dataLoaded = true;
   },
 
-  emits: ['updateFilters', 'latestRefreshDateUpdate'],
+  emits: ['updateFilters', 'updateFiltersInstant', 'latestRefreshDateUpdate'],
 
   methods: {
     updateLatestRefreshDate(dateObj) {
       this.$emit('latestRefreshDateUpdate', dateObj);
     },
-    refreshDateUpdated({ month, year }) {
+    refreshDateUpdated({ month, year }, isInstant = false) {
       this.filters.refreshDates.selected = { month, year };
-      this.filtersUpdated();
+      isInstant ? this.filterUpdatedInstant() : this.filtersUpdated();
     },
-    valueOrQuantityUpdate() {
+    valueOrQuantityUpdate(isInstant = false) {
       this.filters.valueOrQuantity =
         this.filters.valueOrQuantity === BY_VALUE ? BY_QUANTITY : BY_VALUE;
-      this.filtersUpdated();
+      isInstant ? this.filterUpdatedInstant() : this.filtersUpdated();
     },
     filtersUpdated() {
       this.$emit('updateFilters', this.filters, {
+        customers: _.get(this.apiData, 'customers', []),
+        categories: _.get(this.apiData, 'categories', []),
+      });
+    },
+    filterUpdatedInstant() {
+      this.$emit('updateFiltersInstant', this.filters, {
         customers: _.get(this.apiData, 'customers', []),
         categories: _.get(this.apiData, 'categories', []),
       });
@@ -99,9 +111,9 @@ export default {
           filters.valueOrQuantity === BY_VALUE ? 'tw-font-medium' : ''
         }`"
       >
-        Value {{ currency }}
+        Value ({{ currency }})
       </span>
-      <div class="tw-flex tw-pt-8" style="color: #7823dc">
+      <div class="tw-flex tw-pt-8 tw-text-brand-primary">
         <v-switch
           :model-value="filters.valueOrQuantity === BY_QUANTITY"
           inset

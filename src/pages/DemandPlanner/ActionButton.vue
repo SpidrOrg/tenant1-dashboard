@@ -60,11 +60,11 @@ export default {
       :icon="getIcon(variance)"
       start
       :color="getColorCode(variance)"
-      size="large"
+      :size="24"
     />
     <span class="tw-text-black tw-normal-case tw-font-medium tw-text-base">
       {{ getActionButtonLabel(variance) }}
     </span>
-    <v-icon icon="mdi-chevron-right" end color="black" size="large" />
+    <v-icon icon="mdi-chevron-right" end color="black" :size="24" />
   </v-btn>
 </template>

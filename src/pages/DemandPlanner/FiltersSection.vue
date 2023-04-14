@@ -1,7 +1,7 @@
 <script>
 import _ from 'lodash';
-import {parse} from "date-fns";
-import fetchMainDashboardOptions from '@/api/DemandPlanner/fetchMainDashboardOptions';
+import { parse } from 'date-fns';
+import fetchDashboardOptions from '@/api/fetchDashboardOptions';
 
 const BY_VALUE = 'BY_VALUE';
 const BY_QUANTITY = 'BY_QUANTITY';
@@ -41,11 +41,11 @@ export default {
 
   async created() {
     // Make API call to get available options for the filters
-    const options = await fetchMainDashboardOptions().catch(() => null);
+    const options = await fetchDashboardOptions().catch(() => null);
     if (options) {
-      this.filters.categories.items = options.categories;
-      this.filters.customers.items = options.customers;
-      this.filters.refreshDates.items = options.marketSensingRefreshDates;
+      this.filters.categories.items = _.get(options, 'ms.categories');
+      this.filters.customers.items = _.get(options, 'ms.customers');
+      this.filters.refreshDates.items = _.get(options, 'updateDates');
     }
 
     // Add all option to the customers filters
@@ -56,7 +56,11 @@ export default {
 
     // Set default option on filters
     // this.filters.refreshDates.selected = new Date(_.first(this.filters.refreshDates.items));
-    const earliestRefreshDate = parse(_.first(this.filters.refreshDates.items), 'yyyy-MM-dd', new Date())
+    const earliestRefreshDate = parse(
+      _.first(this.filters.refreshDates.items),
+      'yyyy-MM-dd',
+      new Date()
+    );
     this.updateLatestRefreshDate(earliestRefreshDate);
     this.refreshDateUpdated(
       {

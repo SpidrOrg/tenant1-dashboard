@@ -137,7 +137,7 @@ export default {
             <textarea
               id="review"
               v-model="userResponse"
-              placeholder="Please mention action items"
+              placeholder="Mention about action items"
               class="tw-w-full tw-h-3/4 tw-max-h-72 tw-text-base tw-py-2 tw-px-4 tw-border-2 tw-border-solid tw-border-brand-secondary-20"
             />
           </div>

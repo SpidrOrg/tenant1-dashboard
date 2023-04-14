@@ -1,7 +1,7 @@
 <script>
 import _ from 'lodash';
 import { parse } from 'date-fns';
-import fetchHeatMapOptions from '@/api/HeatMap/fetchHeatMapOptions';
+import fetchDashboardOptions from '@/api/fetchDashboardOptions';
 
 import InfoIcon from '@/images/info-icon.svg';
 import HeatMapScaleIcon from '@/images/heatmap-scale.svg';
@@ -20,20 +20,25 @@ export default {
         },
         valueOrQuantity: BY_QUANTITY,
       },
+      customers: [],
+      categories: [],
       dataLoaded: false,
+
       currency: 'USD',
       BY_VALUE,
       BY_QUANTITY,
+
       InfoIcon,
       HeatMapScaleIcon,
-      apiData: null,
     };
   },
   async created() {
     // Make API call to get available options for the filters
-    this.apiData = await fetchHeatMapOptions().catch(() => null);
-    if (this.apiData) {
-      this.filters.refreshDates.items = this.apiData.marketSensingRefreshDates;
+    const options = await fetchDashboardOptions().catch(() => null);
+    if (options) {
+      this.filters.refreshDates.items = _.get(options, 'updateDates');
+      this.customers = _.get(options, 'ms.customers', []);
+      this.categories = _.get(options, 'ms.categories', []);
     }
 
     // Set default option on filters
@@ -71,14 +76,14 @@ export default {
     },
     filtersUpdated() {
       this.$emit('updateFilters', this.filters, {
-        customers: _.get(this.apiData, 'customers', []),
-        categories: _.get(this.apiData, 'categories', []),
+        customers: this.customers,
+        categories: this.categories,
       });
     },
     filterUpdatedInstant() {
       this.$emit('updateFiltersInstant', this.filters, {
-        customers: _.get(this.apiData, 'customers', []),
-        categories: _.get(this.apiData, 'categories', []),
+        customers: this.customers,
+        categories: this.categories,
       });
     },
   },

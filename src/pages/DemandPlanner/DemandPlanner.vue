@@ -195,20 +195,22 @@ export default {
       const selectedValueORvolume = _.get(filtersData, 'valueOrQuantity');
 
       try {
+        const marketSensingRefreshDateP = parse(
+          `${selectedMarketSensingRefreshDate.year}-${
+            selectedMarketSensingRefreshDate.month + 1
+          }`,
+          'yyyy-M',
+          new Date()
+        );
+        const marketSensingRefreshDate = formatFn(
+          marketSensingRefreshDateP,
+          'yyyy-MM-dd'
+        );
 
-        const marketSensingRefreshDateP = parse(`${selectedMarketSensingRefreshDate.year}-${selectedMarketSensingRefreshDate.month + 1}`, 'yyyy-M', new Date())
-        const marketSensingRefreshDate = formatFn(marketSensingRefreshDateP, 'yyyy-MM-dd');
-        // const jsDateRefreshDate = new Date(
-        //   selectedMarketSensingRefreshDate.year,
-        //   selectedMarketSensingRefreshDate.month
-        // );
-        // const marketSensingRefreshDate = new Date(
-        //   jsDateRefreshDate.getTime() -
-        //     jsDateRefreshDate.getTimezoneOffset() * 60000
-        // )
-        //   .toISOString()
-        //   .split('T')[0];
-        this.selectedRefreshDate = formatFn(marketSensingRefreshDateP, 'MMM yyyy');
+        this.selectedRefreshDate = formatFn(
+          marketSensingRefreshDateP,
+          'MMM yyyy'
+        );
 
         this.selectedFilters = {
           marketSensingRefreshDate: marketSensingRefreshDate,

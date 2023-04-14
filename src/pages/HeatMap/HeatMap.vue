@@ -1,6 +1,6 @@
 <script>
 import _ from 'lodash';
-import { format as formatFn } from 'date-fns';
+import { format as formatFn, parse } from 'date-fns';
 import fetchHeatMapData from '@/api/HeatMap/fetchHeatMapData';
 import FiltersSection from '@/pages/HeatMap/FiltersSection.vue';
 import CardsList from '@/pages/HeatMap/CardsList.vue';
@@ -70,16 +70,17 @@ export default {
       const selectedValueORvolume = _.get(filtersData, 'valueOrQuantity');
 
       try {
-        const jsDateRefreshDate = new Date(
-          selectedMarketSensingRefreshDate.year,
-          selectedMarketSensingRefreshDate.month
+        const marketSensingRefreshDateP = parse(
+          `${selectedMarketSensingRefreshDate.year}-${
+            selectedMarketSensingRefreshDate.month + 1
+          }`,
+          'yyyy-M',
+          new Date()
         );
-        const marketSensingRefreshDate = new Date(
-          jsDateRefreshDate.getTime() -
-            jsDateRefreshDate.getTimezoneOffset() * 60000
-        )
-          .toISOString()
-          .split('T')[0];
+        const marketSensingRefreshDate = formatFn(
+          marketSensingRefreshDateP,
+          'yyyy-MM-dd'
+        );
 
         this.selectedFilters = {
           marketSensingRefreshDate: marketSensingRefreshDate,

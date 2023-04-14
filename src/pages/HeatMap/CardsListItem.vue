@@ -61,8 +61,12 @@ export default {
       const val = _.round(_.toNumber(cellValue), 0);
       return `${val}${isPercentValue ? '%' : ''}`;
     },
-    closeMenu(data) {
-      this.menu[data] = false;
+    closeMenu(key) {
+      this.menu[key] = false;
+    },
+    handleCellClick(key, isClickDisabled = false) {
+      if (isClickDisabled) return;
+      this.menu[key] = true;
     },
   },
 };
@@ -114,13 +118,12 @@ export default {
             <v-menu
               location="right"
               :close-on-content-click="false"
-              :persistent="true"
               v-model="menu[`${rowData[0]}${index}`]"
             >
               <template v-slot:activator="{ props }">
                 <div
                   v-bind="index > 0 && props"
-                  @click="menu[`${rowData[0]}${index}`] = true"
+                  @click="handleCellClick(`${rowData[0]}${index}`, index === 0)"
                   :class="`tw-py-3 tw-font-medium ${
                     index > 0 ? getCellStyling(cellValue) : 'tw-text-sm'
                   }`"

@@ -90,7 +90,7 @@ export default {
           datum: { stem: { length: 0 } },
           alwaysOutside: true,
         },
-        bar: { groupWidth: '78%' },
+        bar: { groupWidth: '76%' },
         hAxis: {
           textStyle: {
             color: '#323232',

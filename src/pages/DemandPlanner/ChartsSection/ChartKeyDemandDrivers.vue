@@ -26,10 +26,13 @@ export default {
         }),
       ];
     },
-  },
-  data() {
-    return {
-      chartOptions: {
+    dataValues() {
+      return _.map(this.data, (v) => {
+        return _.values(v)[0];
+      });
+    },
+    chartOptions() {
+      return {
         legend: 'none',
         tooltip: { trigger: 'none' },
         colors: ['#646F79'],
@@ -53,14 +56,18 @@ export default {
             count: 0,
           },
           textPosition: 'none',
+          viewWindow: {
+            max: _.add(_.max(this.dataValues), 5),
+            min: _.subtract(_.min(this.dataValues), 5),
+          },
         },
         chartArea: {
-          right: '4%',
+          right: '8%',
           width: '60%',
           height: '90%',
         },
-      },
-    };
+      };
+    },
   },
 };
 </script>

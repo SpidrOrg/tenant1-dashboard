@@ -1,6 +1,6 @@
 <script>
 import _ from 'lodash';
-import { parse } from 'date-fns';
+import { format as formatFn, parse } from 'date-fns';
 import fetchDashboardOptions from '@/api/fetchDashboardOptions';
 
 import InfoIcon from '@/images/info-icon.svg';
@@ -62,6 +62,23 @@ export default {
   emits: ['updateFilters', 'updateFiltersInstant', 'latestRefreshDateUpdate'],
 
   methods: {
+    formatDatePickerValue(date) {
+      return formatFn(date, 'MMM yyyy');
+    },
+    getMinDate() {
+      return parse(
+        _.last(this.filters.refreshDates.items),
+        'yyyy-MM-dd',
+        new Date()
+      );
+    },
+    getMaxDate() {
+      return parse(
+        _.first(this.filters.refreshDates.items),
+        'yyyy-MM-dd',
+        new Date()
+      );
+    },
     updateLatestRefreshDate(dateObj) {
       this.$emit('latestRefreshDateUpdate', dateObj);
     },
@@ -99,14 +116,19 @@ export default {
         v-model="filters.refreshDates.selected"
         month-picker
         @update:model-value="refreshDateUpdated"
+        :format="formatDatePickerValue"
+        :min-date="getMinDate()"
+        :max-date="getMaxDate()"
       >
         <template #dp-input="{ value }">
-          <v-text-field
-            :value="value"
-            density="comfortable"
-            append-inner-icon="mdi-calendar-month"
-            style="cursor: pointer"
-          ></v-text-field>
+          <v-text-field :value="value" density="comfortable"></v-text-field>
+        </template>
+        <template #clear-icon="{}">
+          <v-icon
+            icon="mdi-calendar-month"
+            class="tw-text-brand-primary"
+            :size="32"
+          />
         </template>
       </VueDatePicker>
     </div>
@@ -162,30 +184,7 @@ export default {
 .dp__clear_icon {
   position: absolute;
   top: 36%;
-  right: 15%;
+  right: 4%;
   transform: translateY(-50%);
-  cursor: pointer;
-  color: var(--dp-icon-color);
-}
-.dp__theme_light {
-  --dp-background-color: #ffffff;
-  --dp-text-color: #212121;
-  --dp-hover-color: #f3f3f3;
-  --dp-hover-text-color: #212121;
-  --dp-hover-icon-color: #959595;
-  --dp-primary-color: #7823dc;
-  --dp-primary-text-color: #f8f5f5;
-  --dp-secondary-color: #c0c4cc;
-  --dp-border-color: #ddd;
-  --dp-menu-border-color: #e6d2fa;
-  --dp-border-color-hover: #e6d2fa;
-  --dp-disabled-color: #f6f6f6;
-  --dp-scroll-bar-background: #f3f3f3;
-  --dp-scroll-bar-color: #959595;
-  --dp-success-color: #7823dc;
-  --dp-success-color-disabled: #a3d9b1;
-  --dp-icon-color: #959595;
-  --dp-danger-color: #ff6f60;
-  --dp-highlight-color: rgba(25, 118, 210, 0.1);
 }
 </style>

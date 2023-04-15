@@ -1,6 +1,6 @@
 <script>
 import _ from 'lodash';
-import { parse } from 'date-fns';
+import { format as formatFn, parse } from 'date-fns';
 import fetchDashboardOptions from '@/api/fetchDashboardOptions';
 
 const BY_VALUE = 'BY_VALUE';
@@ -85,6 +85,23 @@ export default {
   emits: ['updateFilters', 'updateFiltersInstant', 'latestRefreshDateUpdate'],
 
   methods: {
+    formatDatePickerValue(date) {
+      return formatFn(date, 'MMM yyyy');
+    },
+    getMinDate() {
+      return parse(
+        _.last(this.filters.refreshDates.items),
+        'yyyy-MM-dd',
+        new Date()
+      );
+    },
+    getMaxDate() {
+      return parse(
+        _.first(this.filters.refreshDates.items),
+        'yyyy-MM-dd',
+        new Date()
+      );
+    },
     updateLatestRefreshDate(dateObj) {
       this.$emit('latestRefreshDateUpdate', dateObj);
     },
@@ -120,13 +137,19 @@ export default {
         v-model="filters.refreshDates.selected"
         month-picker
         @update:model-value="refreshDateUpdated"
+        :format="formatDatePickerValue"
+        :min-date="getMinDate()"
+        :max-date="getMaxDate()"
       >
         <template #dp-input="{ value }">
-          <v-text-field
-            :value="value"
-            density="comfortable"
-            append-inner-icon="mdi-calendar-month"
-          ></v-text-field>
+          <v-text-field :value="value" density="comfortable"></v-text-field>
+        </template>
+        <template #clear-icon="{}">
+          <v-icon
+            icon="mdi-calendar-month"
+            class="tw-text-brand-primary"
+            :size="32"
+          />
         </template>
       </VueDatePicker>
     </div>
@@ -181,9 +204,7 @@ export default {
 .dp__clear_icon {
   position: absolute;
   top: 36%;
-  right: 0;
+  right: 4%;
   transform: translateY(-50%);
-  cursor: pointer;
-  color: var(--dp-icon-color);
 }
 </style>

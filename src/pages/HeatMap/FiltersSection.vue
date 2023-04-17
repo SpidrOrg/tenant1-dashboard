@@ -119,16 +119,19 @@ export default {
         :format="formatDatePickerValue"
         :min-date="getMinDate()"
         :max-date="getMaxDate()"
+        :clearable="false"
       >
         <template #dp-input="{ value }">
-          <v-text-field :value="value" density="comfortable"></v-text-field>
-        </template>
-        <template #clear-icon="{}">
-          <v-icon
-            icon="mdi-calendar-month"
-            class="tw-text-brand-primary"
-            :size="32"
-          />
+          <div
+            class="tw-flex tw-items-center tw-justify-between tw-py-2 tw-px-3 tw-bg-brand-gray-1 tw-cursor-pointer"
+          >
+            <span class="tw-text-base">{{ value }}</span>
+            <v-icon
+              icon="mdi-calendar-month"
+              class="tw-text-brand-primary"
+              :size="32"
+            />
+          </div>
         </template>
       </VueDatePicker>
     </div>

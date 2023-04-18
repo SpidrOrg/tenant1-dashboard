@@ -124,6 +124,8 @@ export default {
         :max-date="getMaxDate()"
         :clearable="false"
         :disabled="isDataLoading"
+        auto-apply
+        menu-class-name="dp-custom-menu"
       >
         <template #dp-input="{ value }">
           <div
@@ -190,10 +192,31 @@ export default {
 </template>
 
 <style>
-.dp__clear_icon {
-  position: absolute;
-  top: 36%;
-  right: 4%;
-  transform: translateY(-50%);
+.dp-custom-menu {
+  background: #ffffff;
+  box-shadow: 0 10px 15px -3px;
+  padding: 8px;
+}
+.dp__theme_light {
+  --dp-background-color: #ffffff;
+  --dp-text-color: #212121;
+  --dp-hover-color: #f3f3f3;
+  --dp-hover-text-color: #212121;
+  --dp-hover-icon-color: #959595;
+  --dp-primary-color: #7823dc;
+  --dp-primary-disabled-color: rgb(120 35 220 / 30%);
+  --dp-primary-text-color: #ffffff;
+  --dp-secondary-color: #c0c4cc;
+  --dp-border-color: #ddd;
+  --dp-menu-border-color: #ddd;
+  --dp-border-color-hover: #aaaeb7;
+  --dp-disabled-color: #f6f6f6;
+  --dp-scroll-bar-background: #f3f3f3;
+  --dp-scroll-bar-color: #959595;
+  --dp-success-color: #76d275;
+  --dp-success-color-disabled: #a3d9b1;
+  --dp-icon-color: #959595;
+  --dp-danger-color: #ff6f60;
+  --dp-highlight-color: rgba(25, 118, 210, 0.1);
 }
 </style>

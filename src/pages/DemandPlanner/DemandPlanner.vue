@@ -250,6 +250,7 @@ export default {
         @update-filters="debounceUpdateFilters"
         @update-filters-instant="debounceUpdateFiltersInstant"
         @latestRefreshDateUpdate="latestRefreshDateUpdateHandler"
+        :isDataLoading="dataLoading"
       />
     </div>
     <div
@@ -336,6 +337,9 @@ export default {
         <ChartsSection
           v-if="activePeriodData"
           :activePeriodData="activePeriodData"
+          :options="{
+            forecastPeriodType,
+          }"
         />
       </div>
     </div>

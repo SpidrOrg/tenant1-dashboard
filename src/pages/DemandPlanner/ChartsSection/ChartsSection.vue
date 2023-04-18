@@ -1,5 +1,6 @@
 <script>
 import _ from 'lodash';
+import { FORECAST_PERIOD_TYPES } from '../constants';
 import ChartKeyDemandDrivers from '@/pages/DemandPlanner/ChartsSection/ChartKeyDemandDrivers.vue';
 import ChartPYandImpliedGrowth from '@/pages/DemandPlanner/ChartsSection/ChartPYAndImpliedGrowth.vue';
 import ChartHistoricalAndActual from '@/pages/DemandPlanner/ChartsSection/ChartHistoricalAndActual.vue';
@@ -16,6 +17,7 @@ export default {
       type: Object,
       required: true,
     },
+    options: Object,
   },
   computed: {
     metrics() {
@@ -24,6 +26,15 @@ export default {
     periodLabel() {
       return _.get(this.activePeriodData, 'label');
     },
+    forecastPeriodType() {
+      return _.get(this.options, 'forecastPeriodType');
+    },
+    formattedHorizon() {
+      if (this.forecastPeriodType === FORECAST_PERIOD_TYPES.R3M_VIEW) {
+        return _.get(this.activePeriodData, 'formattedHorizon');
+      }
+      return '';
+    },
   },
 };
 </script>
@@ -31,10 +42,8 @@ export default {
 <template>
   <div class="tw-flex tw-gap-x-4 tw-items-center tw-w-full tw-py-2">
     <p class="tw-font-medium tw-text-2xl">More details for {{ periodLabel }}</p>
-    <div class="tw-bg-brand-gray-4 tw-rounded">
-      <p class="tw-p-1 tw-text-sm">
-        Future {{ activePeriodData.formattedHorizon }} months
-      </p>
+    <div class="tw-bg-brand-gray-4 tw-rounded" v-if="formattedHorizon">
+      <p class="tw-p-1 tw-text-sm">Future {{ formattedHorizon }} months</p>
     </div>
   </div>
   <div class="tw-py-3 tw-w-full">

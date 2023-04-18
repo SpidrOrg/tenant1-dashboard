@@ -11,6 +11,9 @@ const BY_QUANTITY = 'BY_QUANTITY';
 
 export default {
   name: 'FiltersSection',
+  props: {
+    isDataLoading: { type: Boolean, default: false },
+  },
   data() {
     return {
       filters: {
@@ -86,7 +89,7 @@ export default {
       this.filters.refreshDates.selected = { month, year };
       isInstant ? this.filterUpdatedInstant() : this.filtersUpdated();
     },
-    valueOrQuantityUpdate(isInstant = false) {
+    valueOrQuantityUpdate(event, isInstant = false) {
       this.filters.valueOrQuantity =
         this.filters.valueOrQuantity === BY_VALUE ? BY_QUANTITY : BY_VALUE;
       isInstant ? this.filterUpdatedInstant() : this.filtersUpdated();
@@ -120,10 +123,12 @@ export default {
         :min-date="getMinDate()"
         :max-date="getMaxDate()"
         :clearable="false"
+        :disabled="isDataLoading"
       >
         <template #dp-input="{ value }">
           <div
-            class="tw-flex tw-items-center tw-justify-between tw-py-2 tw-px-3 tw-bg-brand-gray-1 tw-cursor-pointer"
+            :class="`tw-flex tw-items-center tw-justify-between tw-py-2 tw-px-3 tw-bg-brand-gray-1
+            ${isDataLoading ? 'tw-opacity-40' : 'tw-cursor-pointer'}`"
           >
             <span class="tw-text-base">{{ value }}</span>
             <v-icon
@@ -149,6 +154,7 @@ export default {
           inset
           density="compact"
           @click="valueOrQuantityUpdate"
+          :disabled="isDataLoading"
         />
       </div>
       <span

@@ -20,7 +20,8 @@ export default async function ({categories, customers,valueORvolume,msTimeHorizo
     msTimeHorizon,
     internalModel
   });
-  let dataForUi = _.get(data, "result", {});
+  let dataForUi = _.get(data, "result.data", {});
+  let unit = _.get(data, "result.unit", {});
   let cachedData;
   //console.log(dataForUi);
 //   const data = await invokeGetApi('internalcharts'); // apidatacleint2 //maindashboard
@@ -33,6 +34,7 @@ export default async function ({categories, customers,valueORvolume,msTimeHorizo
     forecastGrowth: v.forecastGrowth==null || v.forecastGrowth==''  ? 0 : v.forecastGrowth,
     msProjectedGrowth: v.msProjectedGrowth==null || v.msProjectedGrowth==''  ? 0 : v.msProjectedGrowth,
     actualSales: v.actualSales==null || v.actualSales==''  ? 0 : v.actualSales,
+    unit: unit
   }));
   cachedData = dataForUi;
   console.log(dataForUi);

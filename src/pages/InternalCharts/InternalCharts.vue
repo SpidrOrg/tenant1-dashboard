@@ -17,7 +17,8 @@ export default {
       refreshDate:null,
       apiData:[],
       columnChartData:[],
-      debounceUpdateFilters: _.debounce(this.updateFilters, 500),
+      debounceUpdateFilters: _.debounce(this.updateFilters, 4500),
+      filterDisabled:false,
       columnChartOptions:{
         height:320,
         explorer: {
@@ -65,6 +66,7 @@ export default {
         this.columnChartData = [];
         this.lineChartData = [];
           this.isLoading = true;
+          this.filterDisabled = true;
           const selectedCategories = _.get(filtersData, "categories.selected");
           const selectedCustomers = _.get(filtersData, "customers.selected");
           const selectedValueORvolume = _.get(filtersData, "valueOrQuantity");
@@ -79,12 +81,13 @@ export default {
             if (!_.isEmpty(response)){
               this.apiData = response;
               this.isLoading = false;
+              this.filterDisabled = false;
               let v = this;
               if(!this.columnChartData.length){
                 
-                this.columnChartData.push(['period','Internal','Actual']);
+                this.columnChartData.push(['period','Internal',{'role':'annotation'},'Actual',{'role':'annotation'}]);
                 _.forEach(this.apiData, function (data) {
-                v.columnChartData.push([data.timeline,data.forecastSales,data.actualSales]);
+                v.columnChartData.push([data.timeline,data.forecastSales,data.forecastSales+data.unit,data.actualSales,data.actualSales+data.unit]);
               });
               }
               if(!this.lineChartData.length){
@@ -119,7 +122,7 @@ export default {
     </div>
     <div class="tw-flex tw-w-full tw-flex-auto tw-border-t tw-border-solid tw-border-brand-gray-2" />
     <div class="tw-py-5 tw-bg-brand-gray-1"  style="width: 1600px;">
-      <TheHeader  @update-filters="debounceUpdateFilters"/>
+      <TheHeader  @update-filters="debounceUpdateFilters" :filterDisabled="filterDisabled"/>
     </div>
     <div class="tw-w-full tw-border-t tw-border-solid tw-border-brand-gray-2" v-if="!isLoading">
       <div class="tw-grid tw-grid-rows-2 tw-gap-6">

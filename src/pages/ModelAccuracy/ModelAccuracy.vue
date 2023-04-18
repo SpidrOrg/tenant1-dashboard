@@ -17,6 +17,8 @@ export default {
       isCVAccuracyLoading: false,
       isHistoricPerformanceLoading:false,
       cvAccuracy:false,
+      accuracy_disabled:false,
+      historic_disabled:false,
       apiData:[],
       filtersTestAccuracy : {
         categories: {
@@ -171,7 +173,7 @@ export default {
           return '#8C8C8C';
       }
     },
-    selectFilterUpdated(filterName, currentSelection){
+    selectFilterUpdated : function(filterName, currentSelection){
       this.filtersCharts[filterName].selected = currentSelection;
       this.filtersUpdated();
     },
@@ -179,15 +181,15 @@ export default {
       this.filtersTestAccuracy[filterName].selected = currentSelection;
       this.filtersAccuracyUpdated();
     },
-    async filtersUpdated(){
-      let v = this;
-      
+    filtersUpdated: _.debounce(async function(){
+      let v = this;      
       if(this.firstTimeLoad){
         this.isLoading = true;
         this.isHistoricPerformanceLoading = false;
       } else {
         this.isLoading = false;
         this.isHistoricPerformanceLoading = true;
+        this.historic_disabled = true;
       }
       const selectedHistoricCategories = _.get(this.filtersCharts, "categories.selected");
       const selectedprojectedPeriod = _.get(this.filtersCharts, "projected_period.selected");
@@ -243,9 +245,10 @@ export default {
       } else {
         this.isLoading = false;
         this.isHistoricPerformanceLoading = false;
+        this.historic_disabled = false;
       }
       this.firstTimeLoad = false;
-    },
+    },2000),
     async filtersAccuracyUpdated(){
       let v = this;
       if(this.firstTimeLoad){
@@ -254,6 +257,7 @@ export default {
       } else {
         this.isLoading = false;
         this.isCVAccuracyLoading = true;
+        this.accuracy_disabled = true;
       }
       const selectedAccuracyCategories = _.get(this.filtersTestAccuracy, "categories.selected");
       const response = await fetchCVRollingAccuracyData({categoriesAccuracy: selectedAccuracyCategories === ALL_OPTION ? "*" : selectedAccuracyCategories});
@@ -310,6 +314,7 @@ export default {
       } else {
         this.isLoading = false;
         this.isCVAccuracyLoading = false;
+        this.accuracy_disabled = false;
       }
       this.firstTimeLoad = false
     },
@@ -367,6 +372,7 @@ export default {
               <div class="tw-pl-2 tw-pt-5 tw-w-1/6">
                 <label for="category" class="tw-text-sm">Category</label>
                 <v-select
+                  :disabled="accuracy_disabled"
                   :items="filtersTestAccuracy.categories.items"
                   :model-value="filtersTestAccuracy.categories.selected"
                   @update:modelValue="value=>selectAccuracyFilterUpdated('categories', value)"
@@ -413,6 +419,7 @@ export default {
               <div class="tw-pl-2 tw-pt-5 tw-w-1/6">
                 <label for="category" class="tw-text-sm">Category</label>
                 <v-select
+                  :disabled="historic_disabled"
                   :items="filtersCharts.categories.items"
                   :model-value="filtersCharts.categories.selected"
                   @update:modelValue="value=>selectFilterUpdated('categories', value)"
@@ -421,6 +428,7 @@ export default {
               <div class="tw-pl-2 tw-pt-5 tw-w-1/6">
                 <label for="projection_period" class="tw-text-sm">Projection Period</label>
                 <v-select
+                  :disabled="historic_disabled"
                   :items="filtersCharts.projected_period.items"
                   :model-value="filtersCharts.projected_period.selected"
                   @update:modelValue="value=>selectFilterUpdated('projected_period', value)"

@@ -3,7 +3,7 @@ import _ from 'lodash';
 import { getPeriodStartDate, getPeriodEndDate } from '@/utils/dateHelpers';
 import getReviews from '@/api/DemandPlanner/getReviews';
 import addReview from '@/api/DemandPlanner/addReview';
-import { ACTION_STATUS_LABELS } from './constants';
+import { ACTION_STATUS_LABELS, FORECAST_PERIOD_TYPES } from './constants';
 
 import ModelAccuracySection from './ModelAccuracySection/ModelAccuracySection.vue';
 import ActionButton from './ActionButton.vue';
@@ -75,6 +75,12 @@ export default {
     },
     periodLabel() {
       return _.get(this.data, 'label');
+    },
+    formattedHorizon() {
+      if (this.forecastPeriodType === FORECAST_PERIOD_TYPES.R3M_VIEW) {
+        return _.get(this.data, 'formattedHorizon');
+      }
+      return '';
     },
   },
   methods: {
@@ -172,10 +178,11 @@ export default {
       <p style="color: #9291a5">Projected Period</p>
       <div class="tw-flex tw-gap-x-4 tw-items-center tw-w-full">
         <p class="tw-text-lg tw-font-medium">{{ periodLabel }}</p>
-        <div class="tw-bg-brand-gray-4 tw-rounded tw-text-center">
-          <p class="tw-p-1 tw-text-sm">
-            Future {{ data.formattedHorizon }} months
-          </p>
+        <div
+          class="tw-bg-brand-gray-4 tw-rounded tw-text-center"
+          v-if="formattedHorizon"
+        >
+          <p class="tw-p-1 tw-text-sm">Future {{ formattedHorizon }} months</p>
         </div>
       </div>
     </div>

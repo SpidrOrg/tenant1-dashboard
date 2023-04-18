@@ -120,6 +120,7 @@ export default {
         @update-filters="debounceUpdateFilters"
         @update-filters-instant="debounceUpdateFiltersInstant"
         @latestRefreshDateUpdate="latestRefreshDateUpdateHandler"
+        :isDataLoading="isFetchingData"
       />
     </div>
     <div

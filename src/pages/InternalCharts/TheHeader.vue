@@ -7,9 +7,15 @@ const BY_QUANTITY = "BY_QUANTITY";
 export const ALL_OPTION = "All";
 export default {
   name: "TheHeader",
+  props: {
+    filterDisabled: { // value is the default prop used by v-model
+      required: true,
+      type: Boolean,
+    },
+  },
   data(){
     return {
-      isByVolume: true,
+      isByVolume: false,
       filters : {
         categories: {
           items: [],
@@ -36,7 +42,6 @@ export default {
       },
       currency: "USD",
       dataLoaded: false,
-
       BY_VALUE,
       BY_QUANTITY,
       ALL_OPTION,
@@ -86,6 +91,7 @@ export default {
     <div class="tw-pt-5 tw-w-1/6">
       <label for="category" class="tw-text-sm">Category</label>
       <v-select
+        :disabled="filterDisabled"
         :items="filters.categories.items"
         :model-value="filters.categories.selected"
         @update:modelValue="value=>selectFilterUpdated('categories', value)"
@@ -94,6 +100,7 @@ export default {
     <div class="tw-pt-5 tw-w-1/6">
       <label for="customer" class="tw-text-sm">Customer(s)</label>
       <v-select
+        :disabled="filterDisabled"
         :items="filters.customers.items"
         :model-value="filters.customers.selected"
         @update:modelValue="value=>selectFilterUpdated('customers', value)"
@@ -102,14 +109,16 @@ export default {
     <div class="tw-pt-5 tw-w-1/6">
       <label for="mstimehorizon" class="tw-text-sm">MS Time Horizon</label>
       <v-select
+        :disabled="filterDisabled"
         :items="filters.time_horizon.items"
         :model-value="filters.time_horizon.selected"
         @update:modelValue="value=>selectFilterUpdated('time_horizon', value)"
       ></v-select>
     </div>
     <div class="tw-pt-5 tw-w-1/6">
-      <label for="category" class="tw-text-sm">Model</label>
+      <label for="model" class="tw-text-sm">Model</label>
       <v-select
+        :disabled="filterDisabled"
         :items="filters.internal_model.items"
         :model-value="filters.internal_model.selected"
         @update:modelValue="value=>selectFilterUpdated('internal_model', value)"
@@ -118,7 +127,7 @@ export default {
     <div class="tw-flex tw-items-center tw-gap-1.5 tw-mt-3">
       <p :class="`${!isByVolume ? 'tw-font-medium' : ''}`">Value (USD)</p>
       <div class="tw-flex tw-pt-5" style="color: #7823DC;">
-        <v-switch inset @click="valueOrQuantityUpdate" v-model="isByVolume"></v-switch>
+        <v-switch inset @click="valueOrQuantityUpdate" v-model="isByVolume" :disabled="filterDisabled"></v-switch>
       </div>
       <p :class="`${isByVolume ? 'tw-font-medium' : ''}`">Volume</p>
     </div>

@@ -10,19 +10,22 @@ const DATA_CONFIG = [
     color: '',
   },
   {
-    key: 'Market Sensing',
+    key: 'msForecastGrowth',
     label: 'Market Sensing Forecast',
     color: '#570EAA',
+    legendStyle: 'solid',
   },
   {
-    key: 'Internal',
+    key: 'internalForecastGrowth',
     label: 'Internal Forecast',
-    color: '#787878',
+    color: '#8C8C8C',
+    legendStyle: 'dashed',
   },
   {
-    key: 'Sales',
+    key: 'actualGrowth',
     label: 'Sales',
-    color: '#C8A5F0',
+    color: '#B991EB',
+    legendStyle: 'solid',
   },
 ];
 
@@ -71,8 +74,30 @@ export default {
     },
   },
   computed: {
+    chartColumns() {
+      const columns = [];
+      _.forEach(dataKeys, (key, i) => {
+        columns.push(key);
+        if (i > 0) columns.push({ role: 'annotation' });
+      });
+      return columns;
+    },
     chartData() {
-      return [[...dataKeys], ...this.apiData];
+      return [
+        [...this.chartColumns],
+        ..._.map(this.apiData, (v) => {
+          return _.map(this.chartColumns, (column, i) => {
+            let key = column;
+            if (_.get(key, 'role') === 'annotation') {
+              key = this.chartColumns[i - 1];
+              return v[key] === null || v[key] === undefined
+                ? 'NA'
+                : `${_.round(_.toNumber(v[key]), 0)}%`;
+            }
+            return v[key] === null || v[key] === undefined ? 0 : v[key];
+          });
+        }),
+      ];
     },
     chartOptions() {
       return {
@@ -82,6 +107,14 @@ export default {
         tooltip: { trigger: 'none' },
         width: 850,
         height: 350,
+        annotations: {
+          textStyle: {
+            color: '#000000',
+            fontSize: 13,
+          },
+          datum: { stem: { length: 0 } },
+          // alwaysOutside: true,
+        },
         hAxis: {
           textStyle: {
             color: '#323232',
@@ -90,14 +123,13 @@ export default {
           },
         },
         vAxis: {
-          gridlines: {
-            count: 0,
-          },
+          // gridlines: {
+          //   count: 0,
+          // },
         },
         chartArea: {
-          left: '4%',
           top: '4%',
-          width: '100%',
+          width: '90%',
           height: '84%',
         },
         series: {
@@ -132,20 +164,22 @@ export default {
           Demand Forecast : {{ category }} / {{ customer }}
         </h1>
         <div class="tw-flex tw-items-center tw-ml-auto">
-          <div
-            v-for="item in legendData"
-            :key="item.key"
-            class="tw-flex tw-items-center tw-gap-x-1 tw-pl-3"
-          >
-            <span
-              :style="`height: 12px; width: 12px; background: ${item.color}`"
-            />
-            <span class="tw-text-xs">{{ item.label }}</span>
-          </div>
           <v-btn variant="plain" icon="mdi-close" @click="closeMenu"></v-btn>
         </div>
       </div>
       <div class="tw-w-full tw-border tw-border-solid tw-border-brand-gray-2" />
+      <div class="tw-flex tw-items-center tw-pt-3 tw-px-4">
+        <div
+          v-for="item in legendData"
+          :key="item.key"
+          class="tw-flex tw-items-center tw-gap-x-1 tw-pl-3"
+        >
+          <span
+            :style="`width: 24px; border: 3px ${item.legendStyle} ${item.color}`"
+          />
+          <span class="tw-text-xs tw-text-black">{{ item.label }}</span>
+        </div>
+      </div>
       <div class="tw-w-full tw-flex tw-justify-center tw-pt-4">
         <GoogleChart
           type="LineChart"

@@ -56,7 +56,12 @@ export default async function ({
     );
     const actualGrowth = getNumericValue(_.get(values, 'actualGrowth'));
 
-    return [key, msForecastGrowth, internalForecastGrowth, actualGrowth];
+    return {
+      period: key,
+      msForecastGrowth,
+      internalForecastGrowth,
+      actualGrowth,
+    };
   });
 
   return dataForUi;

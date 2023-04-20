@@ -194,7 +194,7 @@ export default {
 <style>
 .dp-custom-menu {
   background: #ffffff;
-  box-shadow: 0 10px 15px -3px;
+  box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
   padding: 8px;
 }
 .dp__theme_light {

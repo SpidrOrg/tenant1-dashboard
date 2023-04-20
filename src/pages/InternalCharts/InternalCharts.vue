@@ -29,14 +29,19 @@ export default {
         colors: ['#787878', '#B991EB'],
         hAxis : {
           textStyle : {
-            fontSize: 10
-          }
+            fontSize: 12
+          },
+
         },
         vAxis : {
-          minorGridlines:{color:'none'}
+          minorGridlines:{color:'none'},
+          gridlines: {
+            count: 0
+        },
+        textPosition: 'none',
         },
         chartArea:{
-          left: '3%',
+          left: '1%',
           width:'100%'
         },
         annotations: {
@@ -54,8 +59,13 @@ export default {
         explorer: {
           axis:'horizontal'
         },
+        tooltip: { trigger: 'none' },
         vAxis : {
-          minorGridlines:{color:'none'}
+          minorGridlines:{color:'none'},
+          gridlines: {
+            count: 0
+        },
+        textPosition: 'none',
         },
         annotations: {
           textStyle: {
@@ -73,7 +83,7 @@ export default {
         },
         hAxis : {
           textStyle : {
-            fontSize: 10
+            fontSize: 12
           }
         },
         chartArea:{

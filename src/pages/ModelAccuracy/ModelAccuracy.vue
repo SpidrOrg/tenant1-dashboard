@@ -50,6 +50,12 @@ export default {
             fontSize: 10
           }
         },
+        vAxis : {
+          gridlines: {
+            count: 0
+        },
+        textPosition: 'none',
+        },
         chartArea:{
           left: '3%',
           width:'90%'
@@ -147,6 +153,7 @@ export default {
         gridlines: {
             count: 0
         },
+        minValue: 0,
         textPosition: 'none',
       }
       },
@@ -180,6 +187,7 @@ export default {
             count: 0
         },
         textPosition: 'none',
+        minValue: 0,
       },
         tooltip: { trigger: 'none' },
         chartArea:{
@@ -198,11 +206,11 @@ export default {
         case n >= 90:
           return '#8737E1';
         case n >= 80:
-          return '#AF7DEB';
+          return '#BF9CEC';
         case n >= 60:
-          return '#B9B9B9';
+          return '#C6C6C9';
         default:
-          return '#8C8C8C';
+          return '#A7A7AA';
       }
     },
     selectFilterUpdated : function(filterName, currentSelection){

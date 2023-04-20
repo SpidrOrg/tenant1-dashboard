@@ -80,21 +80,22 @@ export default {
           datum: { stem: { length: 0 } },
           alwaysOutside: true,
         },
+        bar: { groupWidth: '44%' },
         vAxis: {
           gridlines: {
             count: 0,
           },
           textPosition: 'none',
-          viewWindow: {
-            max: _.add(
-              _.max([_.toNumber(this.pyVal), _.toNumber(this.impliedVal)]),
-              5
-            ),
-            min: _.subtract(
-              _.min([_.toNumber(this.pyVal), _.toNumber(this.impliedVal)]),
-              5
-            ),
-          },
+          // viewWindow: {
+          //   max: _.add(
+          //     _.max([_.toNumber(this.pyVal), _.toNumber(this.impliedVal)]),
+          //     5
+          //   ),
+          //   min: _.subtract(
+          //     _.min([_.toNumber(this.pyVal), _.toNumber(this.impliedVal)]),
+          //     5
+          //   ),
+          // },
         },
         hAxis: {
           textStyle: {

@@ -25,15 +25,27 @@ export default {
           axis:'horizontal'
         },
         legend: {position: 'none'},
+        tooltip: { trigger: 'none' },
         colors: ['#787878', '#B991EB'],
         hAxis : {
           textStyle : {
             fontSize: 10
           }
         },
+        vAxis : {
+          minorGridlines:{color:'none'}
+        },
         chartArea:{
           left: '3%',
           width:'100%'
+        },
+        annotations: {
+          textStyle: {
+            color: '#000000',
+            fontSize: 12,
+          },
+          datum: { stem: { length: 0 } },
+          alwaysOutside: true,
         },
       },
       lineChartData:[],
@@ -41,6 +53,17 @@ export default {
         curveType: 'none',
         explorer: {
           axis:'horizontal'
+        },
+        vAxis : {
+          minorGridlines:{color:'none'}
+        },
+        annotations: {
+          textStyle: {
+            color: '#000000',
+            fontSize: 12,
+          },
+          datum: { stem: { length: 0 } },
+          alwaysOutside: true,
         },
         legend: { position: 'top' },
         colors: ['#570EAA', '#787878', '#C8A5F0'],
@@ -91,9 +114,9 @@ export default {
               });
               }
               if(!this.lineChartData.length){
-                this.lineChartData.push(['period','Market Sensing Forecast','Internal Forecast','Sales']);
+                this.lineChartData.push(['period','Market Sensing Forecast',{'role':'annotation'},'Internal Forecast',{'role':'annotation'},'Sales',{'role':'annotation'}]);
                 _.forEach(this.apiData, function (data) {
-                v.lineChartData.push([data.timeline,data.msProjectedGrowth,data.forecastGrowth,data.actualGrowth]);
+                v.lineChartData.push([data.timeline,data.msProjectedGrowth,data.msProjectedGrowth+'%',data.forecastGrowth,data.forecastGrowth+'%',data.actualGrowth,data.actualGrowth+'%']);
               });
               }
         }       
@@ -126,26 +149,26 @@ export default {
     </div>
     <div class="tw-w-full tw-border-t tw-border-solid tw-border-brand-gray-2" v-if="!isLoading">
       <div class="tw-grid tw-grid-rows-2 tw-gap-6">
-        <div>
-          <v-card style="width:3500px;height: 370px;overflow-x: auto;">
-            <p class="tw-font-medium tw-text-2xl tw-pl-2 tw-pt-2 tw-mb-2">Internal Forecast vs Sales</p>
+        <div style="overflow-x: auto !important">
+          <v-card style="width:3500px;height: 370px;">
+            <p class="tw-font-medium tw-text-xl tw-pl-2 tw-pt-2 tw-mb-2">Internal Forecast vs Sales</p>
             <div class="overflow-x-auto tw-w-full tw-items-left tw-border-t tw-border-solid tw-border-brand-gray-2" />
             <div class="tw-flex tw-mt-3">
-                <div style="width:21px;height:21px;background: #787878;" class="tw-ml-3">
+                <div style="width:12px;height:12px;background: #787878;" class="tw-ml-3 tw-mt-px">
                 </div>
-                <div style="height:21px" class="tw-ml-1">Internal Forecast</div>
+                <div style="height:12px;" class="tw-text-xs tw-ml-1">Internal Forecast</div>
                 <div class="tw-flex">
-                <div style="width:21px;height:21px;background: #b991eb;" class="tw-ml-3">
+                <div style="width:12px;height:12px;background: #b991eb;" class="tw-ml-3 tw-mt-px">
                 </div>
-                <div style="height:21px" class="tw-ml-1">Sales</div>
+                <div style="height:12px;font-size:12px" class="tw-text-xs tw-ml-1">Sales</div>
                 </div>
               </div>
             <GChart type="ColumnChart" :data="columnChartData" :options="columnChartOptions" height="370"/>
           </v-card>
         </div>
-        <div>
-          <v-card style="height: 370px">
-            <p class="tw-font-medium tw-text-2xl tw-pl-2 tw-pt-2 tw-mb-2">Projections of Market Sensing Forecast vs Internal Forecast vs Sales</p>
+        <div style="overflow-x: auto !important">
+          <v-card style="width:3500px;height: 370px;">
+            <p class="tw-font-medium tw-text-xl tw-pl-2 tw-pt-2 tw-mb-2">Projections of Market Sensing Forecast vs Internal Forecast vs Sales</p>
             <div class="tw-flex tw-w-full tw-flex-auto tw-border-t tw-border-solid tw-border-brand-gray-2" />
             <GChart type="LineChart" :options="lineChartOptions" :data="lineChartData"/>
           </v-card>

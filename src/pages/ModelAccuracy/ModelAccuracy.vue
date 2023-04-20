@@ -54,6 +54,14 @@ export default {
           left: '3%',
           width:'90%'
         },
+        annotations: {
+          textStyle: {
+            color: '#000000',
+            fontSize: 12,
+          },
+          datum: { stem: { length: 0 } },
+          alwaysOutside: true,
+        },
         // vAxis: {
         //   baselineColor: 'none',
         //   textPosition: 'none'
@@ -68,6 +76,14 @@ export default {
         height:100,
         series: {
           1: {lineDashStyle: [4, 4]}
+        },
+        annotations: {
+          textStyle: {
+            color: '#000000',
+            fontSize: 12,
+          },
+          datum: { stem: { length: 0 } },
+          alwaysOutside: true,
         },
         hAxis : {
           baselineColor: 'none',
@@ -113,6 +129,14 @@ export default {
         legend:{
           position:'none'
         },
+        annotations: {
+          textStyle: {
+            color: '#000000',
+            fontSize: 12,
+          },
+          datum: { stem: { length: 0 } },
+          alwaysOutside: true,
+        },
         tooltip: { trigger: 'none' },
         chartArea:{
           left: '3%',
@@ -142,6 +166,14 @@ export default {
         colors: ['#570EAA'],
         legend:{
           position:'none'
+        },
+        annotations: {
+          textStyle: {
+            color: '#000000',
+            fontSize: 12,
+          },
+          datum: { stem: { length: 0 } },
+          alwaysOutside: true,
         },
         vAxis: {
           gridlines: {

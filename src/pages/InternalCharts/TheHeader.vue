@@ -63,10 +63,10 @@ export default {
     // Add all option to the categories and customers filters
     this.filters.categories.items = this.filters.categories.items;
     this.filters.customers.items = this.filters.customers.items;
-    this.selectFilterUpdated("categories", this.filters.categories.items[1]);
+    this.selectFilterUpdated("categories", this.filters.categories.items[0]);
     this.selectFilterUpdated("time_horizon", this.filters.time_horizon.items[0]);
     this.selectFilterUpdated("internal_model", this.filters.internal_model.items[0]);
-    this.selectFilterUpdated("customers", this.filters.customers.items[1])
+    this.selectFilterUpdated("customers", this.filters.customers.items[0])
   },
   emits: ['updateFilters'],
   methods: {
@@ -88,7 +88,7 @@ export default {
 
 <template>
   <div class="tw-flex tw-gap-x-4 tw-w-full tw-bg-white tw-px-3">
-    <div class="tw-pt-5 tw-w-1/6">
+    <div class="tw-pt-3 tw-min-w-[14%] tw--mb-3">
       <label for="category" class="tw-text-sm">Category</label>
       <v-select
         :disabled="filterDisabled"
@@ -97,7 +97,7 @@ export default {
         @update:modelValue="value=>selectFilterUpdated('categories', value)"
       ></v-select>
     </div>
-    <div class="tw-pt-5 tw-w-1/6">
+    <div class="tw-pt-3 tw-min-w-[14%] tw--mb-3">
       <label for="customer" class="tw-text-sm">Customer(s)</label>
       <v-select
         :disabled="filterDisabled"
@@ -106,7 +106,7 @@ export default {
         @update:modelValue="value=>selectFilterUpdated('customers', value)"
       ></v-select>
     </div>
-    <div class="tw-pt-5 tw-w-1/6">
+    <div class="tw-pt-3 tw-min-w-[14%] tw--mb-3">
       <label for="mstimehorizon" class="tw-text-sm">MS Time Horizon</label>
       <v-select
         :disabled="filterDisabled"
@@ -115,7 +115,7 @@ export default {
         @update:modelValue="value=>selectFilterUpdated('time_horizon', value)"
       ></v-select>
     </div>
-    <div class="tw-pt-5 tw-w-1/6">
+    <div class="tw-pt-3 tw-min-w-[14%] tw--mb-3">
       <label for="model" class="tw-text-sm">Model</label>
       <v-select
         :disabled="filterDisabled"

@@ -177,8 +177,8 @@ export default {
             class="tw-w-80 tw-h-20 tw-p-2 tw-bg-white tw-border tw-rounded tw-border-[#D9D9D9] tw-shadow-2xl"
           >
             <p class="tw-text-sm tw-text-center">
-              Value = Market Sensing - Internal Prediction - = Internal higher
-              than Market + = Market Higher than Internal
+              Value = Market Sensing - Internal Prediction<br />- = Internal
+              higher than Market<br />+ = Market Higher than Internal
             </p>
           </div>
         </v-menu>

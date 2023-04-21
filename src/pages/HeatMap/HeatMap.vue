@@ -97,7 +97,7 @@ export default {
 </script>
 
 <template>
-  <div class="tw-h-full tw-w-full tw-px-4 tw-pt-2 tw-pb-10 tw-bg-brand-gray-1">
+  <div class="tw-h-full tw-w-full tw-pb-10 tw-bg-brand-gray-1">
     <div class="tw-flex tw-w-full tw-h-8 tw-bg-brand-gray-1">
       <div class="tw-flex tw-h-full tw-items-center">
         <h1 class="tw-text-lg">

@@ -68,7 +68,8 @@ export default {
 <style scoped>
 .logo-area {
   width: 100%;
-  height: 88px;
+  height: 80px;
+  margin-bottom: 20px;
   display: flex;
   align-self: center;
   justify-self: center;

@@ -40,8 +40,17 @@ export default {
     },
   },
   methods: {
-    getCellStyling(cellValue) {
-      let styles = 'tw-cursor-pointer tw-text-center tw-rounded tw-shadow';
+    getCellStyling(cellValue, isRowLabel = false) {
+      let styles =
+        'tw-py-3 tw-font-medium tw-cursor-pointer tw-rounded tw-shadow';
+
+      if (isRowLabel) {
+        styles +=
+          'tw-text-sm tw-text-left tw-whitespace-nowrap tw-text-ellipsis tw-overflow-hidden';
+        return styles;
+      } else {
+        styles += ' tw-text-center';
+      }
 
       if (cellValue === null || _.isNaN(_.toNumber(cellValue))) {
         styles += ' tw-bg-brand-gray-2';
@@ -93,10 +102,20 @@ export default {
           v-for="(columnHeader, index) in data.columnHeaders"
           :key="columnHeader"
           :class="`tw-font-medium tw-text-sm ${
-            index > 0 ? 'tw-text-center' : ''
+            index > 0 ? 'tw-text-center' : 'tw-text-left'
           }`"
         >
-          {{ columnHeader }}
+          <span v-if="index === 0">{{ columnHeader }}</span>
+          <v-menu open-on-hover location="top" v-if="index > 0">
+            <template v-slot:activator="{ props }">
+              <span v-bind="props">{{ columnHeader }}</span>
+            </template>
+            <div
+              class="tw-w-auto tw-h-auto tw-flex tw-items-center tw-p-1 tw-overflow-scroll tw-text-sm tw-bg-white tw-border tw-rounded tw-border-[#D9D9D9] tw-shadow-xl"
+            >
+              {{ columnHeader }}
+            </div>
+          </v-menu>
         </span>
       </div>
       <div
@@ -124,11 +143,19 @@ export default {
                 <div
                   v-bind="index > 0 && props"
                   @click="handleCellClick(`${rowData[0]}${index}`, index === 0)"
-                  :class="`tw-py-3 tw-font-medium ${
-                    index > 0 ? getCellStyling(cellValue) : 'tw-text-sm'
-                  }`"
+                  :class="getCellStyling(cellValue, index === 0)"
                 >
-                  {{ index > 0 ? getCellLabel(cellValue) : cellValue }}
+                  <span v-if="index > 0">{{ getCellLabel(cellValue) }}</span>
+                  <v-menu open-on-hover location="top" v-if="index === 0">
+                    <template v-slot:activator="{ props }">
+                      <span v-bind="props">{{ cellValue }}</span>
+                    </template>
+                    <div
+                      class="tw-w-auto tw-h-auto tw-flex tw-items-center tw-p-1 tw-overflow-scroll tw-text-sm tw-bg-white tw-border tw-rounded tw-border-[#D9D9D9] tw-shadow-xl"
+                    >
+                      {{ cellValue }}
+                    </div>
+                  </v-menu>
                 </div>
               </template>
               <TooltipChart

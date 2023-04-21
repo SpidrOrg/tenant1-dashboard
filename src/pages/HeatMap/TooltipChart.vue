@@ -110,10 +110,8 @@ export default {
         annotations: {
           textStyle: {
             color: '#000000',
-            fontSize: 13,
+            fontSize: 12,
           },
-          datum: { stem: { length: 0 } },
-          // alwaysOutside: true,
         },
         hAxis: {
           textStyle: {
@@ -123,9 +121,10 @@ export default {
           },
         },
         vAxis: {
-          // gridlines: {
-          //   count: 0,
-          // },
+          gridlines: {
+            count: 0,
+          },
+          textPosition: 'none',
         },
         chartArea: {
           top: '4%',
@@ -133,9 +132,34 @@ export default {
           height: '84%',
         },
         series: {
-          0: { color: DATA_CONFIG[1].color },
-          1: { color: DATA_CONFIG[2].color, lineDashStyle: [6, 6] },
-          2: { color: DATA_CONFIG[3].color },
+          0: {
+            color: DATA_CONFIG[1].color,
+            annotations: {
+              stem: {
+                length: 15,
+                color: DATA_CONFIG[1].color,
+              },
+            },
+          },
+          1: {
+            color: DATA_CONFIG[2].color,
+            lineDashStyle: [6, 6],
+            annotations: {
+              stem: {
+                length: 5,
+                color: DATA_CONFIG[2].color,
+              },
+            },
+          },
+          2: {
+            color: DATA_CONFIG[3].color,
+            annotations: {
+              stem: {
+                length: 0,
+                color: DATA_CONFIG[3].color,
+              },
+            },
+          },
         },
       };
     },
@@ -175,7 +199,7 @@ export default {
           class="tw-flex tw-items-center tw-gap-x-1 tw-pl-3"
         >
           <span
-            :style="`width: 24px; border: 3px ${item.legendStyle} ${item.color}`"
+            :style="`width: 24px; border: 2px ${item.legendStyle} ${item.color}`"
           />
           <span class="tw-text-xs tw-text-black">{{ item.label }}</span>
         </div>

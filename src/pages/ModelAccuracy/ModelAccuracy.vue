@@ -478,16 +478,16 @@ export default {
           <div class="tw-w-full tw-grid-rows-2" v-if="!isLoading && !isHistoricPerformanceLoading">
             <div class="tw-h-1/6">
               <div class="tw-flex">
-                <div style="width:21px;height:21px;background: #A5A5A5;" class="tw-ml-3">
+                <div style="width:12px;height:12px;background: #A5A5A5;" class="tw-ml-3">
                 </div>
-                <div style="height:21px" class="tw-ml-1">Predicted Values(USD)</div>
+                <div style="height:12px;" class="tw-text-xs tw-ml-1">Predicted Values(USD)</div>
                 <div class="tw-flex">
-                <div style="width:21px;height:21px;background: #5F5F5F;" class="tw-ml-3">
+                <div style="width:12px;height:12px;background: #5F5F5F;" class="tw-ml-3">
                 </div>
-                <div style="height:21px" class="tw-ml-1">Actual Values(USD)</div>
-                <div style="width:21px;height:21px;background: #7823DC;" class="tw-ml-3">
+                <div style="height:12px" class="tw-text-xs tw-ml-1">Actual Values(USD)</div>
+                <div style="width:12px;height:12px;background: #7823DC;" class="tw-ml-3">
                 </div>
-                <div style="height:21px" class="tw-ml-1">Prediction Accuracy</div>
+                <div style="height:12px" class="tw-text-xs tw-ml-1">Prediction Accuracy</div>
                 </div>
               </div>
               

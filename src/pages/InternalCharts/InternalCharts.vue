@@ -75,7 +75,7 @@ export default {
           datum: { stem: { length: 0 } },
           alwaysOutside: true,
         },
-        legend: { position: 'top' },
+        legend: { position: 'top',textStyle: {fontSize: 12}},
         colors: ['#570EAA', '#787878', '#C8A5F0'],
         height:370,
         series: {
@@ -87,7 +87,7 @@ export default {
           }
         },
         chartArea:{
-          left: '3%',
+          left: '1%',
           width:'100%'
         },
       }
@@ -170,7 +170,7 @@ export default {
                 <div class="tw-flex">
                 <div style="width:12px;height:12px;background: #b991eb;" class="tw-ml-3 tw-mt-px">
                 </div>
-                <div style="height:12px;font-size:12px" class="tw-text-xs tw-ml-1">Sales</div>
+                <div style="height:12px;" class="tw-text-xs tw-ml-1">Sales</div>
                 </div>
               </div>
             <GChart type="ColumnChart" :data="columnChartData" :options="columnChartOptions" height="370"/>

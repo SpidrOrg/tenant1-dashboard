@@ -151,7 +151,7 @@ export default {
                       <span v-bind="props">{{ cellValue }}</span>
                     </template>
                     <div
-                      class="tw-w-auto tw-h-auto tw-flex tw-items-center tw-p-1 tw-overflow-scroll tw-text-sm tw-bg-white tw-border tw-rounded tw-border-[#D9D9D9] tw-shadow-xl"
+                      class="tw-w-auto tw-h-auto tw-flex tw-items-center tw-p-1 tw-text-sm tw-bg-white tw-border tw-rounded tw-border-[#D9D9D9] tw-shadow-xl"
                     >
                       {{ cellValue }}
                     </div>

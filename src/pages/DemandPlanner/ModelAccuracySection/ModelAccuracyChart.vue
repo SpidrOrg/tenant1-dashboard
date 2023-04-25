@@ -70,6 +70,7 @@ export default {
           gridlines: {
             count: 0,
           },
+          textPosition: 'none',
           viewWindow: {
             max: 100,
             min: 0,

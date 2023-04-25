@@ -133,6 +133,7 @@ export default {
     },
     async fetchDashboardData() {
       this.dataLoading = true;
+      this.error = null;
       try {
         const response = await this.fetchApi({
           marketSensingRefreshDate:

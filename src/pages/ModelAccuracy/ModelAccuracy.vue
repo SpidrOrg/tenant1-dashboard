@@ -41,7 +41,7 @@ export default {
       },
       columnChartData:[],
       columnChartOptions:{
-        height:370,
+        height:400,
         tooltip: { trigger: 'none' },
         legend: {position: 'none'},
         colors: ['#A5A5A5', '#5F5F5F'],
@@ -129,8 +129,8 @@ export default {
       // ],
       cvAccuracyData:[],
       cvAccuracyOptions:{
-        height:314,
-        width:720,
+        height:320,
+        width:650,
         colors: ['#570EAA'],
         legend:{
           position:'none'
@@ -147,7 +147,7 @@ export default {
         chartArea:{
           left: '3%',
           width:'100%',
-          height:'70%'
+          height:'100%'
         },
         vAxis: {
         gridlines: {
@@ -168,8 +168,8 @@ export default {
       // ],
       rollingTestAccuracyData:[],
       rollingTestAccuracyOptions:{
-        height:314,
-        width:720,
+        height:320,
+        width:650,
         colors: ['#570EAA'],
         legend:{
           position:'none'
@@ -193,7 +193,7 @@ export default {
         chartArea:{
           left: '3%',
           width:'100%',
-          height:'70%',
+          height:'100%',
         },
       },
       ALL_OPTION,
@@ -222,7 +222,11 @@ export default {
       this.filtersAccuracyUpdated();
     },
     filtersUpdated: _.debounce(async function(){
-      let v = this;      
+      let v = this;
+      this.lineChartData = [];
+      this.columnChartData = [];
+      this.cvAccuracyData = [];
+      this.rollingTestAccuracyData = [];      
       if(this.firstTimeLoad){
         this.isLoading = true;
         this.isHistoricPerformanceLoading = false;
@@ -252,7 +256,7 @@ export default {
         this.lineChartData.push(['Time Period','Prediction Accuracy',{role: 'annotation', type: 'string'}]);
         //this.lineChartData.push(this.apiData.accuracyData);
         _.forEach(this.apiData.accuracyData, function (data) {
-          v.lineChartData.push([data[0],data[1],data[1]]);
+          v.lineChartData.push([data[0],data[1],data[1]+'%']);
         });
      }
       
@@ -291,6 +295,10 @@ export default {
     },2000),
     async filtersAccuracyUpdated(){
       let v = this;
+      this.lineChartData = [];
+      this.columnChartData = [];
+      this.cvAccuracyData = [];
+      this.rollingTestAccuracyData = [];
       if(this.firstTimeLoad){
         this.isLoading = true;
         this.isCVAccuracyLoading = false;
@@ -318,7 +326,7 @@ export default {
         this.lineChartData.push(['Time Period','Prediction Accuracy',{role: 'annotation', type: 'string'}]);
         //this.lineChartData.push(this.apiData.accuracyData);
         _.forEach(this.apiData.accuracyData, function (data) {
-          v.lineChartData.push([data[0],data[1],data[1]]);
+          v.lineChartData.push([data[0],data[1],data[1]+'%']);
         });
         
      }
@@ -409,13 +417,14 @@ export default {
             </div>
             <div class="tw-flex tw-w-full tw-flex-auto tw-border-t tw-border-solid tw-border-brand-gray-2" />
             <div class="tw-flex tw-gap-x-4 tw-w-full tw-bg-white tw-px-3">
-              <div class="tw-pl-2 tw-pt-5 tw-w-1/6">
+              <div class="tw-pt-3 tw-min-w-[14%] tw--mb-3">
                 <label for="category" class="tw-text-sm">Category</label>
                 <v-select
                   :disabled="accuracy_disabled"
                   :items="filtersTestAccuracy.categories.items"
                   :model-value="filtersTestAccuracy.categories.selected"
                   @update:modelValue="value=>selectAccuracyFilterUpdated('categories', value)"
+                  density="comfortable"
                 ></v-select>
               </div>
               <div class="tw-flex tw-items-center tw-gap-1.5 tw-mt-3">
@@ -426,26 +435,26 @@ export default {
                 <p :class="`${cvAccuracy ? 'tw-font-medium' : ''}`">CV Accuracy</p>
             </div>
 
-              <div class="tw-flex tw-justify-end tw-w-7/12">
+              <div class="tw-flex tw-justify-end tw-w-7/12" style="height:72px">
                 <img src="../../assets/model-accuracy-scale.svg" class="tw-h-full"/>
               </div>
             </div>
             <div v-if="cvAccuracy" class="tw-block tw-m-auto">
               <div class="tw-flex tw-justify-center">
-                <h3 class="tw-pl-2 tw-flex tw-h-8 tw-justify-center tw-font-bold">CV Accuracy</h3>
+                <h3 class="tw-pl-2 tw-flex tw-h-8 tw-justify-center tw-font-bold tw-text-lg">CV Accuracy</h3>
               </div>
 <!--              <div class="tw-flex tw-w-full tw-flex-auto tw-border-t tw-border-solid tw-border-brand-gray-2" />-->
-              <div class="tw-flex tw-justify-center" v-if="!isLoading && !isCVAccuracyLoading">
+              <div class="tw-flex tw-justify-center tw-p-8" v-if="!isLoading && !isCVAccuracyLoading">
                 <GChart type="ColumnChart" :data="cvAccuracyData" :options="cvAccuracyOptions"/>
               </div>
 
             </div>
             <div v-else>
               <div class="tw-flex tw-justify-center">
-                <h3 class="tw-pl-2 tw-flex tw-h-8 tw-items-center tw-font-bold">Rolling Test Accuracy</h3>
+                <h3 class="tw-pl-2 tw-flex tw-h-8 tw-items-center tw-text-lg tw-font-bold">Rolling Test Accuracy</h3>
               </div>
 <!--              <div class="tw-flex tw-w-full tw-flex-auto tw-border-t tw-border-solid tw-border-brand-gray-2" />-->
-                <div class="tw-flex tw-justify-center" v-if="!isLoading && !isCVAccuracyLoading">
+                <div class="tw-flex tw-justify-center tw-p-8" v-if="!isLoading && !isCVAccuracyLoading">
                   <GChart type="ColumnChart" :data="rollingTestAccuracyData" :options="rollingTestAccuracyOptions"/>
                 </div>
             </div>
@@ -456,43 +465,44 @@ export default {
           <h3 class="tw-font-bold  tw-py-2 tw-pl-2 tw-text-lg">Historic Actual vs Predicted Market Value</h3>
             <div class="tw-flex tw-w-full tw-flex-auto tw-border-t tw-border-solid tw-border-brand-gray-2" />
             <div class="tw-flex tw-gap-x-4 tw-w-full tw-bg-white tw-px-3">
-              <div class="tw-pl-2 tw-pt-5 tw-w-1/6">
+              <div class="tw-pt-3 tw-min-w-[14%] tw--mb-3">
                 <label for="category" class="tw-text-sm">Category</label>
                 <v-select
                   :disabled="historic_disabled"
                   :items="filtersCharts.categories.items"
                   :model-value="filtersCharts.categories.selected"
                   @update:modelValue="value=>selectFilterUpdated('categories', value)"
+                  density="comfortable"
                 ></v-select>
               </div>
-              <div class="tw-pl-2 tw-pt-5 tw-w-1/6">
+              <div class="tw-pt-3 tw-min-w-[14%] tw--mb-3">
                 <label for="projection_period" class="tw-text-sm">Projection Period</label>
                 <v-select
                   :disabled="historic_disabled"
                   :items="filtersCharts.projected_period.items"
                   :model-value="filtersCharts.projected_period.selected"
                   @update:modelValue="value=>selectFilterUpdated('projected_period', value)"
+                  density="comfortable"
                 ></v-select>
               </div>
             </div>
           <div class="tw-w-full tw-grid-rows-2" v-if="!isLoading && !isHistoricPerformanceLoading">
             <div class="tw-h-1/6">
-              <div class="tw-flex">
+              <div class="tw-flex tw-ml-5">
                 <div style="width:12px;height:12px;background: #A5A5A5;" class="tw-ml-3">
                 </div>
-                <div style="height:12px;" class="tw-text-xs tw-ml-1">Predicted Values(USD)</div>
+                <div style="height:14px;" class="tw-text-xs tw-ml-1">Predicted Values(USD)</div>
                 <div class="tw-flex">
                 <div style="width:12px;height:12px;background: #5F5F5F;" class="tw-ml-3">
                 </div>
-                <div style="height:12px" class="tw-text-xs tw-ml-1">Actual Values(USD)</div>
-                <div style="width:12px;height:12px;background: #7823DC;" class="tw-ml-3">
+                <div style="height:14px" class="tw-text-xs tw-ml-1">Actual Values(USD)</div>
+                <div style="width:24px;height:3px;background: #7823DC;" class="tw-ml-3 tw-mt-1.5">
                 </div>
-                <div style="height:12px" class="tw-text-xs tw-ml-1">Prediction Accuracy</div>
+                <div style="height:14px" class="tw-text-xs tw-ml-1">Prediction Accuracy</div>
                 </div>
               </div>
-              
-              <GChart type="LineChart" :options="lineChartOptions" :data="lineChartData"/>
             </div>
+            <GChart type="LineChart" :options="lineChartOptions" :data="lineChartData"/>
             <div>
               <GChart type="ColumnChart" :data="columnChartData" :options="columnChartOptions" height="370"/>
             </div>

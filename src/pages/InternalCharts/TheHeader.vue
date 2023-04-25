@@ -87,7 +87,7 @@ export default {
 </script>
 
 <template>
-  <div class="tw-flex tw-gap-x-4 tw-w-full tw-bg-white tw-px-3">
+  <div class="tw-flex tw-gap-x-3 tw-w-full tw-bg-white tw-px-3">
     <div class="tw-pt-3 tw-min-w-[14%] tw--mb-3">
       <label for="category" class="tw-text-sm">Category</label>
       <v-select
@@ -95,6 +95,7 @@ export default {
         :items="filters.categories.items"
         :model-value="filters.categories.selected"
         @update:modelValue="value=>selectFilterUpdated('categories', value)"
+        density="comfortable"
       ></v-select>
     </div>
     <div class="tw-pt-3 tw-min-w-[14%] tw--mb-3">
@@ -104,6 +105,7 @@ export default {
         :items="filters.customers.items"
         :model-value="filters.customers.selected"
         @update:modelValue="value=>selectFilterUpdated('customers', value)"
+        density="comfortable"
       ></v-select>
     </div>
     <div class="tw-pt-3 tw-min-w-[14%] tw--mb-3">
@@ -113,6 +115,7 @@ export default {
         :items="filters.time_horizon.items"
         :model-value="filters.time_horizon.selected"
         @update:modelValue="value=>selectFilterUpdated('time_horizon', value)"
+        density="comfortable"
       ></v-select>
     </div>
     <div class="tw-pt-3 tw-min-w-[14%] tw--mb-3">
@@ -122,6 +125,7 @@ export default {
         :items="filters.internal_model.items"
         :model-value="filters.internal_model.selected"
         @update:modelValue="value=>selectFilterUpdated('internal_model', value)"
+        density="comfortable"
       ></v-select>
     </div>
     <div class="tw-flex tw-items-center tw-gap-1.5 tw-mt-3">

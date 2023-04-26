@@ -41,15 +41,14 @@ export default {
   },
   methods: {
     getCellStyling(cellValue, isRowLabel = false) {
-      let styles =
-        'tw-py-3 tw-font-medium tw-cursor-pointer tw-rounded tw-shadow';
+      let styles = 'tw-py-3 tw-font-medium';
 
       if (isRowLabel) {
         styles +=
-          'tw-text-sm tw-text-left tw-whitespace-nowrap tw-text-ellipsis tw-overflow-hidden';
+          ' tw-text-sm tw-text-left tw-whitespace-nowrap tw-text-ellipsis tw-overflow-hidden tw-cursor-default';
         return styles;
       } else {
-        styles += ' tw-text-center';
+        styles += ' tw-text-center tw-rounded tw-shadow tw-cursor-pointer';
       }
 
       if (cellValue === null || _.isNaN(_.toNumber(cellValue))) {
@@ -101,7 +100,7 @@ export default {
         <span
           v-for="(columnHeader, index) in data.columnHeaders"
           :key="columnHeader"
-          :class="`tw-font-medium tw-text-sm ${
+          :class="`tw-font-medium tw-text-sm tw-cursor-default ${
             index > 0 ? 'tw-text-center' : 'tw-text-left'
           }`"
         >
@@ -111,7 +110,7 @@ export default {
               <span v-bind="props">{{ columnHeader }}</span>
             </template>
             <div
-              class="tw-w-auto tw-h-auto tw-flex tw-items-center tw-p-1 tw-overflow-scroll tw-text-sm tw-bg-white tw-border tw-rounded tw-border-[#D9D9D9] tw-shadow-xl"
+              class="tw-w-auto tw-h-auto tw-flex tw-items-center tw-p-1 tw-text-sm tw-bg-white tw-border tw-rounded tw-border-[#D9D9D9] tw-shadow-xl"
             >
               {{ columnHeader }}
             </div>

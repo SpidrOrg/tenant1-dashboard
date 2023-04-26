@@ -33,7 +33,7 @@ export default {
         </div>
       </div>
       <div class="content-container">
-        <router-view :userdata="userdata"/>
+        <router-view :userdata="userdata" />
       </div>
       <footer class="footer">
         <div class="footer-copy-right">Copyright @ Kearney 2023</div>
@@ -47,7 +47,7 @@ export default {
   display: flex;
   width: 100vw;
   height: 100vh;
-  overflow: auto;
+  overflow: scroll;
 }
 .sidebar {
   display: flex;

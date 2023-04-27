@@ -26,6 +26,12 @@ export default {
     periodLabel() {
       return _.get(this.activePeriodData, 'label');
     },
+    horizon() {
+      return _.get(this.activePeriodData, 'horizon');
+    },
+    selectedFilters() {
+      return _.get(this.options, 'selectedFilters');
+    },
     forecastPeriodType() {
       return _.get(this.options, 'forecastPeriodType');
     },
@@ -49,7 +55,11 @@ export default {
   <div class="tw-py-3 tw-w-full">
     <div class="tw-grid tw-grid-cols-7 tw-gap-4" v-if="metrics">
       <div class="tw-col-span-2">
-        <ChartKeyDemandDrivers :data="metrics.keyDemandDrivers" />
+        <ChartKeyDemandDrivers
+          :data="metrics.keyDemandDrivers"
+          :horizon="horizon"
+          :selectedFilters="selectedFilters"
+        />
       </div>
       <div class="tw-col-span-1">
         <ChartPYandImpliedGrowth

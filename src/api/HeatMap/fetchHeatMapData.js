@@ -3,7 +3,7 @@ import { parse, getMonth, getYear, add, format } from 'date-fns';
 
 import getApiBase from '../getApiBase';
 
-export const ALL_CUSTOMERS = 'All Customers';
+export const ALL_CUSTOMERS = 'Value (USD)';
 const NAME = 'Name';
 
 function getPeriodLabel(dateString, lag) {

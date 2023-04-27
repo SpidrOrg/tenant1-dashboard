@@ -41,6 +41,7 @@ export default {
     },
     async fetchDashboardData(metaData) {
       this.isFetchingData = true;
+      this.error = null;
       try {
         this.apiData = await Promise.all(
           _.map(LAG_VALUES, (lag) => {

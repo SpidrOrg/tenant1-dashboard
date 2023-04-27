@@ -43,6 +43,7 @@ export default {
     },
     async fetchData() {
       this.isLoading = true;
+      this.error = null;
       try {
         const response = await fetchHistoricalModelAccuracyData({
           marketSensingRefreshDate: this.marketSensingRefreshDate,

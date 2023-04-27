@@ -131,6 +131,7 @@ export default {
       cvAccuracyOptions:{
         height:320,
         width:650,
+        bar: {groupWidth: "50%"},
         colors: ['#570EAA'],
         legend:{
           position:'none'
@@ -147,7 +148,7 @@ export default {
         chartArea:{
           left: '3%',
           width:'100%',
-          height:'100%'
+          height:'70%'
         },
         vAxis: {
         gridlines: {
@@ -170,6 +171,7 @@ export default {
       rollingTestAccuracyOptions:{
         height:320,
         width:650,
+        bar: {groupWidth: "50%"},
         colors: ['#570EAA'],
         legend:{
           position:'none'
@@ -193,7 +195,7 @@ export default {
         chartArea:{
           left: '3%',
           width:'100%',
-          height:'100%',
+          height:'70%',
         },
       },
       ALL_OPTION,
@@ -435,7 +437,7 @@ export default {
                 <p :class="`${cvAccuracy ? 'tw-font-medium' : ''}`">CV Accuracy</p>
             </div>
 
-              <div class="tw-flex tw-justify-end tw-w-7/12" style="height:72px">
+              <div class="tw-flex tw-justify-end tw-w-7/12 tw-mt-2" style="height:72px">
                 <img src="../../assets/model-accuracy-scale.svg" class="tw-h-full"/>
               </div>
             </div>
@@ -444,7 +446,7 @@ export default {
                 <h3 class="tw-pl-2 tw-flex tw-h-8 tw-justify-center tw-font-bold tw-text-lg">CV Accuracy</h3>
               </div>
 <!--              <div class="tw-flex tw-w-full tw-flex-auto tw-border-t tw-border-solid tw-border-brand-gray-2" />-->
-              <div class="tw-flex tw-justify-center tw-p-8" v-if="!isLoading && !isCVAccuracyLoading">
+              <div class="tw-flex tw-justify-center tw-p-8 tw-pt-7" v-if="!isLoading && !isCVAccuracyLoading">
                 <GChart type="ColumnChart" :data="cvAccuracyData" :options="cvAccuracyOptions"/>
               </div>
 
@@ -487,7 +489,7 @@ export default {
               </div>
             </div>
           <div class="tw-w-full tw-grid-rows-2" v-if="!isLoading && !isHistoricPerformanceLoading">
-            <div class="tw-h-1/6">
+            <div class="tw-h-1/6 tw-mt-2">
               <div class="tw-flex tw-ml-5">
                 <div style="width:12px;height:12px;background: #A5A5A5;" class="tw-ml-3">
                 </div>

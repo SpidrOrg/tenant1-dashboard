@@ -17,6 +17,23 @@ export default {
       type: Object,
       required: false,
     },
+    PAGES_CONFIG: { type: Object, required: true },
+    PAGE_KEYS: { type: Object, required: true },
+  },
+  data() {
+    return {
+      activePageKey: this.PAGE_KEYS.DEMAND_PLANNER,
+    };
+  },
+  computed: {
+    ActiveComponent() {
+      return this.PAGES_CONFIG[this.activePageKey].component;
+    },
+  },
+  methods: {
+    pageSelectionHandler(key) {
+      this.activePageKey = key;
+    },
   },
 };
 </script>
@@ -24,7 +41,13 @@ export default {
 <template>
   <div class="screen">
     <div class="sidebar">
-      <SideBar :org-logo="orgLogo" />
+      <SideBar
+        :org-logo="orgLogo"
+        :PAGES_CONFIG="PAGES_CONFIG"
+        :PAGE_KEYS="PAGE_KEYS"
+        :activePageKey="activePageKey"
+        @page-selected="pageSelectionHandler"
+      />
     </div>
     <div class="main-area">
       <div class="control-container">
@@ -33,7 +56,7 @@ export default {
         </div>
       </div>
       <div class="content-container">
-        <router-view :userdata="userdata" />
+        <component :is="ActiveComponent" v-bind="{ userdata }"></component>
       </div>
       <footer class="footer">
         <div class="footer-copy-right">Copyright @ Kearney 2023</div>
@@ -74,6 +97,7 @@ export default {
   width: 100%;
 }
 .content-container {
+  height: 100%;
   display: flex;
   padding: 1rem;
   flex-direction: column;

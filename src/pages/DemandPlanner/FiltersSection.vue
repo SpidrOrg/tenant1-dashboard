@@ -1,6 +1,6 @@
 <script>
 import _ from 'lodash';
-import { format as formatFn, parse } from 'date-fns';
+import { format as formatFn, parse, endOfMonth } from 'date-fns';
 import fetchDashboardOptions from '@/api/fetchDashboardOptions';
 
 const BY_VALUE = 'BY_VALUE';
@@ -99,11 +99,11 @@ export default {
       );
     },
     getMaxDate() {
-      return parse(
+      return endOfMonth(parse(
         _.first(this.filters.refreshDates.items),
         'yyyy-MM-dd',
         new Date()
-      );
+      ));
     },
     updateLatestRefreshDate(dateObj) {
       this.$emit('latestRefreshDateUpdate', dateObj);

@@ -107,7 +107,7 @@ export default {
         },
         chartArea: {
           right: '8%',
-          width: '60%',
+          width: '50%',
           height: '90%',
         },
       };
@@ -168,7 +168,7 @@ export default {
         <div class="tw-flex tw-justify-between">
           <div class="tw-flex tw-flex-col tw-items-start">
             <span class="tw-text-lg tw-text-brand-gray-3"
-              >Key Demand Drivers</span
+              >Key Demand Driver</span
             >
             <span class="tw-text-2xl tw-font-medium tw-text-black">{{
               selectedDriver
@@ -195,13 +195,13 @@ export default {
             class="tw-flex tw-justify-between tw-gap-x-2 tw-items-center tw-px-2 tw-py-3 tw-bg-brand-gray-1"
           >
             <span class="tw-text-lg tw-font-medium tw-text-black">
-              Data point
+              Data point(s)
             </span>
             <div class="tw-flex tw-gap-x-2">
               <span
                 class="tw-text-lg tw-font-medium tw-text-black tw-text-left tw-w-44"
               >
-                Source
+                Source(s)
               </span>
               <span
                 class="tw-text-lg tw-font-medium tw-text-black tw-text-right tw-w-24"

@@ -114,7 +114,7 @@ export default {
       <template v-slot:activator="{ props }">
         <span
           v-bind="props"
-          class="tw-font-medium tw-text-lg tw-cursor-default"
+          class="tw-font-medium tw-text-lg desktop:tw-text-base tw-cursor-default"
         >
           Key Demand Drivers
         </span>
@@ -151,12 +151,12 @@ export default {
               selectedItem[0]
             }}</span>
           </div>
-          <div class="tw-flex tw-flex-col tw-items-start">
+          <!-- <div class="tw-flex tw-flex-col tw-items-start">
             <span class="tw-text-lg tw-text-brand-gray-3">Source</span>
             <span class="tw-text-2xl tw-font-medium tw-text-black">{{
               source
             }}</span>
-          </div>
+          </div> -->
           <v-btn variant="plain" icon="mdi-close" @click="closeDialog"></v-btn>
         </div>
         <ul class="tw-py-4">
@@ -168,6 +168,7 @@ export default {
             }`"
           >
             <span>{{ dp.label }}</span>
+            <span>{{ source }}</span>
             <span>{{ dp.value }}</span>
           </li>
         </ul>

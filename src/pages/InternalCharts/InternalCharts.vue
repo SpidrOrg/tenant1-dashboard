@@ -132,6 +132,8 @@ export default {
         }       
       } catch(e) {
         console.log(e);
+        this.isLoading = false;
+        alert('There is some erroe while fetching data');
       }
       this.isLoading = false;
     }

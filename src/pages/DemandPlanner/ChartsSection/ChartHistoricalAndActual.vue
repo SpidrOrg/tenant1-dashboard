@@ -117,7 +117,7 @@ export default {
 
 <template>
   <div class="tw-flex tw-flex-col tw-gap-y-2">
-    <span class="tw-font-medium tw-text-lg tw-cursor-default">
+    <span class="tw-font-medium tw-text-lg desktop:tw-text-base tw-cursor-default">
       Market Sensing Forecast vs Sales (%, YoY) – Historical Period
     </span>
     <div class="tw-flex tw-items-center tw-gap-x-3">

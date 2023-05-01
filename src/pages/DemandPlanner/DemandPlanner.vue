@@ -269,9 +269,9 @@ export default {
       <div
         class="tw-flex tw-flex-col tw-w-full tw-border-b tw-border-solid tw-border-brand-gray-2"
       >
-        <h1 class="tw-text-3xl tw-font-bold">Future Demand Forecasting</h1>
+        <h1 class="desktop:tw-text-2xl small-laptop:tw-text-2xl tw-text-3xl tw-font-bold">Future Demand Forecasting</h1>
         <div class="tw-flex tw-items-center tw-w-full">
-          <p>Show demand projections for:</p>
+          <p class="desktop:tw-text-sm small-laptop:tw-text-sm">Show demand projections for:</p>
           <div
             v-for="periodData in dashboardData.periodsData"
             :key="periodData.label"
@@ -285,28 +285,28 @@ export default {
             />
             <label
               :for="`period${periodData.checkboxLabel}`"
-              class="tw-text-black"
+              class="tw-text-black desktop:tw-text-sm small-laptop:tw-text-sm"
               >{{ periodData.checkboxLabel }}
             </label>
           </div>
-          <div class="tw-flex tw-gap-x-3 tw-ml-auto">
+          <div class="tw-flex tw-gap-x-3 tw-ml-auto small-laptop:tw-ml-3">
             <button
-              class="tw-px-2 tw-py-1.5 tw-border tw-border-solid tw-border-brand-primary"
+              class="small-laptop:tw-hidden tw-px-2 tw-py-1.5 tw-border tw-border-solid tw-border-brand-primary "
               @click="isModelAccuracyHidden = !isModelAccuracyHidden"
             >
-              <div class="tw-flex tw-gap-x-2">
+              <div class="tw-flex tw-gap-x-2 desktop:tw-gap-x-1 small-laptop:tw-gap-x-0">
                 <img :src="isModelAccuracyHidden ? EyeIcon : EyeOffIcon" />
-                <span class="tw-text-sm">
+                <span class="tw-text-sm desktop:tw-text-xs">
                   {{ isModelAccuracyHidden ? 'Show' : 'Hide' }} Model Accuracy
                 </span>
               </div>
             </button>
             <button
-              class="tw-px-3 tw-py-1.5 tw-bg-brand-primary"
+              class="tw-px-3 tw-py-1.5 small-laptop:tw-px-1 small-laptop:tw-py-1 tw-bg-brand-primary"
               @click="toggleForecastPeriodType"
               :disabled="dataLoading"
             >
-              <span class="tw-text-white tw-text-sm">
+              <span class="tw-text-white tw-text-sm desktop:tw-text-xs small-laptop:tw-text-xs">
                 Switch to
                 {{
                   forecastPeriodType === R3M_VIEW

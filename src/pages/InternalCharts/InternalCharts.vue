@@ -117,7 +117,7 @@ export default {
               this.filterDisabled = false;
               let v = this;
               if(!this.columnChartData.length){
-                
+
                 this.columnChartData.push(['period','Internal',{'role':'annotation'},'Actual',{'role':'annotation'}]);
                 _.forEach(this.apiData, function (data) {
                 v.columnChartData.push([data.timeline,data.forecastSales,data.forecastSales+data.unit,data.actualSales,data.actualSales+data.unit]);
@@ -129,7 +129,7 @@ export default {
                 v.lineChartData.push([data.timeline,data.msProjectedGrowth,data.msProjectedGrowth+'%',data.forecastGrowth,data.forecastGrowth+'%',data.actualGrowth,data.actualGrowth+'%']);
               });
               }
-        }       
+        }
       } catch(e) {
         console.log(e);
         this.isLoading = false;
@@ -156,7 +156,7 @@ export default {
     </div>
     </div>
     <div class="tw-flex tw-w-full tw-flex-auto tw-border-t tw-border-solid tw-border-brand-gray-2" />
-    <div class="tw-py-5 tw-bg-brand-gray-1"  style="width: 1600px;">
+    <div class="tw-py-5 tw-bg-brand-gray-1">
       <TheHeader  @update-filters="debounceUpdateFilters" :filterDisabled="filterDisabled"/>
     </div>
     <div class="tw-w-full tw-border-t tw-border-solid tw-border-brand-gray-2" v-if="!isLoading">

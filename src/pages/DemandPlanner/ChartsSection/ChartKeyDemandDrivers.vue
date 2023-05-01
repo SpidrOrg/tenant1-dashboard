@@ -1,6 +1,7 @@
 <script>
 import _ from 'lodash';
 import { GChart } from 'vue-google-charts';
+import fetchKeyDemandDriverDetails from '@/api/DemandPlanner/fetchKeyDemandDriverDetails';
 
 export default {
   name: 'ChartKeyDemandDrivers',
@@ -8,45 +9,52 @@ export default {
     GChart,
   },
   props: {
-    data: {
-      type: Array,
-      required: true,
-    },
+    data: { type: Array, required: true },
+    selectedFilters: { type: Object, required: true },
+    horizon: { type: String, required: true },
   },
   data() {
     return {
       dialogIsShown: false,
-      selectedItem: null,
-      source: 'IHS',
-      dataPoints: [
-        { label: 'Data point 1', value: '23.0%' },
-        { label: 'Data point 2', value: '3.4%' },
-        { label: 'Data point 3', value: '2.0%' },
-        { label: 'Data point 4', value: '5.5%' },
-        { label: 'Data point 5', value: '4.05%' },
-        { label: 'Data point 6', value: '53.0%' },
-        { label: 'Data point 7', value: '2.0%' },
-        { label: 'Data point 8', value: '5.5%' },
-        { label: 'Data point 9', value: '4.05%' },
-        { label: 'Data point 10', value: '5.0%' },
-      ],
+      isFetchingDriverDetails: false,
+      selectedDriver: null,
+      selectedDriverDetails: null,
       chartEvents: {
         click: (e) => {
           const { targetID } = e;
           const [el, , index] = _.split(targetID, '#');
           if (el === 'bar') {
-            this.selectedItem = this.chartData[_.toNumber(index) + 1];
+            this.selectedDriver = _.head(this.chartData[_.toNumber(index) + 1]);
+            this.fetchDriverDetails(this.selectedDriver);
             this.dialogIsShown = true;
           } else {
             this.dialogIsShown = false;
           }
         },
       },
+      lodSize: _.size,
     };
   },
   methods: {
     closeDialog() {
       this.dialogIsShown = false;
+    },
+    async fetchDriverDetails(driver) {
+      this.isFetchingDriverDetails = true;
+      try {
+        this.selectedDriverDetails = await fetchKeyDemandDriverDetails({
+          ...this.apiParams,
+          driver,
+        });
+      } catch (e) {
+        console.log(e);
+      }
+      this.isFetchingDriverDetails = false;
+    },
+    getPercentValue(value) {
+      if (value === null || value === undefined || _.isNaN(_.toNumber(value)))
+        return 'NA';
+      return `${value}%`;
     },
   },
   computed: {
@@ -99,9 +107,22 @@ export default {
         },
         chartArea: {
           right: '8%',
-          width: '60%',
+          width: '50%',
           height: '90%',
         },
+      };
+    },
+    apiParams() {
+      const marketSensingRefreshDate = _.get(
+        this.selectedFilters,
+        'marketSensingRefreshDate'
+      );
+      const category = _.get(this.selectedFilters, 'category');
+
+      return {
+        marketSensingRefreshDate,
+        category,
+        horizon: this.horizon,
       };
     },
   },
@@ -137,39 +158,76 @@ export default {
       ref="chartKeyDemandDrivers"
     />
     <v-dialog
-      width="1040"
+      :width="1040"
       :close-on-content-click="false"
       v-model="dialogIsShown"
     >
-      <div class="tw-w-full tw-bg-white tw-px-5 tw-py-4 tw-overflow-auto">
+      <div
+        class="tw-w-full tw-min-h-[590px] tw-bg-white tw-px-5 tw-py-4 tw-overflow-auto"
+      >
         <div class="tw-flex tw-justify-between">
           <div class="tw-flex tw-flex-col tw-items-start">
             <span class="tw-text-lg tw-text-brand-gray-3"
-              >Key Demand Drivers</span
+              >Key Demand Driver</span
             >
             <span class="tw-text-2xl tw-font-medium tw-text-black">{{
-              selectedItem[0]
+              selectedDriver
             }}</span>
           </div>
-          <!-- <div class="tw-flex tw-flex-col tw-items-start">
-            <span class="tw-text-lg tw-text-brand-gray-3">Source</span>
-            <span class="tw-text-2xl tw-font-medium tw-text-black">{{
-              source
-            }}</span>
-          </div> -->
           <v-btn variant="plain" icon="mdi-close" @click="closeDialog"></v-btn>
         </div>
-        <ul class="tw-py-4">
+        <div
+          class="tw-w-full tw-mt-32 tw-flex tw-justify-center tw-items-center"
+          v-if="isFetchingDriverDetails"
+        >
+          <v-progress-circular
+            indeterminate
+            color="#7823DC"
+            :size="80"
+            :width="10"
+          />
+        </div>
+        <ul
+          v-if="!isFetchingDriverDetails && lodSize(selectedDriverDetails) > 0"
+          class="tw-py-4"
+        >
           <li
-            v-for="(dp, index) in dataPoints"
-            :key="dp.label"
-            :class="`tw-flex tw-justify-between tw-items-center tw-px-2 tw-py-3 ${
-              index % 2 !== 0 ? 'tw-bg-white' : 'tw-bg-brand-gray-1'
+            class="tw-flex tw-justify-between tw-gap-x-2 tw-items-center tw-px-2 tw-py-3 tw-bg-brand-gray-1"
+          >
+            <span class="tw-text-lg tw-font-medium tw-text-black">
+              Data point(s)
+            </span>
+            <div class="tw-flex tw-gap-x-2">
+              <span
+                class="tw-text-lg tw-font-medium tw-text-black tw-text-left tw-w-44"
+              >
+                Source(s)
+              </span>
+              <span
+                class="tw-text-lg tw-font-medium tw-text-black tw-text-right tw-w-24"
+              >
+                Value
+              </span>
+            </div>
+          </li>
+          <li
+            v-for="(item, index) in selectedDriverDetails"
+            :key="item.dataPoint"
+            :class="`tw-flex tw-justify-between tw-gap-x-2 tw-items-center tw-px-2 tw-py-3 ${
+              index % 2 === 0 ? 'tw-bg-white' : 'tw-bg-brand-gray-1'
             }`"
           >
-            <span>{{ dp.label }}</span>
-            <span>{{ source }}</span>
-            <span>{{ dp.value }}</span>
+            <span class="tw-text-base tw-text-black">
+              {{ item.dataPoint }}
+            </span>
+            <div class="tw-flex tw-gap-x-2">
+              <span class="tw-text-base tw-text-black tw-text-left tw-w-44">
+                {{ item.source }}
+              </span>
+              <span class="tw-text-base tw-text-black tw-text-right tw-w-24">{{
+                getPercentValue(item.value)
+              }}</span>
+            </div>
           </li>
         </ul>
       </div>

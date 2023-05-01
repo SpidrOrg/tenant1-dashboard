@@ -339,6 +339,7 @@ export default {
           v-if="activePeriodData"
           :activePeriodData="activePeriodData"
           :options="{
+            selectedFilters,
             forecastPeriodType,
           }"
         />

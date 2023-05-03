@@ -3,6 +3,9 @@ import _ from 'lodash';
 import { GChart } from 'vue-google-charts';
 import fetchKeyDemandDriverDetails from '@/api/DemandPlanner/fetchKeyDemandDriverDetails';
 
+const OTHERS_START_INDEX = 5;
+const OTHER_DRIVERS = 'Others';
+
 export default {
   name: 'ChartKeyDemandDrivers',
   components: {
@@ -23,7 +26,7 @@ export default {
         click: (e) => {
           const { targetID } = e;
           const [el, , index] = _.split(targetID, '#');
-          if (el === 'bar') {
+          if (el === 'bar' || el === 'annotationtext') {
             this.selectedDriver = _.head(this.chartData[_.toNumber(index) + 1]);
             this.fetchDriverDetails(this.selectedDriver);
             this.dialogIsShown = true;
@@ -42,10 +45,26 @@ export default {
     async fetchDriverDetails(driver) {
       this.isFetchingDriverDetails = true;
       try {
-        this.selectedDriverDetails = await fetchKeyDemandDriverDetails({
-          ...this.apiParams,
-          driver,
-        });
+        if (driver === OTHER_DRIVERS) {
+          this.selectedDriverDetails = _.flatten(
+            _.concat(
+              await Promise.all(
+                _.map(this.otherDrivers, (el) => {
+                  const driver = _.keys(el)[0];
+                  return fetchKeyDemandDriverDetails({
+                    ...this.apiParams,
+                    driver,
+                  });
+                })
+              )
+            )
+          );
+        } else {
+          this.selectedDriverDetails = await fetchKeyDemandDriverDetails({
+            ...this.apiParams,
+            driver,
+          });
+        }
       } catch (e) {
         console.log(e);
       }
@@ -56,18 +75,38 @@ export default {
         return 'NA';
       return `${value}%`;
     },
+    getSelectedDriverLabel() {
+      if (this.selectedDriver === OTHER_DRIVERS) {
+        const otherDriverNames = _.map(
+          this.otherDrivers,
+          (el) => _.keys(el)[0]
+        );
+        return _.join(otherDriverNames, ', ');
+      }
+      return this.selectedDriver;
+    },
   },
   computed: {
+    otherDrivers() {
+      return _.slice(this.data, OTHERS_START_INDEX);
+    },
     chartData() {
+      const otherDriversValue = this.otherDrivers.reduce(
+        (accumulator, currentEl) =>
+          accumulator + _.toNumber(_.values(currentEl)[0]),
+        0
+      );
+
       return [
         ['X', 'Y', { role: 'annotation' }],
-        ..._.map(this.data, (v) => {
+        ..._.map(_.slice(this.data, 0, OTHERS_START_INDEX), (v) => {
           return [
             _.keys(v)[0],
             _.values(v)[0],
             `${_.round(_.values(v)[0], 1)}%`,
           ];
         }),
+        [OTHER_DRIVERS, otherDriversValue, `${_.round(otherDriversValue, 1)}%`],
       ];
     },
     dataValues() {
@@ -163,15 +202,15 @@ export default {
       v-model="dialogIsShown"
     >
       <div
-        class="tw-w-full tw-min-h-[590px] tw-bg-white tw-px-5 tw-py-4 tw-overflow-auto"
+        class="tw-w-full tw-max-h-[80vh] tw-min-h-[590px] tw-bg-white tw-px-5 tw-py-4 tw-overflow-auto"
       >
-        <div class="tw-flex tw-justify-between">
+        <div class="tw-flex tw-justify-between tw-gap-x-2">
           <div class="tw-flex tw-flex-col tw-items-start">
-            <span class="tw-text-lg tw-text-brand-gray-3"
-              >Key Demand Driver</span
-            >
+            <span class="tw-text-lg tw-text-brand-gray-3">
+              Key Demand Driver(s)
+            </span>
             <span class="tw-text-2xl tw-font-medium tw-text-black">{{
-              selectedDriver
+              getSelectedDriverLabel()
             }}</span>
           </div>
           <v-btn variant="plain" icon="mdi-close" @click="closeDialog"></v-btn>
@@ -187,49 +226,52 @@ export default {
             :width="10"
           />
         </div>
-        <ul
+        <div
           v-if="!isFetchingDriverDetails && lodSize(selectedDriverDetails) > 0"
           class="tw-py-4"
         >
-          <li
-            class="tw-flex tw-justify-between tw-gap-x-2 tw-items-center tw-px-2 tw-py-3 tw-bg-brand-gray-1"
+          <div
+            class="tw-flex tw-justify-between tw-gap-x-3 tw-items-center tw-p-3 tw-bg-brand-gray-1"
           >
             <span class="tw-text-lg tw-font-medium tw-text-black">
               Data point(s)
             </span>
-            <div class="tw-flex tw-gap-x-2">
+            <div class="tw-flex tw-gap-x-1">
               <span
                 class="tw-text-lg tw-font-medium tw-text-black tw-text-left tw-w-44"
               >
                 Source(s)
               </span>
               <span
-                class="tw-text-lg tw-font-medium tw-text-black tw-text-right tw-w-24"
+                class="tw-text-lg tw-font-medium tw-text-black tw-text-right tw-w-24 tw-pr-1"
               >
                 Value
               </span>
             </div>
-          </li>
-          <li
-            v-for="(item, index) in selectedDriverDetails"
-            :key="item.dataPoint"
-            :class="`tw-flex tw-justify-between tw-gap-x-2 tw-items-center tw-px-2 tw-py-3 ${
-              index % 2 === 0 ? 'tw-bg-white' : 'tw-bg-brand-gray-1'
-            }`"
-          >
-            <span class="tw-text-base tw-text-black">
-              {{ item.dataPoint }}
-            </span>
-            <div class="tw-flex tw-gap-x-2">
-              <span class="tw-text-base tw-text-black tw-text-left tw-w-44">
-                {{ item.source }}
+          </div>
+          <ul class="tw-max-h-[420px] tw-overflow-scroll">
+            <li
+              v-for="(item, index) in selectedDriverDetails"
+              :key="item.dataPoint"
+              :class="`tw-flex tw-justify-between tw-gap-x-3 tw-items-center tw-p-3 ${
+                index % 2 === 0 ? 'tw-bg-white' : 'tw-bg-brand-gray-1'
+              }`"
+            >
+              <span class="tw-text-base tw-text-black">
+                {{ item.dataPoint }}
               </span>
-              <span class="tw-text-base tw-text-black tw-text-right tw-w-24">{{
-                getPercentValue(item.value)
-              }}</span>
-            </div>
-          </li>
-        </ul>
+              <div class="tw-flex tw-gap-x-1">
+                <span class="tw-text-base tw-text-black tw-text-left tw-w-44">
+                  {{ item.source }}
+                </span>
+                <span
+                  class="tw-text-base tw-text-black tw-text-right tw-w-24 tw-pr-1"
+                  >{{ getPercentValue(item.value) }}</span
+                >
+              </div>
+            </li>
+          </ul>
+        </div>
       </div>
     </v-dialog>
   </div>

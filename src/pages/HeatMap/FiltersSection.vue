@@ -144,7 +144,7 @@ export default {
     </div>
     <div class="tw-flex tw-gap-1.5 tw-pt-3 tw-pl-3 tw--mb-3">
       <span
-        :class="`tw-pt-10 ${
+        :class="`tw-pt-10 desktop:tw-text-sm ${
           filters.valueOrQuantity === BY_VALUE ? 'tw-font-medium' : ''
         }`"
       >
@@ -160,7 +160,7 @@ export default {
         />
       </div>
       <span
-        :class="`tw-pt-10 ${
+        :class="`tw-pt-10 desktop:tw-text-sm ${
           filters.valueOrQuantity === BY_QUANTITY ? 'tw-font-medium' : ''
         }`"
       >

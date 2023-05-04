@@ -20,7 +20,7 @@ module.exports = {
         sans: ['Graphik', ...defaultTheme.fontFamily.sans],
       },
       fontSize: {
-        xxs:'0.60rem'
+        xxs:['0.60rem','1.2']
       },
       colors: {
         'brand-primary': '#7823DC',

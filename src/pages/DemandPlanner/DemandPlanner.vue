@@ -334,7 +334,7 @@ export default {
           }"
         />
       </div>
-      <div class="tw-p-4 tw-border tw-border-solid tw-border-brand-primary">
+      <div class="tw-p-4 desktop:tw-p-1 tw-border tw-border-solid tw-border-brand-primary">
         <ChartsSection
           v-if="activePeriodData"
           :activePeriodData="activePeriodData"

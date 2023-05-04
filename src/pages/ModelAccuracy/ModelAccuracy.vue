@@ -169,17 +169,16 @@ export default {
       // ],
       rollingTestAccuracyData:[],
       rollingTestAccuracyOptions:{
-        height:410,
+        height:380,
         width:650,
         bar: {groupWidth: "50%"},
-        colors: ['#570EAA'],
         legend:{
           position:'none'
         },
         annotations: {
           textStyle: {
             color: 'black',
-            fontSize: 12,
+            fontSize: 13,
           },
           datum: { stem: { length: 2, color:'none' } },
           alwaysOutside: true,
@@ -411,9 +410,9 @@ export default {
     </div>
     <div class="tw-flex tw-w-full tw-flex-auto tw-border-t tw-border-solid tw-border-brand-gray-2" />
     <div class="tw-w-full tw-border-t tw-border-solid tw-border-brand-gray-2" >
-      <div class="tw-grid tw-grid-rows-2 tw-gap-6">
+      <div class="tw-grid tw-grid-rows-2">
         <div>
-          <v-card class="tw-h-full">
+          <v-card>
             <div class="tw-font-bold  tw-py-2 tw-pl-2 tw-text-lg">
               Model Accuracy Forecast Performance
             </div>
@@ -430,11 +429,11 @@ export default {
                 ></v-select>
               </div>
               <div class="tw-flex tw-items-center tw-gap-1.5 tw-mt-3">
-                <p :class="`${!cvAccuracy ? 'tw-font-medium' : ''}`" >Rolling Test Accuracy</p>
+                <p :class="`${!cvAccuracy ? 'tw-font-medium desktop:tw-leading-tight small-laptop:tw-leading-tight desktop:tw-text-end small-laptop:tw-text-end' : 'desktop:tw-leading-tight small-laptop:tw-leading-tight desktop:tw-text-end small-laptop:tw-text-end'}`" >Rolling Test Accuracy</p>
                 <div class="tw-flex tw-pt-5" style="color: #7823DC;">
                   <v-switch inset @click="cvAccuracy = !cvAccuracy"></v-switch>
                 </div>
-                <p :class="`${cvAccuracy ? 'tw-font-medium' : ''}`">CV Accuracy</p>
+                <p :class="`${cvAccuracy ? 'tw-font-medium desktop:tw-leading-tight small-laptop:tw-leading-tight' : 'desktop:tw-leading-tight small-laptop:tw-leading-tight'}`">CV Accuracy</p>
             </div>
 
               <div class="tw-flex tw-justify-end tw-items-center tw-w-7/12 tw-mt-9" style="height:72px">
@@ -489,7 +488,7 @@ export default {
               </div>
             </div>
           <div class="tw-w-full tw-grid-rows-2" v-if="!isLoading && !isHistoricPerformanceLoading">
-            <div class="tw-h-1/6 tw-mt-2">
+            <div class="tw-h-1/6 tw-mt-4">
               <div class="tw-flex tw-ml-5">
                 <div style="width:12px;height:12px;background: #A5A5A5;" class="tw-ml-3">
                 </div>

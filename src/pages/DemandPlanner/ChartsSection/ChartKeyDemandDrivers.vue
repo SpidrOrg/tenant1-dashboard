@@ -135,7 +135,7 @@ export default {
       <template v-slot:activator="{ props }">
         <span
           v-bind="props"
-          class="tw-font-medium tw-text-lg desktop:tw-text-base tw-cursor-default"
+          class="tw-font-medium tw-text-lg small-laptop:tw-text-base desktop:tw-text-base tw-cursor-default"
         >
           Key Demand Drivers
         </span>

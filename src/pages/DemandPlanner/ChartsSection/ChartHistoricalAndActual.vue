@@ -116,8 +116,8 @@ export default {
 </script>
 
 <template>
-  <div class="tw-flex tw-flex-col tw-gap-y-2">
-    <span class="tw-font-medium tw-text-lg desktop:tw-text-base tw-cursor-default">
+  <div class="tw-flex tw-flex-col tw-gap-y-2  small-laptop:tw-overflow-auto">
+    <span class="tw-font-medium tw-text-lg desktop:tw-text-base small-laptop:tw-text-base tw-cursor-default">
       Market Sensing Forecast vs Sales (%, YoY) – Historical Period
     </span>
     <div class="tw-flex tw-items-center tw-gap-x-3">
@@ -131,5 +131,9 @@ export default {
       </div>
     </div>
   </div>
-  <GChart type="ColumnChart" :data="chartData" :options="chartOptions" />
+  <div class="tw-overflow-x-auto tw-overflow-y-hidden">
+    <div class="tw-min-w-[800px]">
+      <GChart type="ColumnChart" :data="chartData" :options="chartOptions" />
+    </div>
+  </div>
 </template>

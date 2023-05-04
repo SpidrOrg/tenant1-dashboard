@@ -173,7 +173,7 @@ export default {
 </script>
 
 <template>
-  <div class="tw-w-full tw-h-full tw-px-3 tw-py-1">
+  <div class="tw-w-full tw-h-full tw-px-3 tw-py-4">
     <div class="tw-flex tw-flex-col tw-py-2">
       <p style="color: #9291a5" class="desktop:tw-text-sm small-laptop:tw-text-xs">Projected Period</p>
       <div class="tw-flex tw-gap-x-4 desktop:tw-gap-x-3 tw-items-center tw-w-full">
@@ -182,7 +182,7 @@ export default {
           class="tw-bg-brand-gray-4 tw-rounded tw-text-center"
           v-if="formattedHorizon"
         >
-          <p class="tw-p-1 tw-text-sm small-laptop:tw-text-xs">Future {{ formattedHorizon }} months</p>
+          <p class="tw-p-1 tw-text-sm desktop:tw-text-xs small-laptop:tw-text-xs">Future {{ formattedHorizon }} months</p>
         </div>
       </div>
     </div>
@@ -195,7 +195,7 @@ export default {
       <div class="tw-col-span-3">
         <v-menu open-on-hover location="top">
           <template v-slot:activator="{ props }">
-            <p v-bind="props" class="tw-text-sm desktop:tw-text-xs tw-font-medium">
+            <p v-bind="props" class="tw-text-sm desktop:tw-text-xs small-laptop:tw-text-xs tw-font-medium">
               Projected Growth (%YoY)
             </p>
           </template>
@@ -211,10 +211,10 @@ export default {
           <v-menu open-on-hover location="top">
             <template v-slot:activator="{ props }">
               <div v-bind="props" class="tw-text-center">
-                <p class="tw-text-2xl desktop:tw-text-xl tw-font-semibold">
+                <p class="tw-text-2xl desktop:tw-text-xl small-laptop:tw-text-lg tw-font-semibold">
                   {{ `${lodGetNumeric(data, 'metrics.jdaGrowth')}` }}
                 </p>
-                <p class="tw-text-xs desktop:tw-text-xxs">Planned Internal Forecast</p>
+                <p class="tw-text-xs desktop:tw-text-xxs small-laptop:tw-text-xxs">Planned Internal Forecast</p>
               </div>
             </template>
             <div
@@ -229,10 +229,10 @@ export default {
           <v-menu open-on-hover location="top">
             <template v-slot:activator="{ props }">
               <div v-bind="props" class="tw-text-center">
-                <p class="tw-text-2xl desktop:tw-text-xl tw-font-semibold">
+                <p class="tw-text-2xl desktop:tw-text-xl small-laptop:tw-text-lg tw-font-semibold">
                   {{ `${lodGetNumeric(data, 'metrics.marketSensingGrowth')}` }}
                 </p>
-                <p class="tw-text-xs desktop:tw-text-xxs">Market Sensing Model Forecast</p>
+                <p class="tw-text-xs desktop:tw-text-xxs small-laptop:tw-text-xxs">Market Sensing Model Forecast</p>
               </div>
             </template>
             <div
@@ -268,12 +268,12 @@ export default {
         <template v-slot:activator="{ props }">
           <div v-bind="props" class="tw-flex tw-flex-col tw-items-center">
             <span
-              class="tw-text-4xl desktop:tw-text-2xl tw-font-semibold"
+              class="tw-text-4xl desktop:tw-text-2xl small-laptop:tw-text-lg tw-font-semibold"
               :style="{ color: getColorCode(variance) }"
             >
               {{ `${lodGetNumeric(data, 'metrics.variance')}` }}
             </span>
-            <span class="tw-text-xs desktop:tw-text-xxs">Variance</span>
+            <span class="tw-text-xs desktop:tw-text-xxs small-laptop:tw-text-xxs">Variance</span>
           </div>
         </template>
         <div

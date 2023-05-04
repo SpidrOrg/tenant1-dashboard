@@ -1,9 +1,10 @@
 import _ from 'lodash';
 import { parse, getMonth, getYear, add, format } from 'date-fns';
-
 import getApiBase from '../getApiBase';
+import { BY_VALUE, BY_QUANTITY } from '@/pages/HeatMap/FiltersSection.vue';
 
-export const ALL_CUSTOMERS = 'Value (USD)';
+export const VALUE = 'Value (USD)';
+export const VOLUME = 'Volume';
 const NAME = 'Name';
 
 function getPeriodLabel(dateString, lag) {
@@ -20,6 +21,14 @@ function getPeriodLabel(dateString, lag) {
   );
 
   return `${periodStartDate} - ${periodEndDate}`;
+}
+
+function getCustomerName(customer, valueORvolume) {
+  if (customer === '*') {
+    if (valueORvolume === BY_VALUE) return VALUE;
+    if (valueORvolume === BY_QUANTITY) return VOLUME;
+  }
+  return customer;
 }
 
 export default async function ({
@@ -40,7 +49,7 @@ export default async function ({
   const varianceArr = _.get(data, 'variance');
   const columnHeaders = _.concat(NAME, _.get(data, 'categories'));
   const records = _.map(_.get(data, 'customers'), (customer, index) => {
-    const customerName = customer === '*' ? ALL_CUSTOMERS : customer;
+    const customerName = getCustomerName(customer, valueORvolume);
     const rowData = _.map(varianceArr, (el) => {
       return el[index];
     });

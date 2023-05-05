@@ -45,7 +45,7 @@ export default {
 
       if (isRowLabel) {
         styles +=
-          ' tw-text-sm desktop:tw-text-xxs tw-text-left tw-whitespace-nowrap tw-text-ellipsis tw-overflow-hidden tw-cursor-default';
+          ' tw-text-sm desktop:tw-text-xxs small-laptop:tw-text-xxs tw-text-left tw-whitespace-nowrap tw-text-ellipsis tw-overflow-hidden tw-cursor-default';
         return styles;
       } else {
         styles += ' tw-text-center tw-rounded tw-shadow tw-cursor-pointer';
@@ -82,12 +82,12 @@ export default {
 
 <template>
   <div
-    class="tw-flex tw-flex-col tw-gap-3 tw-w-full tw-h-full tw-bg-white tw-p-4 desktop:tw-p-2"
+    class="tw-flex tw-flex-col tw-gap-3 tw-w-full tw-h-full tw-bg-white tw-p-4 desktop:tw-p-2 small-laptop:tw-p-2"
   >
     <div class="tw-flex tw-gap-x-4 tw-items-center tw-w-full">
-      <p class="tw-text-xl desktop:tw-text-base tw-font-medium">{{ data.period }}</p>
+      <p class="tw-text-xl desktop:tw-text-base small-laptop:tw-text-base tw-font-medium">{{ data.period }}</p>
       <div class="tw-bg-brand-gray-4 tw-rounded tw-text-center">
-        <p class="tw-p-1 tw-text-sm desktop:tw-text-xs">Future {{ formattedHorizon }} months</p>
+        <p class="tw-p-1 tw-text-sm desktop:tw-text-xs small-laptop:tw-text-xs">Future {{ formattedHorizon }} months</p>
       </div>
     </div>
     <div class="tw-w-full tw-border tw-border-solid tw-border-brand-gray-2" />
@@ -100,7 +100,7 @@ export default {
         <span
           v-for="(columnHeader, index) in data.columnHeaders"
           :key="columnHeader"
-          :class="`tw-font-medium tw-text-sm desktop:tw-text-xs tw-cursor-default ${
+          :class="`tw-font-medium tw-text-sm desktop:tw-text-xs small-laptop:tw-text-xs tw-cursor-default ${
             index > 0 ? 'tw-text-center' : 'tw-text-left'
           }`"
         >
@@ -110,7 +110,7 @@ export default {
               <span v-bind="props">{{ columnHeader }}</span>
             </template>
             <div
-              class="tw-w-auto tw-h-auto tw-flex tw-items-center tw-p-1 tw-text-sm desktop:tw-text-xs tw-bg-white tw-border tw-rounded tw-border-[#D9D9D9] tw-shadow-xl"
+              class="tw-w-auto tw-h-auto tw-flex tw-items-center tw-p-1 tw-text-sm desktop:tw-text-xs small-laptop:tw-text-xs tw-bg-white tw-border tw-rounded tw-border-[#D9D9D9] tw-shadow-xl"
             >
               {{ columnHeader }}
             </div>
@@ -144,13 +144,13 @@ export default {
                   @click="handleCellClick(`${rowData[0]}${index}`, index === 0)"
                   :class="getCellStyling(cellValue, index === 0)"
                 >
-                  <span class="desktop:tw-text-xs" v-if="index > 0">{{ getCellLabel(cellValue) }}</span>
+                  <span class="desktop:tw-text-xs small-laptop:tw-text-xs" v-if="index > 0">{{ getCellLabel(cellValue) }}</span>
                   <v-menu open-on-hover location="top" v-if="index === 0">
                     <template v-slot:activator="{ props }">
-                      <span v-bind="props" class="desktop:tw-text-xs">{{ cellValue }}</span>
+                      <span v-bind="props" class="desktop:tw-text-xs small-laptop:tw-text-xs">{{ cellValue }}</span>
                     </template>
                     <div
-                      class="tw-w-auto tw-h-auto tw-flex tw-items-center tw-p-1 tw-text-sm desktop:tw-text-xs tw-bg-white tw-border tw-rounded tw-border-[#D9D9D9] tw-shadow-xl"
+                      class="tw-w-auto tw-h-auto tw-flex tw-items-center tw-p-1 tw-text-sm desktop:tw-text-xs small-laptop:tw-text-xs tw-bg-white tw-border tw-rounded tw-border-[#D9D9D9] tw-shadow-xl"
                     >
                       {{ cellValue }}
                     </div>

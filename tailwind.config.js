@@ -20,7 +20,7 @@ module.exports = {
         sans: ['Graphik', ...defaultTheme.fontFamily.sans],
       },
       fontSize: {
-        xxs:['0.60rem','1.2']
+        xxs: ['0.60rem', '1.2'],
       },
       colors: {
         'brand-primary': '#7823DC',
@@ -44,13 +44,10 @@ module.exports = {
       },
     },
     screens: {
-      
-      'small-laptop': {min:'1280px', max:'1439px'},
-      // => @media (min-width: 768px) { ... }
+      'small-laptop': { max: '1439px' },
 
-      'desktop': {min:'1440px', max:'1919px'},
-      // => @media (min-width: 1024px) { ... }
-    }
+      desktop: { min: '1440px', max: '1919px' },
+    },
   },
   plugins: [],
 };

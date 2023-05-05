@@ -10,6 +10,7 @@ export default {
       type: String,
       required: true,
     },
+    isSidebarCollapsed: { type: Boolean, default: false },
   },
   data() {
     return {
@@ -40,7 +41,10 @@ export default {
 <template>
   <div class="logo-area">
     <div class="logo">
-      <img class="logoImage" :src="orgLogo" />
+      <img
+        :class="isSidebarCollapsed ? 'logoImageSmall' : 'logoImageLarge'"
+        :src="orgLogo"
+      />
     </div>
   </div>
   <div class="menu-area">
@@ -82,7 +86,10 @@ export default {
   margin-bottom: auto;
   margin-left: auto;
 }
-.logoImage {
+.logoImageSmall {
+  width: 28px;
+}
+.logoImageLarge {
   width: 128px;
 }
 .menu-area {

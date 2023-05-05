@@ -31,23 +31,23 @@ export default {
       >
         <img class="kearney-home-logo" :src="KearneyHomeLogo" />
       </div>
-      <div class="tw-col-span-6 tw-col-start-7 tw-px-20">
-        <div class="tw-flex tw-flex-col tw-h-full">
-          <h1 class="tw-text-4xl tw-text-black tw-font-medium">
+      <div class="tw-col-span-6 tw-col-start-7 tw-px-20 desktop:tw-px-10 small-laptop:tw-px-10">
+        <div class="tw-flex tw-flex-col tw-justify-center tw-h-full">
+          <h1 class="tw-text-4xl desktop:tw-text-3xl small-laptop:tw-text-xl tw-text-black tw-font-medium">
             Kearney’s Sensing Solution
           </h1>
-          <div class="tw-py-6">
+          <div class="tw-py-6 desktop:tw-py-2 small-laptop:tw-py-1">
             <img
               class="kearney-infographic-image"
               :src="kearneyInfographicImage"
             />
           </div>
-          <p class="tw-text-lg tw-text-black tw-break-words">
+          <p class="tw-text-lg desktop:tw-text-base small-laptop:tw-text-sm tw-text-black tw-break-words">
             Demand Dashboard uses rigorous analytics to project demand growth
             and compare against internal forecasts. The goal is to help users
             identify “triggers” to review projection calibration.
           </p>
-          <div class="tw-pt-8">
+          <div class="tw-pt-8 small-laptop:tw-pt-5 small-laptop:tw-pb-2">
             <LoginButton
               label="Proceed to Sign In"
               type="primary"
@@ -64,16 +64,35 @@ export default {
 </template>
 
 <style scoped>
-.kearney-home-logo {
+@media screen and (max-width : 1440px) {
+  .kearney-home-logo {
+    height: 550px;
+    width: 430px;
+    object-fit: contain;
+  }
+  .kearney-infographic-image {
+  height: 320px;
+  width: 480px;
+  object-fit: contain;
+}
+}
+
+@media screen and (min-width: 1441px) {
+  .kearney-home-logo {
   height: 708px;
   width: 630px;
   object-fit: contain;
-}
-.kearney-infographic-image {
+  }
+  .kearney-infographic-image {
   height: 456px;
   width: 706px;
   object-fit: contain;
 }
+}
+
+
+
+
 .footer {
   display: flex;
   width: 100%;
@@ -90,4 +109,7 @@ export default {
   display: flex;
   align-items: center;
 }
+
+/* height: 600px;
+    width: 460px; */
 </style>

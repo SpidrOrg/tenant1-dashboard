@@ -69,10 +69,6 @@ export default {
           datum: { stem: { length: 0 } },
           alwaysOutside: true,
         },
-        // vAxis: {
-        //   baselineColor: 'none',
-        //   textPosition: 'none'
-        // }
       },
       lineChartData:[],
       lineChartOptions:{
@@ -109,25 +105,12 @@ export default {
             color: 'transparent'
           }
         },
-        // hAxis: {
-        //   baselineColor: 'none',
-        //   textPosition: 'none'
-        // },
         chartArea:{
           left: '3%',
           width:'90%',
           height:'90%'
         },
       },
-      // cvAccuracyData:[
-      //   ['Period','Predicted Values', { role: 'style' }],
-      //   ['1-3 months',92, `color: ${this.getColorCode(92)}`],
-      //   ['4-6 months',88, `color: ${this.getColorCode(88)}`],
-      //   ['6-9 months',75, `color: ${this.getColorCode(75)}`],
-      //   ['10-12 months',89, `color: ${this.getColorCode(89)}`],
-      //   ['1-6 months',93, `color: ${this.getColorCode(93)}`],
-      //   ['1-12 months',61, `color: ${this.getColorCode(61)}`]
-      // ],
       cvAccuracyData:[],
       cvAccuracyOptions:{
         height:410,
@@ -143,7 +126,6 @@ export default {
             fontSize: 12,
           },
           datum: { stem: { length: 2, color:'none' } },
-          alwaysOutside: true,
         },
         tooltip: { trigger: 'none' },
         chartArea:{
@@ -158,15 +140,6 @@ export default {
         textPosition: 'none',
       }
       },
-      // rollingTestAccuracyData:[
-      //   ['Period','Predicted Values',{role:'style'}],
-      //   ['1-3 months',96,`color: ${this.getColorCode(96)}`],
-      //   ['4-6 months',85,`color: ${this.getColorCode(85)}`],
-      //   ['6-9 months',90,`color: ${this.getColorCode(90)}`],
-      //   ['10-12 months',88,`color: ${this.getColorCode(88)}`],
-      //   ['1-6 months',93,`color: ${this.getColorCode(93)}`],
-      //   ['1-12 months',89,`color: ${this.getColorCode(89)}`]
-      // ],
       rollingTestAccuracyData:[],
       rollingTestAccuracyOptions:{
         height:380,
@@ -181,7 +154,6 @@ export default {
             fontSize: 13,
           },
           datum: { stem: { length: 2, color:'none' } },
-          alwaysOutside: true,
         },
         vAxis: {
           gridlines: {
@@ -260,28 +232,6 @@ export default {
         });
      }
       
-      //Historic Performance accuracy data --end
-
-      //CV Accuracy Data
-      // if(!this.cvAccuracyData.length){
-      //   this.cvAccuracyData.push(['Period','Predicted Values',{'role':'annotation'},{ role: 'style' }]);
-        
-      //   _.forEach(this.apiData.cvAccuracyData, function (data) {
-      //     v.cvAccuracyData.push([data['period'],data['value'],data['value']+'%',`color: ${v.getColorCode(data['value'])}`]);
-      //   });
-        
-      // }
-      //CV Accuracy Data --end
-
-        //Rolling Test Accuracy Data
-        // if(!this.rollingTestAccuracyData.length){
-        //   this.rollingTestAccuracyData.push(['Period','Predicted Values',{'role':'annotation'},{ role: 'style' }]);
-        
-        //   _.forEach(this.apiData.rollingAccuracyData, function (data) {
-        //     v.rollingTestAccuracyData.push([data['period'],data['value'],data['value']+'%',`color: ${v.getColorCode(data['value'])}`]);
-        //   });
-        // }
-        //Rolling Test Accuracy Data --end
     }
     if(this.firstTimeLoad){
         this.isLoading = false;
@@ -312,25 +262,6 @@ export default {
             if (!_.isEmpty(response)){
                   this.apiData = response;
 
-        //Historic Performance data
-        // if(!this.columnChartData.length){
-        //   this.columnChartData.push(['Period','Predicted Values',{'role':'annotation'},'Actual Values',{'role':'annotation'}]);
-        //   _.forEach(this.apiData.historicPredicted, function (data) {
-        //   v.columnChartData.push(data);
-        //   });
-        // }
-      //Historic performance end
-
-     //Historic Performance accuracy data
-    //  if(!this.lineChartData.length){
-    //     this.lineChartData.push(['Time Period','Prediction Accuracy',{role: 'annotation', type: 'string'}]);
-    //     //this.lineChartData.push(this.apiData.accuracyData);
-    //     _.forEach(this.apiData.accuracyData, function (data) {
-    //       v.lineChartData.push([data[0],data[1],data[1]+'%']);
-    //     });
-        
-    //  }
-     
       
       //Historic Performance accuracy data --end
 
@@ -437,7 +368,7 @@ export default {
             </div>
 
               <div class="tw-flex tw-justify-end tw-items-center tw-w-7/12 tw-mt-9" style="height:72px">
-                <img src="../../assets/model-accuracy-scale.svg" class="tw-h-full"/>
+                <img src="@/images/model-accuracy-scale.svg" class="tw-h-full"/>
               </div>
             </div>
             <div v-if="cvAccuracy" class="tw-block tw-m-auto">
@@ -514,13 +445,4 @@ export default {
     </div>
   </div>
   <v-divider/>
-  <!--  <div class="tw-w-full tw-h-8 tw-bg-brand-gray-1">-->
-  <!--    <div class="tw-w-full tw-border-t tw-border-solid tw-border-brand-gray-2" v-if="chartDataLoaded">-->
-  <!--      <div class="tw-align-center tw-grid tw-grid-cols-1">-->
-  <!--        <div>-->
-  <!--          <GChart type="LineChart" :options="lineChartOptions" :data="lineChartData"/>-->
-  <!--        </div>-->
-  <!--      </div>-->
-  <!--    </div>-->
-  <!--  </div>-->
 </template>

@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { ALL_CUSTOMERS } from './fetchHeatMapData';
+import { VALUE, VOLUME } from './fetchHeatMapData';
 
 import getApiBase from '../getApiBase';
 
@@ -8,6 +8,13 @@ const getNumericValue = (value) => {
     return 0;
   }
   return _.toNumber(value);
+};
+
+const getCustomerValueForApi = (customer) => {
+  if (customer === VALUE || customer === VOLUME) {
+    return '*';
+  }
+  return customer;
 };
 
 // let cachedData = [
@@ -43,7 +50,7 @@ export default async function ({
     marketSensingRefreshDate,
     valueORvolume,
     category,
-    customer: customer === ALL_CUSTOMERS ? '*' : customer,
+    customer: getCustomerValueForApi(customer),
     lag,
   });
 

@@ -71,6 +71,10 @@ export default {
       const selectedValueORvolume = _.get(filtersData, 'valueOrQuantity');
 
       try {
+        if (selectedMarketSensingRefreshDate === null) {
+          throw new Error('Market Sensing Refresh Date is not available.');
+        }
+
         const marketSensingRefreshDateP = parse(
           `${selectedMarketSensingRefreshDate.year}-${
             selectedMarketSensingRefreshDate.month + 1
@@ -91,6 +95,7 @@ export default {
         this.fetchDashboardData(metaData);
       } catch (e) {
         this.error = e;
+        this.isFetchingData = false;
       }
     },
   },

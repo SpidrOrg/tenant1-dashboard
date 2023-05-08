@@ -51,18 +51,22 @@ export default {
   },
   async created() {
     const options = await fetchInternalChartsOptions().catch(() => null);
-    
+
     if (options){
-      console.log(options);
       this.filters.categories.items = options.ms.categories;
       this.filters.customers.items = options.ms.customers;
+       // Add all option to the customers filters
+      this.filters.customers.items = _.concat(
+        ALL_OPTION,
+        this.filters.customers.items
+      );
       this.filters.time_horizon.items = options.ms.msTimeHorizon;
-      this.filters.internal_model.items = options.ms.msModel;
+      this.filters.internal_model.items = options.clientData.models;
     }
     this.filters.refreshDate = options.updateDates[0];
     // Add all option to the categories and customers filters
-    this.filters.categories.items = this.filters.categories.items;
-    this.filters.customers.items = this.filters.customers.items;
+    // this.filters.categories.items = this.filters.categories.items;
+    // this.filters.customers.items = this.filters.customers.items;
     this.selectFilterUpdated("categories", this.filters.categories.items[0]);
     this.selectFilterUpdated("time_horizon", this.filters.time_horizon.items[0]);
     this.selectFilterUpdated("internal_model", this.filters.internal_model.items[0]);

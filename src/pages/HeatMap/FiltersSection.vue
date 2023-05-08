@@ -6,8 +6,8 @@ import fetchDashboardOptions from '@/api/fetchDashboardOptions';
 import InfoIcon from '@/images/info-icon.svg';
 import HeatMapScaleIcon from '@/images/heatmap-scale.svg';
 
-const BY_VALUE = 'BY_VALUE';
-const BY_QUANTITY = 'BY_QUANTITY';
+export const BY_VALUE = 'BY_VALUE';
+export const BY_QUANTITY = 'BY_QUANTITY';
 
 export default {
   name: 'FiltersSection',
@@ -45,20 +45,28 @@ export default {
     }
 
     // Set default option on filters
-    // this.filters.refreshDates.selected = new Date(_.first(this.filters.refreshDates.items));
-    const earliestRefreshDate = parse(
-      _.first(this.filters.refreshDates.items),
-      'yyyy-MM-dd',
-      new Date()
-    );
-    this.updateLatestRefreshDate(earliestRefreshDate);
-    this.refreshDateUpdated(
-      {
-        month: earliestRefreshDate.getMonth(),
-        year: earliestRefreshDate.getFullYear(),
-      },
-      true
-    );
+    let earliestRefreshDate = null;
+    if (_.first(this.filters.refreshDates.items)) {
+      earliestRefreshDate = parse(
+        _.first(this.filters.refreshDates.items),
+        'yyyy-MM-dd',
+        new Date()
+      );
+    }
+
+    if (earliestRefreshDate !== null) {
+      this.updateLatestRefreshDate(earliestRefreshDate);
+      this.refreshDateUpdated(
+        {
+          month: earliestRefreshDate.getMonth(),
+          year: earliestRefreshDate.getFullYear(),
+        },
+        true
+      );
+    } else {
+      this.filterUpdatedInstant();
+    }
+
     this.dataLoaded = true;
   },
 
@@ -76,11 +84,13 @@ export default {
       );
     },
     getMaxDate() {
-      return endOfMonth(parse(
-        _.first(this.filters.refreshDates.items),
-        'yyyy-MM-dd',
-        new Date()
-      ));
+      return endOfMonth(
+        parse(
+          _.first(this.filters.refreshDates.items),
+          'yyyy-MM-dd',
+          new Date()
+        )
+      );
     },
     updateLatestRefreshDate(dateObj) {
       this.$emit('latestRefreshDateUpdate', dateObj);
@@ -123,7 +133,7 @@ export default {
         :min-date="getMinDate()"
         :max-date="getMaxDate()"
         :clearable="false"
-        :disabled="isDataLoading"
+        :disabled="isDataLoading || filters.refreshDates.selected === null"
         auto-apply
         menu-class-name="dp-custom-menu"
       >
@@ -144,7 +154,7 @@ export default {
     </div>
     <div class="tw-flex tw-gap-1.5 tw-pt-3 tw-pl-3 tw--mb-3">
       <span
-        :class="`tw-pt-10 ${
+        :class="`tw-pt-10 desktop:tw-text-sm ${
           filters.valueOrQuantity === BY_VALUE ? 'tw-font-medium' : ''
         }`"
       >
@@ -160,7 +170,7 @@ export default {
         />
       </div>
       <span
-        :class="`tw-pt-10 ${
+        :class="`tw-pt-10 desktop:tw-text-sm ${
           filters.valueOrQuantity === BY_QUANTITY ? 'tw-font-medium' : ''
         }`"
       >

@@ -25,6 +25,7 @@ export default async function ({
     category,
     byValueOrByVolume,
     forecastPeriodType,
+    invalidate: `${Date.now()}`
   });
 
   return data;

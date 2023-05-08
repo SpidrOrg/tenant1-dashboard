@@ -18,6 +18,7 @@ export default async function ({
     periodStart,
     periodEnd,
     forecastPeriodType,
+    invalidate: `${Date.now()}`
   });
 
   const headers = _.get(data, 'result.headers');

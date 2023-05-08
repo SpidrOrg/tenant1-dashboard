@@ -9,6 +9,7 @@ export default {
     activePageKey: { type: String, required: true },
     PAGES_CONFIG: { type: Object, required: true },
     PAGE_KEYS: { type: Object, required: true },
+    isSidebarCollapsed: { type: Boolean, default: false },
   },
   emits: ['pageSelected'],
   data() {
@@ -27,7 +28,10 @@ export default {
 <template>
   <div class="logo-area">
     <div class="logo">
-      <img class="logoImage" :src="orgLogo" />
+      <img
+        :class="isSidebarCollapsed ? 'logoImageSmall' : 'logoImageLarge'"
+        :src="orgLogo"
+      />
     </div>
   </div>
   <div class="menu-area">
@@ -72,7 +76,10 @@ export default {
   margin-bottom: auto;
   margin-left: auto;
 }
-.logoImage {
+.logoImageSmall {
+  width: 28px;
+}
+.logoImageLarge {
   width: 128px;
 }
 .menu-area {

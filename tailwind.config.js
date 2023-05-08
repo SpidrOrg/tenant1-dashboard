@@ -19,6 +19,9 @@ module.exports = {
       fontFamily: {
         sans: ['Graphik', ...defaultTheme.fontFamily.sans],
       },
+      fontSize: {
+        xxs: ['0.60rem', '1.2'],
+      },
       colors: {
         'brand-primary': '#7823DC',
         'brand-primary-disabled': '#C8A5F0',
@@ -39,6 +42,11 @@ module.exports = {
       boxShadow: {
         blue: '0 0  3px 3px #4285f4',
       },
+    },
+    screens: {
+      'small-laptop': { max: '1439px' },
+
+      desktop: { min: '1440px', max: '1919px' },
     },
   },
   plugins: [],

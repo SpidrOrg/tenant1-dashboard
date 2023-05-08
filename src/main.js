@@ -19,7 +19,7 @@ import idpConfig from '@/idpConfig-dev-local-rnd-dev';
 import PAGES_CONFIG from '@/navConfig';
 import { PAGE_KEYS } from '@/navConfig';
 
-import OrgLogo from '@/images/orgLogo.png';
+import OrgLogo from '@/images/orgLogo.svg';
 
 import './index.css';
 

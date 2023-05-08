@@ -6,8 +6,8 @@ import fetchDashboardOptions from '@/api/fetchDashboardOptions';
 import InfoIcon from '@/images/info-icon.svg';
 import HeatMapScaleIcon from '@/images/heatmap-scale.svg';
 
-const BY_VALUE = 'BY_VALUE';
-const BY_QUANTITY = 'BY_QUANTITY';
+export const BY_VALUE = 'BY_VALUE';
+export const BY_QUANTITY = 'BY_QUANTITY';
 
 export default {
   name: 'FiltersSection',
@@ -76,11 +76,13 @@ export default {
       );
     },
     getMaxDate() {
-      return endOfMonth(parse(
-        _.first(this.filters.refreshDates.items),
-        'yyyy-MM-dd',
-        new Date()
-      ));
+      return endOfMonth(
+        parse(
+          _.first(this.filters.refreshDates.items),
+          'yyyy-MM-dd',
+          new Date()
+        )
+      );
     },
     updateLatestRefreshDate(dateObj) {
       this.$emit('latestRefreshDateUpdate', dateObj);
@@ -144,7 +146,7 @@ export default {
     </div>
     <div class="tw-flex tw-gap-1.5 tw-pt-3 tw-pl-3 tw--mb-3">
       <span
-        :class="`tw-pt-10 ${
+        :class="`tw-pt-10 desktop:tw-text-sm ${
           filters.valueOrQuantity === BY_VALUE ? 'tw-font-medium' : ''
         }`"
       >
@@ -160,7 +162,7 @@ export default {
         />
       </div>
       <span
-        :class="`tw-pt-10 ${
+        :class="`tw-pt-10 desktop:tw-text-sm ${
           filters.valueOrQuantity === BY_QUANTITY ? 'tw-font-medium' : ''
         }`"
       >

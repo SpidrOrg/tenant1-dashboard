@@ -53,9 +53,13 @@ export default {
     const options = await fetchInternalChartsOptions().catch(() => null);
 
     if (options){
-      console.log(options);
       this.filters.categories.items = options.ms.categories;
       this.filters.customers.items = options.ms.customers;
+       // Add all option to the customers filters
+      this.filters.customers.items = _.concat(
+        ALL_OPTION,
+        this.filters.customers.items
+      );
       this.filters.time_horizon.items = options.ms.msTimeHorizon;
       this.filters.internal_model.items = options.clientData.models;
     }

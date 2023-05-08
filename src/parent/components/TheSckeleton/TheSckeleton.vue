@@ -1,4 +1,5 @@
 <script>
+import _ from 'lodash';
 import SideBar from './SideBar.vue';
 import TheHeader from './TheHeader.vue';
 
@@ -33,7 +34,17 @@ export default {
   methods: {
     pageSelectionHandler(key) {
       this.activePageKey = key;
+      sessionStorage.setItem('pageKey', key);
     },
+  },
+  created() {
+    const currentPageKey = sessionStorage.getItem('pageKey');
+    if (_.includes(this.PAGE_KEYS, currentPageKey)) {
+      this.activePageKey = currentPageKey;
+    } else {
+      this.activePageKey = this.PAGE_KEYS.DEMAND_PLANNER;
+      sessionStorage.setItem('pageKey', this.activePageKey);
+    }
   },
 };
 </script>

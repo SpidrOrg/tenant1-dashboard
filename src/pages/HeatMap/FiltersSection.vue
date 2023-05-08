@@ -45,20 +45,28 @@ export default {
     }
 
     // Set default option on filters
-    // this.filters.refreshDates.selected = new Date(_.first(this.filters.refreshDates.items));
-    const earliestRefreshDate = parse(
-      _.first(this.filters.refreshDates.items),
-      'yyyy-MM-dd',
-      new Date()
-    );
-    this.updateLatestRefreshDate(earliestRefreshDate);
-    this.refreshDateUpdated(
-      {
-        month: earliestRefreshDate.getMonth(),
-        year: earliestRefreshDate.getFullYear(),
-      },
-      true
-    );
+    let earliestRefreshDate = null;
+    if (_.first(this.filters.refreshDates.items)) {
+      earliestRefreshDate = parse(
+        _.first(this.filters.refreshDates.items),
+        'yyyy-MM-dd',
+        new Date()
+      );
+    }
+
+    if (earliestRefreshDate !== null) {
+      this.updateLatestRefreshDate(earliestRefreshDate);
+      this.refreshDateUpdated(
+        {
+          month: earliestRefreshDate.getMonth(),
+          year: earliestRefreshDate.getFullYear(),
+        },
+        true
+      );
+    } else {
+      this.filterUpdatedInstant();
+    }
+
     this.dataLoaded = true;
   },
 
@@ -125,7 +133,7 @@ export default {
         :min-date="getMinDate()"
         :max-date="getMaxDate()"
         :clearable="false"
-        :disabled="isDataLoading"
+        :disabled="isDataLoading || filters.refreshDates.selected === null"
         auto-apply
         menu-class-name="dp-custom-menu"
       >

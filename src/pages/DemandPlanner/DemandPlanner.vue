@@ -95,6 +95,9 @@ export default {
       }
       return fetchR3MData;
     },
+    isApiDataAvailable() {
+      return _.size(_.get(this.dashboardData, 'periodsData')) > 0;
+    },
   },
   methods: {
     formatHorizon(value) {
@@ -196,6 +199,10 @@ export default {
       const selectedValueORvolume = _.get(filtersData, 'valueOrQuantity');
 
       try {
+        if (selectedMarketSensingRefreshDate === null) {
+          throw new Error('Market Sensing Refresh Date is not available.');
+        }
+
         const marketSensingRefreshDateP = parse(
           `${selectedMarketSensingRefreshDate.year}-${
             selectedMarketSensingRefreshDate.month + 1
@@ -223,6 +230,7 @@ export default {
         this.fetchDashboardData();
       } catch (e) {
         this.error = e;
+        this.dataLoading = false;
       }
     },
   },
@@ -265,13 +273,22 @@ export default {
         :width="10"
       />
     </div>
-    <div class="tw-w-full tw-p-4 tw-bg-white" v-if="!dataLoading && !error">
+    <div
+      class="tw-w-full tw-p-4 tw-bg-white"
+      v-if="!dataLoading && !error && isApiDataAvailable"
+    >
       <div
         class="tw-flex tw-flex-col tw-w-full tw-border-b tw-border-solid tw-border-brand-gray-2"
       >
-        <h1 class="desktop:tw-text-2xl small-laptop:tw-text-2xl tw-text-3xl tw-font-bold">Future Demand Forecasting</h1>
+        <h1
+          class="desktop:tw-text-2xl small-laptop:tw-text-2xl tw-text-3xl tw-font-bold"
+        >
+          Future Demand Forecasting
+        </h1>
         <div class="tw-flex tw-items-center tw-w-full">
-          <p class="desktop:tw-text-sm small-laptop:tw-text-sm">Show demand projections for:</p>
+          <p class="desktop:tw-text-sm small-laptop:tw-text-sm">
+            Show demand projections for:
+          </p>
           <div
             v-for="periodData in dashboardData.periodsData"
             :key="periodData.label"
@@ -291,10 +308,12 @@ export default {
           </div>
           <div class="tw-flex tw-gap-x-3 tw-ml-auto small-laptop:tw-ml-3">
             <button
-              class="small-laptop:tw-hidden tw-px-2 tw-py-1.5 tw-border tw-border-solid tw-border-brand-primary "
+              class="small-laptop:tw-hidden tw-px-2 tw-py-1.5 tw-border tw-border-solid tw-border-brand-primary"
               @click="isModelAccuracyHidden = !isModelAccuracyHidden"
             >
-              <div class="tw-flex tw-gap-x-2 desktop:tw-gap-x-1 small-laptop:tw-gap-x-0">
+              <div
+                class="tw-flex tw-gap-x-2 desktop:tw-gap-x-1 small-laptop:tw-gap-x-0"
+              >
                 <img :src="isModelAccuracyHidden ? EyeIcon : EyeOffIcon" />
                 <span class="tw-text-sm desktop:tw-text-xs">
                   {{ isModelAccuracyHidden ? 'Show' : 'Hide' }} Model Accuracy
@@ -306,7 +325,9 @@ export default {
               @click="toggleForecastPeriodType"
               :disabled="dataLoading"
             >
-              <span class="tw-text-white tw-text-sm desktop:tw-text-xs small-laptop:tw-text-xs">
+              <span
+                class="tw-text-white tw-text-sm desktop:tw-text-xs small-laptop:tw-text-xs"
+              >
                 Switch to
                 {{
                   forecastPeriodType === R3M_VIEW
@@ -334,7 +355,9 @@ export default {
           }"
         />
       </div>
-      <div class="tw-p-4 desktop:tw-p-1 tw-border tw-border-solid tw-border-brand-primary">
+      <div
+        class="tw-p-4 desktop:tw-p-1 tw-border tw-border-solid tw-border-brand-primary"
+      >
         <ChartsSection
           v-if="activePeriodData"
           :activePeriodData="activePeriodData"

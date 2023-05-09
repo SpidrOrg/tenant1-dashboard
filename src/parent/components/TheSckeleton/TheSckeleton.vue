@@ -46,6 +46,7 @@ export default {
         const sidebar = document.querySelector('.sidebar');
         sidebar.style.minWidth = '13rem';
         sidebar.style.maxWidth = '10%';
+        sidebar.style['z-index'] = 9999;
         this.isSidebarCollapsed = false;
       }
     },
@@ -54,6 +55,7 @@ export default {
         const sidebar = document.querySelector('.sidebar');
         sidebar.style.minWidth = '0px';
         sidebar.style.maxWidth = '48px';
+        sidebar.style['z-index'] = 0;
         this.isSidebarCollapsed = true;
       }
     },
@@ -73,6 +75,19 @@ export default {
     } else {
       this.isSidebarCollapsed = false;
     }
+
+    const resizeObserver = new ResizeObserver(() => {
+      if (window.screen.availWidth < DESKTOP_SCREEN_MIN_WIDTH_PIXELS) {
+        this.collapseSidebarHandler();
+      } else {
+        const sidebar = document.querySelector('.sidebar');
+        sidebar.style.minWidth = '13rem';
+        sidebar.style.maxWidth = '10%';
+        this.isSidebarCollapsed = false;
+      }
+    });
+
+    resizeObserver.observe(document.querySelector('.screen'));
   },
 };
 </script>
@@ -115,11 +130,9 @@ export default {
     display: flex;
     flex-direction: column;
     max-width: 48px;
-    padding-top: 60px;
     white-space: nowrap;
     overflow-x: hidden;
     transition: 0.5s;
-    z-index: 9999;
     position: fixed;
     height: 100%;
     background: white;
@@ -138,6 +151,9 @@ export default {
     flex-direction: column;
     min-width: 13rem;
     width: 10%;
+    max-width: 10%;
+    white-space: nowrap;
+    overflow-x: hidden;
   }
 }
 

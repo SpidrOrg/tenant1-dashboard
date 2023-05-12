@@ -276,7 +276,6 @@ export default {
       //CV Accuracy Data --end
 
         //Rolling Test Accuracy Data
-       //Rolling Test Accuracy Data
        if(!this.rollingTestAccuracyData.length){
           this.rollingTestAccuracyData.push(['Period','Predicted Values',{ role: 'annotation' },{ role: 'style' }]);
         
@@ -285,7 +284,6 @@ export default {
           });
         }
       }
-        //Rolling Test Accuracy Data --end
         //Rolling Test Accuracy Data --end
     
         if(this.firstTimeLoad){
@@ -344,7 +342,7 @@ export default {
       <div class="tw-grid tw-grid-rows-2">
         <div>
           <v-card>
-            <div class="tw-font-bold  tw-py-2 tw-pl-2 tw-text-lg">
+            <div class="tw-font-bold tw-py-2 tw-pl-2 tw-text-lg">
               Model Accuracy Forecast Performance
             </div>
             <div class="tw-flex tw-w-full tw-flex-auto tw-border-t tw-border-solid tw-border-brand-gray-2" />

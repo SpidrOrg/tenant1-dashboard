@@ -44,6 +44,17 @@ export default {
         FILTER_INSTANT_UPDATE_GAP_MS
       ),
       dashboardData: {},
+      jsonData: [
+        {'id': 1, 'fname': 'Jesse'},
+        {'id': 2, 'fname': 'John'},
+      ],
+      dataFile: 'my_export.csv',
+      labels: {
+        fname: 'First Name',
+        lname: 'Last Name'
+      },
+      fields: ['id', 'fname', 'lname', 'date'],
+      isExported: false,
       selectedFilters: {
         marketSensingRefreshDate: null,
         category: '',
@@ -261,6 +272,12 @@ export default {
         @latestRefreshDateUpdate="latestRefreshDateUpdateHandler"
         :isDataLoading="dataLoading"
       />
+      <download-csv
+            :data="jsonData"
+            :delimeter="','"
+        >
+      <v-btn>Download Data</v-btn>
+    </download-csv>
     </div>
     <div
       class="tw-w-full tw-h-3/4 tw-flex tw-justify-center tw-items-center"

@@ -1,5 +1,6 @@
 <script>
 import _ from 'lodash';
+import JsonCSV from 'vue-json-csv';
 import { format as formatFn, parse } from 'date-fns';
 import { getPeriodDataLabel, getConcisePeriodLabel } from './helpers';
 import EyeIcon from '@/images/eye-icon.svg';
@@ -24,6 +25,7 @@ export default {
     FiltersSection,
     CardsList,
     ChartsSection,
+    downloadCsv: JsonCSV,
   },
   props: {
     userdata: {
@@ -44,22 +46,12 @@ export default {
         FILTER_INSTANT_UPDATE_GAP_MS
       ),
       dashboardData: {},
-      jsonData: [
-        {'id': 1, 'fname': 'Jesse'},
-        {'id': 2, 'fname': 'John'},
-      ],
-      dataFile: 'my_export.csv',
-      labels: {
-        fname: 'First Name',
-        lname: 'Last Name'
-      },
-      fields: ['id', 'fname', 'lname', 'date'],
       isExported: false,
       selectedFilters: {
         marketSensingRefreshDate: null,
         category: '',
         customer: '',
-        valueORvolume: null,
+        valueOrQuantity: null,
       },
       latestRefreshDate: null,
       selectedRefreshDate: null,
@@ -76,6 +68,45 @@ export default {
     };
   },
   computed: {
+    csvData() {
+      return {
+        jsonData: _.map(_.get(this.dashboardData, 'periodsData'), (v) => ({
+          ...v,
+          marketSensingGrowth: _.get(v, 'metrics.marketSensingGrowth'),
+          jdaGrowth: _.get(v, 'metrics.jdaGrowth'),
+          variance: _.get(v, 'metrics.variance'),
+          pyGrowth: _.get(v, 'metrics.pyGrowth'),
+          impliedGrowth: _.get(v, 'metrics.impliedGrowth'),
+          keyDemandDrivers: JSON.stringify(
+            _.get(v, 'metrics.keyDemandDrivers')
+          ),
+          historical: JSON.stringify(_.get(v, 'metrics.historical')),
+          ...this.selectedFilters,
+        })),
+        dataFile: 'demand_planner_data.csv',
+        delimeter: ',',
+        fields: (value, key) => {
+          return _.includes(
+            [
+              'period',
+              'marketSensingGrowth',
+              'jdaGrowth',
+              'variance',
+              'pyGrowth',
+              'impliedGrowth',
+              'keyDemandDrivers',
+              'historical',
+              'horizon',
+              'marketSensingRefreshDate',
+              'valueOrQuantity',
+              'category',
+              'customer',
+            ],
+            key
+          );
+        },
+      };
+    },
     selectedCards() {
       return _.filter(
         _.get(this.dashboardData, 'periodsData'),
@@ -272,12 +303,6 @@ export default {
         @latestRefreshDateUpdate="latestRefreshDateUpdateHandler"
         :isDataLoading="dataLoading"
       />
-      <download-csv
-            :data="jsonData"
-            :delimeter="','"
-        >
-      <v-btn>Download Data</v-btn>
-    </download-csv>
     </div>
     <div
       class="tw-w-full tw-h-3/4 tw-flex tw-justify-center tw-items-center"
@@ -323,7 +348,7 @@ export default {
               >{{ periodData.checkboxLabel }}
             </label>
           </div>
-          <div class="tw-flex tw-gap-x-3 tw-ml-auto small-laptop:tw-ml-3">
+          <div class="tw-flex tw-gap-x-3 tw-ml-auto">
             <button
               class="small-laptop:tw-hidden tw-px-2 tw-py-1.5 tw-border tw-border-solid tw-border-brand-primary"
               @click="isModelAccuracyHidden = !isModelAccuracyHidden"
@@ -338,7 +363,7 @@ export default {
               </div>
             </button>
             <button
-              class="tw-px-3 tw-py-1.5 small-laptop:tw-px-1 small-laptop:tw-py-1 tw-bg-brand-primary"
+              class="tw-px-3 tw-py-1.5 small-laptop:tw-px-1 small-laptop:tw-py-1 desktop:tw-px-2 tw-bg-brand-primary"
               @click="toggleForecastPeriodType"
               :disabled="dataLoading"
             >
@@ -354,6 +379,14 @@ export default {
                 View
               </span>
             </button>
+            <downloadCsv
+              :data="csvData.jsonData"
+              :delimeter="csvData.delimeter"
+              :name="csvData.dataFile"
+              :fields="csvData.fields"
+            >
+              <v-btn icon="mdi-download" size="small"></v-btn>
+            </downloadCsv>
           </div>
         </div>
       </div>

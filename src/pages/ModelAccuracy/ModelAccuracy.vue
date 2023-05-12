@@ -14,6 +14,8 @@ export default {
     return {
       isLoading:true,
       firstTimeLoad:true,
+      jsonDataAccuracy:[],
+      jsonDataHistoric:[],
       isCVAccuracyLoading: false,
       isHistoricPerformanceLoading:false,
       cvAccuracy:false,
@@ -218,6 +220,7 @@ export default {
           this.columnChartData.push(['Period','Predicted Values',{'role':'annotation'}, 'Actual Values',{'role':'annotation'}]);
           _.forEach(this.apiData.historicPredicted, function (data) {
           v.columnChartData.push(data);
+          v.jsonDataHistoric.push({'Period':data['period'], 'Predicted Values':data['value'],'Actual Values':data['values']});
           });
         }
         
@@ -270,6 +273,7 @@ export default {
         this.cvAccuracyData.push(['Period','Predicted Values',{ role: 'annotation' },{ role: 'style' }]);
         _.forEach(this.apiData.cvAccuracyData, function (data) {
           v.cvAccuracyData.push([data['period'],data['value'],data['value']+'%',`color: ${v.getColorCode(data['value'])}`]);
+          v.jsonDataAccuracy.push({'Period':data['period'], 'Predicted Values':data['value']})
         });
         
       }
@@ -281,6 +285,7 @@ export default {
         
           _.forEach(this.apiData.rollingAccuracyData, function (data) {
             v.rollingTestAccuracyData.push([data['period'],data['value'],data['value']+'%',`color: ${v.getColorCode(data['value'])}`]);
+            v.jsonDataAccuracy.push({'Period':data['period'], 'Predicted Values':data['value']})
           });
         }
       }
@@ -299,15 +304,24 @@ export default {
   },
   emits: ['updateFilters'],
   async created() {
-    this.isLoading = true;
-    this.isCVAccuracyLoading = false;
-    this.isHistoricPerformanceLoading = false;
     
     const options = await fetchModelAccuracyOptions().catch(() => null);
     if (options){
+      this.isLoading = true;
+      this.isCVAccuracyLoading = false;
+      this.isHistoricPerformanceLoading = false;
+ 
       this.filtersCharts.categories.items = options.categories;
       this.filtersCharts.projected_period.items = options.msTimeHorizon;
       this.filtersTestAccuracy.categories.items = options.categories;
+    }
+    else {
+
+      this.isLoading = false;
+      this.isCVAccuracyLoading = false;
+    this.isHistoricPerformanceLoading = false;
+      alert('Error while fetching data');
+      return;
     }
     // Add all option to the categories and customers filters
     this.filtersCharts.categories.items = this.filtersCharts.categories.items;
@@ -342,8 +356,14 @@ export default {
       <div class="tw-grid tw-grid-rows-2">
         <div>
           <v-card>
-            <div class="tw-font-bold tw-py-2 tw-pl-2 tw-text-lg">
-              Model Accuracy Forecast Performance
+            <div>
+              <p class="tw-font-bold tw-py-2 tw-pl-2 tw-text-lg tw-float-left">Model Accuracy Forecast Performance</p>
+              <download-csv
+              :data="jsonDataAccuracy"
+              :name="dataFile"
+              >
+              <v-btn class="tw-float-left tw-pl-2 tw-pt-2 tw-mb-2 tw-ml-3 tw-mt-2 tw-brand-primary">Download Data</v-btn>
+            </download-csv>
             </div>
             <div class="tw-flex tw-w-full tw-flex-auto tw-border-t tw-border-solid tw-border-brand-gray-2" />
             <div class="tw-flex tw-gap-x-4 tw-w-full tw-bg-white tw-px-3">
@@ -392,7 +412,15 @@ export default {
         </div>
         <div>
           <v-card>
-          <h3 class="tw-font-bold  tw-py-2 tw-pl-2 tw-text-lg">Historic Actual vs Predicted Market Value</h3>
+            <div>
+              <h3 class="tw-float-left tw-font-bold tw-py-2 tw-pl-2 tw-text-lg">Historic Actual vs Predicted Market Value</h3>
+              <download-csv
+              :data="jsonDataHistoric"
+              :name="dataFile"
+              >
+              <v-btn class="tw-float-left tw-pl-2 tw-pt-2 tw-mb-2 tw-ml-3 tw-mt-2 tw-brand-primary">Download Data</v-btn>
+            </download-csv>
+            </div>
             <div class="tw-flex tw-w-full tw-flex-auto tw-border-t tw-border-solid tw-border-brand-gray-2" />
             <div class="tw-flex tw-gap-x-4 tw-w-full tw-bg-white tw-px-3">
               <div class="tw-pt-3 tw-min-w-[14%] tw--mb-3">

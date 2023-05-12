@@ -18,6 +18,10 @@ export default {
       apiData:[],
       columnChartData:[],
       debounceUpdateFilters: _.debounce(this.updateFilters, 4500),
+      jsonData: [],
+      jsonDataLineChart:[],
+      dataFile: 'internal-charts.csv',
+      isExported: false,
       filterDisabled:false,
       columnChartOptions:{
         height:320,
@@ -95,7 +99,13 @@ export default {
   },
   methods:{
     async updateFilters(filtersData){
+      console.log(filtersData);
       try{
+        if(!filtersData){
+          this.isLoading = false;
+          alert('There is some erroe while fetching data');
+          return;
+        }
         this.columnChartData = [];
         this.lineChartData = [];
           this.isLoading = true;
@@ -121,12 +131,14 @@ export default {
                 this.columnChartData.push(['period','Internal',{'role':'annotation'},'Actual',{'role':'annotation'}]);
                 _.forEach(this.apiData, function (data) {
                 v.columnChartData.push([data.timeline,data.forecastSales,data.forecastSales+data.unit,data.actualSales,data.actualSales+data.unit]);
+                v.jsonData.push({'period':data.timeline,'forecast sales':data.forecastSales,'actual sales':data.actualSales})
               });
               }
               if(!this.lineChartData.length){
                 this.lineChartData.push(['period','Market Sensing Forecast',{'role':'annotation'},'Internal Forecast',{'role':'annotation'},'Sales',{'role':'annotation'}]);
                 _.forEach(this.apiData, function (data) {
                 v.lineChartData.push([data.timeline,data.msProjectedGrowth,data.msProjectedGrowth+'%',data.forecastGrowth,data.forecastGrowth+'%',data.actualGrowth,data.actualGrowth+'%']);
+                v.jsonDataLineChart.push({'period':data.timeline,'market sensing':data.msProjectedGrowth,'internal forecast':data.forecastGrowth,'sales':data.actualGrowth});
               });
               }
         }
@@ -163,7 +175,16 @@ export default {
       <div class="tw-grid tw-grid-rows-2 tw-gap-6">
         <div style="overflow-x: auto !important">
           <v-card style="width:3500px;height: 370px;">
-            <p class="tw-font-medium tw-text-xl tw-pl-2 tw-pt-2 tw-mb-2">Internal Forecast vs Sales</p>
+            <div>
+              <p class=" tw-float-left tw-font-medium tw-text-xl tw-pl-2 tw-pt-2 tw-mb-2">Internal Forecast vs Sales</p>
+            <download-csv
+              :data="jsonData"
+              :name="dataFile"
+              >
+              <v-btn class="tw-float-left tw-pl-2 tw-pt-2 tw-mb-2 tw-ml-3 tw-mt-2 tw-brand-primary">Download Data</v-btn>
+            </download-csv>
+            </div>
+            
             <div class="overflow-x-auto tw-w-full tw-items-left tw-border-t tw-border-solid tw-border-brand-gray-2" />
             <div class="tw-flex tw-mt-3">
                 <div style="width:12px;height:12px;background: #787878;" class="tw-ml-3 tw-mt-px">
@@ -180,7 +201,16 @@ export default {
         </div>
         <div style="overflow-x: auto !important">
           <v-card style="width:3500px;height: 370px;">
-            <p class="tw-font-medium tw-text-xl tw-pl-2 tw-pt-2 tw-mb-2">Projections of Market Sensing Forecast vs Internal Forecast vs Sales</p>
+            <div>
+              <p class="tw-float-left tw-font-medium tw-text-xl tw-pl-2 tw-pt-2 tw-mb-2">Projections of Market Sensing Forecast vs Internal Forecast vs Sales</p>
+              <download-csv
+              :data="jsonDataLineChart"
+              :name="dataFile"
+              >
+              <v-btn class="tw-float-left tw-pl-2 tw-pt-2 tw-mb-2 tw-ml-3 tw-mt-2 tw-brand-primary">Download Data</v-btn>
+            </download-csv>
+            </div>
+            
             <div class="tw-flex tw-w-full tw-flex-auto tw-border-t tw-border-solid tw-border-brand-gray-2" />
             <GChart type="LineChart" :options="lineChartOptions" :data="lineChartData"/>
           </v-card>

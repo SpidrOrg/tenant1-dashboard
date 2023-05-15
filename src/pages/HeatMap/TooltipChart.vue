@@ -10,19 +10,19 @@ const DATA_CONFIG = [
     color: '',
   },
   {
-    key: 'msForecastGrowth',
+    key: 'marketSensingForecast',
     label: 'Market Sensing Forecast',
     color: '#570EAA',
     legendStyle: 'solid',
   },
   {
-    key: 'internalForecastGrowth',
+    key: 'internalForecast',
     label: 'Internal Forecast',
     color: '#8C8C8C',
     legendStyle: 'dashed',
   },
   {
-    key: 'actualGrowth',
+    key: 'sales',
     label: 'Sales',
     color: '#B991EB',
     legendStyle: 'solid',
@@ -104,7 +104,6 @@ export default {
         title: '',
         curveType: 'none',
         legend: { position: 'none' },
-        tooltip: { trigger: 'none' },
         width: 850,
         height: 350,
         annotations: {
@@ -112,6 +111,7 @@ export default {
             color: '#000000',
             fontSize: 12,
           },
+          datum: { stem: { length: 4 } },
         },
         hAxis: {
           textStyle: {
@@ -136,7 +136,6 @@ export default {
             color: DATA_CONFIG[1].color,
             annotations: {
               stem: {
-                length: 15,
                 color: DATA_CONFIG[1].color,
               },
             },
@@ -146,7 +145,6 @@ export default {
             lineDashStyle: [6, 6],
             annotations: {
               stem: {
-                length: 5,
                 color: DATA_CONFIG[2].color,
               },
             },
@@ -155,7 +153,6 @@ export default {
             color: DATA_CONFIG[3].color,
             annotations: {
               stem: {
-                length: 0,
                 color: DATA_CONFIG[3].color,
               },
             },

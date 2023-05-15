@@ -57,17 +57,19 @@ export default async function ({
   const dataKeys = _.keys(data);
   let dataForUi = _.map(dataKeys, (key) => {
     const values = _.get(data, `${key}`);
-    const msForecastGrowth = getNumericValue(_.get(values, 'msForecastGrwoth'));
-    const internalForecastGrowth = getNumericValue(
+    const marketSensingForecast = getNumericValue(
+      _.get(values, 'msForecastGrwoth')
+    );
+    const internalForecast = getNumericValue(
       _.get(values, 'internalForecastGrowth')
     );
-    const actualGrowth = getNumericValue(_.get(values, 'actualGrowth'));
+    const sales = getNumericValue(_.get(values, 'actualGrowth'));
 
     return {
       period: key,
-      msForecastGrowth,
-      internalForecastGrowth,
-      actualGrowth,
+      marketSensingForecast,
+      internalForecast,
+      sales,
     };
   });
 

@@ -1,8 +1,4 @@
 <script>
-import _ from 'lodash';
-
-const LANDING_ROUTE_NAME = 'landing';
-
 export default {
   name: 'SideBar',
   props: {
@@ -10,30 +6,21 @@ export default {
       type: String,
       required: true,
     },
+    activePageKey: { type: String, required: true },
+    PAGES_CONFIG: { type: Object, required: true },
+    PAGE_KEYS: { type: Object, required: true },
     isSidebarCollapsed: { type: Boolean, default: false },
   },
+  emits: ['pageSelected'],
   data() {
     return {
       menuItems: [],
     };
   },
-  computed: {
-    cRoute() {
-      if (!this.$route.name || this.$route.name === LANDING_ROUTE_NAME) {
-        return _.get(this.$router, 'options.routes[0].children[1].name', '');
-      }
-      return this.$route.name;
+  methods: {
+    menuItemClickHandler(pageKey) {
+      this.$emit('pageSelected', pageKey);
     },
-  },
-  mounted() {
-    const allRouteItems = _.map(
-      _.get(this.$router, 'options.routes[0].children', []),
-      (v) => _.omit(v, 'component')
-    );
-    this.menuItems = _.filter(
-      allRouteItems,
-      (v) => v.name !== LANDING_ROUTE_NAME
-    );
   },
 };
 </script>
@@ -48,24 +35,27 @@ export default {
     </div>
   </div>
   <div class="menu-area">
-    <router-link
-      v-for="menuItem in menuItems"
-      :key="menuItem.name"
-      :to="menuItem.path"
+    <div
+      v-for="pageKey in PAGE_KEYS"
+      :key="pageKey"
       :class="`menu-item ${
-        menuItem.name === cRoute ? 'menu-item-selected' : ''
+        pageKey === activePageKey ? 'menu-item-selected' : ''
       }`"
+      @click="menuItemClickHandler(pageKey)"
     >
       <div class="menu-item-content">
         <div class="menu-item-content-image">
-          <img :src="menuItem.icon_active" v-if="menuItem.name === cRoute" />
-          <img :src="menuItem.icon" v-else />
+          <img
+            :src="PAGES_CONFIG[pageKey].icon_active"
+            v-if="pageKey === activePageKey"
+          />
+          <img :src="PAGES_CONFIG[pageKey].icon" v-else />
         </div>
         <div>
-          {{ menuItem.label }}
+          {{ PAGES_CONFIG[pageKey].label }}
         </div>
       </div>
-    </router-link>
+    </div>
   </div>
 </template>
 

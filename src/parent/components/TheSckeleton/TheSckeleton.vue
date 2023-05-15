@@ -1,4 +1,5 @@
 <script>
+import _ from 'lodash';
 import SideBar from './SideBar.vue';
 import TheHeader from './TheHeader.vue';
 
@@ -19,14 +20,27 @@ export default {
       type: Object,
       required: false,
     },
+    PAGES_CONFIG: { type: Object, required: true },
+    PAGE_KEYS: { type: Object, required: true },
   },
   data() {
     return {
+      activePageKey: this.PAGE_KEYS.DEMAND_PLANNER,
+
       isSidebarCollapsed: false,
       orgLogoSmall: '/src/images/orgLogoSmall.svg',
     };
   },
+  computed: {
+    ActiveComponent() {
+      return this.PAGES_CONFIG[this.activePageKey].component;
+    },
+  },
   methods: {
+    pageSelectionHandler(key) {
+      this.activePageKey = key;
+      sessionStorage.setItem('pageKey', key);
+    },
     expandSidebarHandler() {
       if (window.screen.availWidth < DESKTOP_SCREEN_MIN_WIDTH_PIXELS) {
         const sidebar = document.querySelector('.sidebar');
@@ -45,6 +59,15 @@ export default {
         this.isSidebarCollapsed = true;
       }
     },
+  },
+  created() {
+    const currentPageKey = sessionStorage.getItem('pageKey');
+    if (_.includes(this.PAGE_KEYS, currentPageKey)) {
+      this.activePageKey = currentPageKey;
+    } else {
+      this.activePageKey = this.PAGE_KEYS.DEMAND_PLANNER;
+      sessionStorage.setItem('pageKey', this.activePageKey);
+    }
   },
   mounted() {
     if (window.screen.availWidth < DESKTOP_SCREEN_MIN_WIDTH_PIXELS) {
@@ -79,6 +102,10 @@ export default {
       <SideBar
         :org-logo="isSidebarCollapsed ? orgLogoSmall : orgLogo"
         :isSidebarCollapsed="isSidebarCollapsed"
+        :PAGES_CONFIG="PAGES_CONFIG"
+        :PAGE_KEYS="PAGE_KEYS"
+        :activePageKey="activePageKey"
+        @page-selected="pageSelectionHandler"
       />
     </div>
     <div class="main-area">
@@ -88,7 +115,7 @@ export default {
         </div>
       </div>
       <div class="content-container">
-        <router-view :userdata="userdata" />
+        <component :is="ActiveComponent" v-bind="{ userdata }"></component>
       </div>
       <footer class="footer">
         <div class="footer-copy-right">Copyright @ Kearney 2023</div>
@@ -156,6 +183,7 @@ export default {
   width: 100%;
 }
 .content-container {
+  height: 100%;
   display: flex;
   padding: 1rem;
   flex-direction: column;

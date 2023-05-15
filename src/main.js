@@ -14,13 +14,16 @@ import { createApp } from 'vue';
 
 // Plugins
 import { registerPlugins } from '@/plugins';
-import idpConfig from '@/idpConfig-rnd-uat';
+import idpConfig from '@/idpConfig';
+
+import PAGES_CONFIG from '@/navConfig';
+import { PAGE_KEYS } from '@/navConfig';
 
 import OrgLogo from '@/images/orgLogo.svg';
 
 import './index.css';
 
-const app = createApp(App, { idpConfig, OrgLogo });
+const app = createApp(App, { idpConfig, OrgLogo, PAGES_CONFIG, PAGE_KEYS });
 app.component('VueDatePicker', VueDatePicker);
 
 registerPlugins(app);

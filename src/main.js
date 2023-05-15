@@ -14,7 +14,7 @@ import { createApp } from 'vue';
 
 // Plugins
 import { registerPlugins } from '@/plugins';
-import idpConfig from '@/idpConfig-dev-local-rnd-dev';
+import idpConfig from '@/idpConfig-rnd-uat';
 
 import OrgLogo from '@/images/orgLogo.svg';
 

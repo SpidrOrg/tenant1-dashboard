@@ -34,9 +34,24 @@ export default defineConfig({
     ],
   },
   server: {
-    port: 3000,
+    port: 3011,
   },
   build: {
-    minify: false
+    minify: false,
+    rollupOptions: {
+      input: {
+        // the default entry point
+        app: './index.html',
+
+        'idpConfig': './src/idpConfig.js',
+      },
+      output: {
+        entryFileNames: assetInfo => {
+          return assetInfo.name === 'idpConfig'
+            ? '[name].js'
+            : 'assets/js/[name]-[hash].js'
+        }
+      },
+    },
   }
 })

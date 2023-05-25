@@ -124,9 +124,15 @@ export default {
       <div class="content-container">
         <component :is="ActiveComponent" v-bind="{ userdata }"></component>
       </div>
-      <footer class="footer">
-        <div class="footer-copy-right">Copyright @ Kearney 2023</div>
-      </footer>
+      <div class="tw-px-5 tw-bg-brand-gray-1">
+        <footer
+          class="tw-w-full tw-flex tw-p-4 tw-border-t tw-border-solid tw-border-brand-gray-2"
+        >
+          <div class="tw-ml-auto tw-flex tw-items-center">
+            Copyright @ Kearney 2023
+          </div>
+        </footer>
+      </div>
     </div>
   </div>
 </template>
@@ -196,23 +202,5 @@ export default {
   flex-direction: column;
   --tw-bg-opacity: 1;
   background-color: rgb(245 245 245 / var(--tw-bg-opacity));
-}
-.footer {
-  display: flex;
-  width: 100%;
-  height: 3rem;
-  padding-left: 1rem;
-  padding-right: 1rem;
-  border-top-width: 1px;
-  border-style: solid;
-  --tw-border-opacity: 1;
-  border-color: rgb(219 219 219 / var(--tw-border-opacity));
-  --tw-bg-opacity: 1;
-  background-color: rgb(245 245 245 / var(--tw-bg-opacity));
-}
-.footer-copy-right {
-  margin-left: auto;
-  display: flex;
-  align-items: center;
 }
 </style>

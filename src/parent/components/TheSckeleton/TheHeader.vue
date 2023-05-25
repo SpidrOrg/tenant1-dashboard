@@ -9,7 +9,6 @@ export default {
       AnyUser,
       dropdownMenuIsShown: false,
       selectedOption: 1,
-      // menuSelected: false, //todo
     };
   },
   props: {
@@ -28,18 +27,7 @@ export default {
       const screen = document.querySelector('.screen');
       screen.addEventListener('click', this.hideDropdownMenu, { once: true });
     },
-    // onMenuSelect() {
-    //   //todo
-    //   this.menuSelected = true;
-    //   try {
-    //     const event = document.createEvent('MouseEvents');
-    //     event.initMouseEvent('mousedown', true, true, window);
-    //     const element = document.getElementById('menu-actions');
-    //     element.dispatchEvent(event);
-    //   } catch (e){console.log(e)}
-    // },
     handleLogout() {
-      //todo
       logout();
     },
   },

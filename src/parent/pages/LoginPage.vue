@@ -31,9 +31,13 @@ export default {
       >
         <img class="kearney-home-logo" :src="KearneyHomeLogo" />
       </div>
-      <div class="tw-col-span-6 tw-col-start-7 tw-px-20 desktop:tw-px-10 small-laptop:tw-px-10">
+      <div
+        class="tw-col-span-6 tw-col-start-7 tw-px-20 desktop:tw-px-10 small-laptop:tw-px-10"
+      >
         <div class="tw-flex tw-flex-col tw-justify-center tw-h-full">
-          <h1 class="tw-text-4xl desktop:tw-text-3xl small-laptop:tw-text-xl tw-text-black tw-font-medium">
+          <h1
+            class="tw-text-4xl desktop:tw-text-3xl small-laptop:tw-text-xl tw-text-black tw-font-medium"
+          >
             Kearney’s Sensing Solution
           </h1>
           <div class="tw-py-6 desktop:tw-py-2 small-laptop:tw-py-1">
@@ -42,7 +46,9 @@ export default {
               :src="kearneyInfographicImage"
             />
           </div>
-          <p class="tw-text-lg desktop:tw-text-base small-laptop:tw-text-sm tw-text-black tw-break-words">
+          <p
+            class="tw-text-lg desktop:tw-text-base small-laptop:tw-text-sm tw-text-black tw-break-words"
+          >
             Demand Dashboard uses rigorous analytics to project demand growth
             and compare against internal forecasts. The goal is to help users
             identify “triggers” to review projection calibration.
@@ -57,59 +63,42 @@ export default {
         </div>
       </div>
     </div>
-    <footer class="footer">
-      <div class="footer-copy-right">Copyright @ Kearney 2023</div>
-    </footer>
+    <div class="tw-px-5">
+      <footer
+        class="tw-w-full tw-flex tw-p-4 tw-border-t tw-border-solid tw-border-brand-gray-2"
+      >
+        <div class="tw-ml-auto tw-flex tw-items-center">
+          Copyright @ Kearney 2023
+        </div>
+      </footer>
+    </div>
   </section>
 </template>
 
 <style scoped>
-@media screen and (max-width : 1440px) {
+@media screen and (max-width: 1440px) {
   .kearney-home-logo {
     height: 550px;
     width: 430px;
     object-fit: contain;
   }
   .kearney-infographic-image {
-  height: 320px;
-  width: 480px;
-  object-fit: contain;
-}
+    height: 320px;
+    width: 480px;
+    object-fit: contain;
+  }
 }
 
 @media screen and (min-width: 1441px) {
   .kearney-home-logo {
-  height: 708px;
-  width: 630px;
-  object-fit: contain;
+    height: 708px;
+    width: 630px;
+    object-fit: contain;
   }
   .kearney-infographic-image {
-  height: 456px;
-  width: 706px;
-  object-fit: contain;
+    height: 456px;
+    width: 706px;
+    object-fit: contain;
+  }
 }
-}
-
-
-
-
-.footer {
-  display: flex;
-  width: 100%;
-  height: 3rem;
-  padding-left: 1rem;
-  padding-right: 1rem;
-  border-top-width: 1px;
-  border-style: solid;
-  --tw-border-opacity: 1;
-  border-color: rgb(219 219 219 / var(--tw-border-opacity));
-}
-.footer-copy-right {
-  margin-left: auto;
-  display: flex;
-  align-items: center;
-}
-
-/* height: 600px;
-    width: 460px; */
 </style>

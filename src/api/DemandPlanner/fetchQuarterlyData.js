@@ -31,6 +31,7 @@ export default async function ({
     categories,
     customers,
     valueORvolume,
+    isFixed: true
   });
 
   // const data = await new Promise((res)=>{

@@ -18,6 +18,10 @@ export default {
       type: String,
       required: true,
     },
+    orgLogoSmall: {
+      type: String,
+      required: true,
+    },
     userdata: {
       type: Object,
       required: false,
@@ -30,7 +34,6 @@ export default {
       activePageKey: this.PAGE_KEYS.DEMAND_PLANNER,
 
       isSidebarCollapsed: false,
-      orgLogoSmall: '/src/images/orgLogoSmall.svg',
     };
   },
   computed: {

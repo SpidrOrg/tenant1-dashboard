@@ -20,6 +20,10 @@ export default {
       type: String,
       required: true,
     },
+    OrgLogoSmall: {
+      type: String,
+      required: true,
+    },
     PAGES_CONFIG: { type: Object, required: true },
     PAGE_KEYS: { type: Object, required: true },
   },
@@ -67,6 +71,7 @@ export default {
   <TheSckeleton
     v-if="isLoggedIn && !loading"
     :org-logo="OrgLogo"
+    :org-logo-small="OrgLogoSmall"
     :userdata="this.loggedInUserData"
     :PAGES_CONFIG="PAGES_CONFIG"
     :PAGE_KEYS="PAGE_KEYS"

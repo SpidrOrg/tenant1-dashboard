@@ -20,10 +20,11 @@ import PAGES_CONFIG from '@/navConfig';
 import { PAGE_KEYS } from '@/navConfig';
 
 import OrgLogo from '@/images/orgLogo.svg';
+import OrgLogoSmall from '@/images/orgLogoSmall.svg';
 
 import './index.css';
 
-const app = createApp(App, { idpConfig, OrgLogo, PAGES_CONFIG, PAGE_KEYS });
+const app = createApp(App, { idpConfig, OrgLogo, OrgLogoSmall, PAGES_CONFIG, PAGE_KEYS });
 app.component('VueDatePicker', VueDatePicker);
 
 registerPlugins(app);

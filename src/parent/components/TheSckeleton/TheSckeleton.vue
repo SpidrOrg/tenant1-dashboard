@@ -124,9 +124,9 @@ export default {
           <TheHeader :userdata="userdata" />
         </div>
       </div>
-      <div class="content-container">
+      <v-app class="content-container">
         <component :is="ActiveComponent" v-bind="{ userdata }"></component>
-      </div>
+      </v-app>
       <div class="tw-px-5 tw-bg-brand-gray-1">
         <footer
           class="tw-w-full tw-flex tw-p-4 tw-border-t tw-border-solid tw-border-brand-gray-2"

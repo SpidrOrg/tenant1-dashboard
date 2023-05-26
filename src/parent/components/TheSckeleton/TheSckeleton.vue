@@ -174,12 +174,13 @@ export default {
   display: flex;
   width: 100vw;
   height: 100vh;
-  overflow: scroll;
 }
 
 .main-area {
-  flex: 1 1 auto;
+  flex: auto;
+  overflow: auto;
 }
+
 .control-container {
   display: flex;
   --tw-bg-opacity: 1;
@@ -191,12 +192,15 @@ export default {
   padding-left: 1.5rem;
   padding-right: 1.5rem;
 }
+
 .control-section {
   display: flex;
   width: 100%;
 }
+
 .content-container {
-  height: 100%;
+  min-height: 100%;
+  max-height: fit-content;
   display: flex;
   padding: 1rem;
   flex-direction: column;

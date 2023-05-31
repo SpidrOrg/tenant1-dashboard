@@ -103,41 +103,43 @@ export default {
 </script>
 
 <template>
-  <div class="screen">
-    <div
-      class="sidebar"
-      @mouseover="expandSidebarHandler"
-      @mouseout="collapseSidebarHandler"
-    >
-      <SideBar
-        :org-logo="isSidebarCollapsed ? orgLogoSmall : orgLogo"
-        :isSidebarCollapsed="isSidebarCollapsed"
-        :PAGES_CONFIG="PAGES_CONFIG"
-        :PAGE_KEYS="PAGE_KEYS"
-        :activePageKey="activePageKey"
-        @page-selected="pageSelectionHandler"
-      />
-    </div>
-    <div class="main-area">
-      <div class="control-container">
-        <div class="control-section">
-          <TheHeader :userdata="userdata" />
+  <v-app>
+    <div class="screen">
+      <div
+        class="sidebar"
+        @mouseover="expandSidebarHandler"
+        @mouseout="collapseSidebarHandler"
+      >
+        <SideBar
+          :org-logo="isSidebarCollapsed ? orgLogoSmall : orgLogo"
+          :isSidebarCollapsed="isSidebarCollapsed"
+          :PAGES_CONFIG="PAGES_CONFIG"
+          :PAGE_KEYS="PAGE_KEYS"
+          :activePageKey="activePageKey"
+          @page-selected="pageSelectionHandler"
+        />
+      </div>
+      <div class="main-area">
+        <div class="control-container">
+          <div class="control-section">
+            <TheHeader :userdata="userdata" />
+          </div>
+        </div>
+        <div class="content-container">
+          <component :is="ActiveComponent" v-bind="{ userdata }"></component>
+        </div>
+        <div class="tw-px-5 tw-bg-brand-gray-1">
+          <footer
+            class="tw-w-full tw-flex tw-p-4 tw-border-t tw-border-solid tw-border-brand-gray-2"
+          >
+            <div class="tw-ml-auto tw-flex tw-items-center">
+              Copyright @ Kearney 2023
+            </div>
+          </footer>
         </div>
       </div>
-      <v-app class="content-container">
-        <component :is="ActiveComponent" v-bind="{ userdata }"></component>
-      </v-app>
-      <div class="tw-px-5 tw-bg-brand-gray-1">
-        <footer
-          class="tw-w-full tw-flex tw-p-4 tw-border-t tw-border-solid tw-border-brand-gray-2"
-        >
-          <div class="tw-ml-auto tw-flex tw-items-center">
-            Copyright @ Kearney 2023
-          </div>
-        </footer>
-      </div>
     </div>
-  </div>
+  </v-app>
 </template>
 
 <style scoped>
@@ -156,7 +158,7 @@ export default {
     top: 0px;
   }
   .main-area {
-    flex: 1 1 auto;
+    flex: auto;
     margin-left: 48px;
   }
 }
@@ -175,8 +177,8 @@ export default {
 
 .screen {
   display: flex;
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  height: 100%;
 }
 
 .main-area {
@@ -202,8 +204,7 @@ export default {
 }
 
 .content-container {
-  min-height: 100%;
-  max-height: fit-content;
+  height: 100%;
   display: flex;
   padding: 1rem;
   flex-direction: column;

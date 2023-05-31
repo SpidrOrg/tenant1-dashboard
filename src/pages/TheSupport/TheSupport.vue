@@ -6,7 +6,14 @@ export default {
     return {
       HelpAndSupportImage,
       supportEmail: 'arjun.shyamsundar@kearney.com',
+      userGuideURL:
+        'https://xebiagroup.sharepoint.com/sites/ProjectKearney/Gedeelde%20documenten/Forms/AllItems.aspx?ct=1685352691531&or=OWA%2DNT&cid=53032b96%2D2504%2D1874%2D133d%2D64ef240b56d6&ga=1&WSL=1&id=%2Fsites%2FProjectKearney%2FGedeelde%20documenten%2FGeneral%2FUserGuide%5FKSS%28MVP1%29%2FKSS%5FUser%20Guide%5FV4%2E0%2Epdf&viewid=6270bc2d%2De035%2D4015%2D86c1%2Dedb8f9493642&parent=%2Fsites%2FProjectKearney%2FGedeelde%20documenten%2FGeneral%2FUserGuide%5FKSS%28MVP1%29',
     };
+  },
+  methods: {
+    downloadHandler() {
+      window.open(this.userGuideURL, '_blank');
+    },
   },
 };
 </script>
@@ -55,6 +62,7 @@ export default {
               <div>
                 <button
                   class="tw-px-2 tw-py-1.5 tw-border-2 tw-border-solid tw-border-brand-primary"
+                  @click="downloadHandler"
                 >
                   <div class="tw-flex tw-gap-x-2 tw-items-center">
                     <v-icon

@@ -42,6 +42,7 @@ export default {
       type: Object,
       required: true,
     },
+    chartsScale: { type: Object, required: true },
   },
   computed: {
     chartColumns() {
@@ -103,6 +104,10 @@ export default {
             count: 0,
           },
           textPosition: 'none',
+          viewWindow: {
+            max: _.get(this.chartsScale, 'max'),
+            min: _.get(this.chartsScale, 'min'),
+          },
         },
         chartArea: {
           top: '6%',
@@ -116,8 +121,10 @@ export default {
 </script>
 
 <template>
-  <div class="tw-flex tw-flex-col tw-gap-y-2  small-laptop:tw-overflow-auto">
-    <span class="tw-font-medium tw-text-lg desktop:tw-text-base small-laptop:tw-text-base tw-cursor-default">
+  <div class="tw-flex tw-flex-col tw-gap-y-2 small-laptop:tw-overflow-auto">
+    <span
+      class="tw-font-medium tw-text-lg desktop:tw-text-base small-laptop:tw-text-base tw-cursor-default"
+    >
       Market Sensing Forecast vs Sales (%, YoY) – Historical Period
     </span>
     <div class="tw-flex tw-items-center tw-gap-x-3">

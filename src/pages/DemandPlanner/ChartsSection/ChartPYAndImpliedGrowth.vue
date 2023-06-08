@@ -35,6 +35,7 @@ export default {
       type: [Number, String],
       required: true,
     },
+    chartsScale: { type: Object, required: true },
   },
   data() {
     return {
@@ -86,16 +87,10 @@ export default {
             count: 0,
           },
           textPosition: 'none',
-          // viewWindow: {
-          //   max: _.add(
-          //     _.max([_.toNumber(this.pyVal), _.toNumber(this.impliedVal)]),
-          //     5
-          //   ),
-          //   min: _.subtract(
-          //     _.min([_.toNumber(this.pyVal), _.toNumber(this.impliedVal)]),
-          //     5
-          //   ),
-          // },
+          viewWindow: {
+            max: _.get(this.chartsScale, 'max'),
+            min: _.get(this.chartsScale, 'min'),
+          },
         },
         hAxis: {
           textStyle: {

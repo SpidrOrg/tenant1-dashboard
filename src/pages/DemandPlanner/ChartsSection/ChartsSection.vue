@@ -41,6 +41,39 @@ export default {
       }
       return '';
     },
+    chartsScale() {
+      const pyValNumeric = this.getNumericValue(
+        _.get(this.metrics, 'pyGrowth')
+      );
+      const impliedValNumeric = this.getNumericValue(
+        _.get(this.metrics, 'impliedGrowth')
+      );
+      const numericValuesOfHistoricalChart = _.flatMap(
+        _.get(this.metrics, 'historical'),
+        (el) => {
+          const values = _.values(el);
+          return _.map(values, (v) => this.getNumericValue(v));
+        }
+      );
+
+      const numericValuesOfAllCharts = [
+        pyValNumeric,
+        impliedValNumeric,
+        ...numericValuesOfHistoricalChart,
+      ];
+      return {
+        max: _.add(_.max(numericValuesOfAllCharts), 5),
+        min: _.subtract(_.min(numericValuesOfAllCharts), 5),
+      };
+    },
+  },
+  methods: {
+    getNumericValue(value) {
+      if (value === null || _.isNaN(_.toNumber(value))) {
+        return 0;
+      }
+      return _.toNumber(value);
+    },
   },
 };
 </script>
@@ -79,12 +112,16 @@ export default {
           :projectedPeriod="periodLabel"
           :pyVal="metrics.pyGrowth"
           :impliedVal="metrics.impliedGrowth"
+          :chartsScale="chartsScale"
         />
       </div>
       <div
         class="tw-col-span-4 desktop:tw-col-span-6 small-laptop:tw-col-span-6"
       >
-        <ChartHistoricalAndActual :data="metrics.historical" />
+        <ChartHistoricalAndActual
+          :data="metrics.historical"
+          :chartsScale="chartsScale"
+        />
       </div>
     </div>
   </div>

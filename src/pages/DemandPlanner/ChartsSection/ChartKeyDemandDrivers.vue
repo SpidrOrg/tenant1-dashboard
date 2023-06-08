@@ -97,7 +97,7 @@ export default {
         0
       );
 
-      return [
+      const result = [
         ['X', 'Y', { role: 'annotation' }],
         ..._.map(_.slice(this.data, 0, OTHERS_START_INDEX), (v) => {
           return [
@@ -106,8 +106,17 @@ export default {
             `${_.round(_.values(v)[0], 1)}%`,
           ];
         }),
-        [OTHER_DRIVERS, otherDriversValue, `${_.round(otherDriversValue, 1)}%`],
       ];
+
+      if (otherDriversValue > 0) {
+        result.push([
+          OTHER_DRIVERS,
+          otherDriversValue,
+          `${_.round(otherDriversValue, 1)}%`,
+        ]);
+      }
+
+      return result;
     },
     dataValues() {
       return _.map(this.data, (v) => {

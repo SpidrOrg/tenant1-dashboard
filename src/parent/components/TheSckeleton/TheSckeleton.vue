@@ -52,7 +52,7 @@ export default {
       sessionStorage.setItem('pageKey', key);
     },
     expandSidebarHandler() {
-      if (window.screen.availWidth < DESKTOP_SCREEN_MIN_WIDTH_PIXELS) {
+      if (window.innerWidth < DESKTOP_SCREEN_MIN_WIDTH_PIXELS) {
         const sidebar = document.querySelector('.sidebar');
         sidebar.style.minWidth = '13rem';
         sidebar.style.maxWidth = '10%';
@@ -61,7 +61,7 @@ export default {
       }
     },
     collapseSidebarHandler() {
-      if (window.screen.availWidth < DESKTOP_SCREEN_MIN_WIDTH_PIXELS) {
+      if (window.innerWidth < DESKTOP_SCREEN_MIN_WIDTH_PIXELS) {
         const sidebar = document.querySelector('.sidebar');
         sidebar.style.minWidth = '0px';
         sidebar.style.maxWidth = '48px';
@@ -80,14 +80,14 @@ export default {
     }
   },
   mounted() {
-    if (window.screen.availWidth < DESKTOP_SCREEN_MIN_WIDTH_PIXELS) {
+    if (window.innerWidth < DESKTOP_SCREEN_MIN_WIDTH_PIXELS) {
       this.isSidebarCollapsed = true;
     } else {
       this.isSidebarCollapsed = false;
     }
 
     const resizeObserver = new ResizeObserver(() => {
-      if (window.screen.availWidth < DESKTOP_SCREEN_MIN_WIDTH_PIXELS) {
+      if (window.innerWidth < DESKTOP_SCREEN_MIN_WIDTH_PIXELS) {
         this.collapseSidebarHandler();
       } else {
         const sidebar = document.querySelector('.sidebar');
@@ -120,22 +120,24 @@ export default {
         />
       </div>
       <div class="main-area">
-        <div class="control-container">
-          <div class="control-section">
-            <TheHeader :userdata="userdata" />
-          </div>
-        </div>
-        <div class="content-container">
-          <component :is="ActiveComponent" v-bind="{ userdata }"></component>
-        </div>
-        <div class="tw-px-5 tw-bg-brand-gray-1">
-          <footer
-            class="tw-w-full tw-flex tw-p-4 tw-border-t tw-border-solid tw-border-brand-gray-2"
-          >
-            <div class="tw-ml-auto tw-flex tw-items-center">
-              Copyright @ Kearney 2023
+        <div class="main-content-wrapper">
+          <div class="control-container">
+            <div class="control-section">
+              <TheHeader :userdata="userdata" />
             </div>
-          </footer>
+          </div>
+          <div class="content-container">
+            <component :is="ActiveComponent" v-bind="{ userdata }"></component>
+          </div>
+          <div class="tw-px-5 tw-bg-brand-gray-1">
+            <footer
+              class="tw-w-full tw-flex tw-p-4 tw-border-t tw-border-solid tw-border-brand-gray-2"
+            >
+              <div class="tw-ml-auto tw-flex tw-items-center">
+                Copyright @ Kearney 2023
+              </div>
+            </footer>
+          </div>
         </div>
       </div>
     </div>
@@ -143,38 +145,6 @@ export default {
 </template>
 
 <style scoped>
-@media screen and (max-width: 1439px) {
-  .sidebar {
-    display: flex;
-    flex-direction: column;
-    max-width: 48px;
-    white-space: nowrap;
-    overflow-x: hidden;
-    transition: 0.5s;
-    position: fixed;
-    height: 100%;
-    background: white;
-    box-shadow: rgba(0, 0, 0, 0.4) 0px 8px 16px;
-    top: 0px;
-  }
-  .main-area {
-    flex: auto;
-    margin-left: 48px;
-  }
-}
-
-@media screen and (min-width: 1440px) {
-  .sidebar {
-    display: flex;
-    flex-direction: column;
-    min-width: 13rem;
-    width: 10%;
-    max-width: 10%;
-    white-space: nowrap;
-    overflow-x: hidden;
-  }
-}
-
 .screen {
   display: flex;
   width: 100%;
@@ -184,6 +154,15 @@ export default {
 .main-area {
   flex: auto;
   overflow: auto;
+}
+
+.main-content-wrapper {
+  width: 100%;
+  height: 100%;
+  min-width: 1160px;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
 }
 
 .control-container {
@@ -210,5 +189,38 @@ export default {
   flex-direction: column;
   --tw-bg-opacity: 1;
   background-color: rgb(245 245 245 / var(--tw-bg-opacity));
+}
+
+@media screen and (max-width: 1439px) {
+  .sidebar {
+    display: flex;
+    flex-direction: column;
+    max-width: 48px;
+    white-space: nowrap;
+    overflow-x: hidden;
+    transition: 0.5s;
+    position: fixed;
+    height: 100%;
+    background: white;
+    box-shadow: rgba(0, 0, 0, 0.4) 0px 8px 16px;
+    top: 0;
+    left: 0;
+  }
+  .main-area {
+    flex: auto;
+    margin-left: 48px;
+  }
+}
+
+@media screen and (min-width: 1440px) {
+  .sidebar {
+    display: flex;
+    flex-direction: column;
+    min-width: 13rem;
+    width: 10%;
+    max-width: 10%;
+    white-space: nowrap;
+    overflow-x: hidden;
+  }
 }
 </style>

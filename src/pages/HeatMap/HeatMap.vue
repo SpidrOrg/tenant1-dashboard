@@ -6,7 +6,7 @@ import FiltersSection from '@/pages/HeatMap/FiltersSection.vue';
 import CardsList from '@/pages/HeatMap/CardsList.vue';
 
 export const LAG_VALUES = [1, 4, 7, 10];
-const FILTER_UPDATE_GAP_MS = 3000;
+const FILTER_UPDATE_GAP_MS = 300;
 const FILTER_INSTANT_UPDATE_GAP_MS = 500;
 
 export default {
@@ -108,7 +108,7 @@ export default {
       <div class="tw-flex tw-h-full tw-items-center">
         <h1 class="tw-text-lg">
           <span class="tw-font-bold">Heat-map View -</span>
-          Representation of variance across categories and stores
+          Representation of variance across categories and channels
         </h1>
       </div>
       <div

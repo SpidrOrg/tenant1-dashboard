@@ -5,7 +5,7 @@ import TheHeader from './TheHeader.vue';
 
 const DESKTOP_SCREEN_MIN_WIDTH_PIXELS = 1440;
 const FAQS_URL =
-  'https://xebiagroup.sharepoint.com/sites/ProjectKearney/Gedeelde%20documenten/Forms/AllItems.aspx?id=%2Fsites%2FProjectKearney%2FGedeelde%20documenten%2FGeneral%2FContent%2FKearney%5FMS%20Demand%20Dashboard%20FAQ%2Epdf&parent=%2Fsites%2FProjectKearney%2FGedeelde%20documenten%2FGeneral%2FContent&p=true&ct=1684174121283&or=OWA%2DNT&cid=1b364130%2Dcec9%2D447e%2D6e14%2D746cabb41467&ga=1';
+  'https://atkearney.sharepoint.com/:b:/s/SensingSolution/ESW_yfK8RxJEtfWR2Uv-UpsBeESf21lYRT_6XYFLC38B9w?e=1RW4dU';
 
 export default {
   name: 'TheSckeleton',

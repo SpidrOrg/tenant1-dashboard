@@ -24,15 +24,16 @@ export default {
       selectedDriverDetails: null,
       chartEvents: {
         click: (e) => {
-          const { targetID } = e;
-          const [el, , index] = _.split(targetID, '#');
-          if (el === 'bar' || el === 'annotationtext') {
-            this.selectedDriver = _.head(this.chartData[_.toNumber(index) + 1]);
-            this.fetchDriverDetails(this.selectedDriver);
-            this.dialogIsShown = true;
-          } else {
-            this.dialogIsShown = false;
-          }
+          // const { targetID } = e;
+          // const [el, , index] = _.split(targetID, '#');
+          // if (el === 'bar' || el === 'annotationtext') {
+          //   this.selectedDriver = _.head(this.chartData[_.toNumber(index) + 1]);
+          //   this.fetchDriverDetails(this.selectedDriver);
+          //   this.dialogIsShown = true;
+          // } else {
+          //   this.dialogIsShown = false;
+          // }
+          console.log("Event disabled", e);
         },
       },
       lodSize: _.size,

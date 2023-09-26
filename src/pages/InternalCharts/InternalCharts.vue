@@ -5,7 +5,7 @@ import fetchInternalChartsData from '@/api/fetchInternalChartsData';
 import { format as formatFn } from 'date-fns';
 import _ from 'lodash';
 
-const FILTER_UPDATE_GAP_MS = 3500;
+const FILTER_UPDATE_GAP_MS = 300;
 
 export default {
   name: 'InternalCharts',

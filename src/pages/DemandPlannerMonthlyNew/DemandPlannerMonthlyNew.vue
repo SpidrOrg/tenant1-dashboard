@@ -1,12 +1,13 @@
 <script>
 import _ from 'lodash';
+import { GChart } from 'vue-google-charts';
 import { format as formatFn, parse } from 'date-fns';
 import { getPeriodDataLabel, getConcisePeriodLabel } from './helpers';
 import EyeIcon from '@/images/eye-icon.svg';
 import EyeOffIcon from '@/images/eye-off-icon.svg';
 import { FORECAST_PERIOD_TYPES } from './constants';
-import fetchR3MData from '@/api/DemandPlanner/fetchR3MData';
-import fetchQuarterlyData from '@/api/DemandPlanner/fetchQuarterlyData';
+import fetchR3MData from '@/api/DemandPlannerMonthly/fetchR3MData';
+import fetchQuarterlyData from '@/api/DemandPlannerMonthly/fetchQuarterlyData';
 
 import FiltersSection, {
   ALL_OPTION,
@@ -21,6 +22,7 @@ const FILTER_INSTANT_UPDATE_GAP_MS = 500;
 export default {
   name: 'DemandPlanner',
   components: {
+    GChart,
     FiltersSection,
     CardsList,
     ChartsSection,
@@ -140,7 +142,7 @@ export default {
       try {
         const response = await this.fetchApi({
           marketSensingRefreshDate:
-            this.selectedFilters.marketSensingRefreshDate,
+          this.selectedFilters.marketSensingRefreshDate,
           categories: this.selectedFilters.category,
           customers: this.selectedFilters.customer,
           valueORvolume: this.selectedFilters.valueOrQuantity,
@@ -185,6 +187,7 @@ export default {
           throw new Error('Unable to fetch data');
         }
       } catch (e) {
+        console.error(e);
         this.error = e;
       }
       this.dataLoading = false;
@@ -229,6 +232,7 @@ export default {
 
         this.fetchDashboardData();
       } catch (e) {
+        console.error(e);
         this.error = e;
         this.dataLoading = false;
       }
@@ -303,7 +307,7 @@ export default {
             <label
               :for="`period${periodData.checkboxLabel}`"
               class="tw-text-black desktop:tw-text-sm small-laptop:tw-text-sm"
-              >{{ periodData.checkboxLabel }}
+            >{{ periodData.checkboxLabel }}
             </label>
           </div>
           <div class="tw-flex tw-gap-x-3 tw-ml-auto small-laptop:tw-ml-3">
@@ -320,39 +324,26 @@ export default {
                 </span>
               </div>
             </button>
-            <button
-              class="tw-px-3 tw-py-1.5 small-laptop:tw-px-1 small-laptop:tw-py-1 tw-bg-brand-primary"
-              @click="toggleForecastPeriodType"
-              :disabled="dataLoading"
-            >
-              <span
-                class="tw-text-white tw-text-sm desktop:tw-text-xs small-laptop:tw-text-xs"
-              >
-                Switch to
-                {{
-                  forecastPeriodType === R3M_VIEW
-                    ? 'Fixed/Quarterly'
-                    : 'Rolling 3 Months'
-                }}
-                View
-              </span>
-            </button>
           </div>
         </div>
       </div>
       <div
-        class="tw-flex tw-justify-center tw-gap-2.5 tw-w-full tw-py-5"
+        class="tw-flex tw-justify-center tw-gap-1 tw-w-full tw-py-5"
         v-if="lodGet(dashboardData, 'periodsData.length')"
       >
-        <CardsList
-          :data="selectedCards"
-          @setActiveCard="setActiveCard"
-          :options="{
-            isModelAccuracyHidden,
-            selectedFilters,
-            userData: { userId, userDisplayName },
-            forecastPeriodType,
-          }"
+        <div class="tw-flex tw-mt-3">
+          <div class="tw-flex-auto tw-w-full" style="text-align: center"> <div style="width:40px; margin: 0 auto;border: 1px solid black;background: red;">1</div></div>
+          <div class="tw-flex-auto tw-w-full" style="text-align: center"> <div style="width:40px; margin: 0 auto;border: 1px solid black;background: red;">1</div></div>
+          <div class="tw-flex-auto tw-w-full" style="text-align: center"> <div style="width:40px; margin: 0 auto;border: 1px solid black;background: red;">1</div></div>
+          <div class="tw-flex-auto tw-w-full" style="text-align: center"> <div style="width:40px; margin: 0 auto;border: 1px solid black;background: red;">1</div></div>
+          <div class="tw-flex-auto tw-w-full" style="text-align: center"> <div style="width:40px; margin: 0 auto;border: 1px solid black;background: red;">1</div></div>
+          <div class="tw-flex-auto tw-w-full" style="text-align: center"> <div style="width:40px; margin: 0 auto;border: 1px solid black;background: red;">1</div></div>
+        </div>
+        <GChart
+          type="ColumnChart"
+          :data="columnChartData"
+          :options="columnChartOptions"
+          height="370"
         />
       </div>
       <div

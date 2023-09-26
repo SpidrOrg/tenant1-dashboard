@@ -38,11 +38,11 @@ export default {
           },
         },
         vAxis: {
-          minorGridlines: { color: 'none' },
-          gridlines: {
-            count: 0,
-          },
           textPosition: 'none',
+          viewWindow: {
+            max: 40,
+            min: -40,
+          },
         },
         chartArea: {
           left: '1%',
@@ -70,6 +70,10 @@ export default {
             count: 0,
           },
           textPosition: 'none',
+          viewWindow: {
+            max: 40,
+            min: -40,
+          },
         },
         annotations: {
           textStyle: {
@@ -204,6 +208,14 @@ export default {
         :filtersDisabled="filtersDisabled"
       />
     </div>
+    <div class="tw-py-5">
+      <FiltersSection
+        @update-filters="debounceUpdateFilters"
+        @update-filters-instant="debounceUpdateFiltersInstant"
+        @latestRefreshDateUpdate="latestRefreshDateUpdateHandler"
+        :isDataLoading="dataLoading"
+      />
+    </div>
     <div
       class="tw-w-full tw-h-3/4 tw-flex tw-justify-center tw-items-center"
       v-if="isLoading"
@@ -220,8 +232,8 @@ export default {
       v-if="!isLoading"
     >
       <div class="tw-grid tw-grid-rows-2 tw-gap-6">
-        <div style="overflow-x: auto !important">
-          <v-card style="width: 3500px; height: 370px">
+        <div>
+          <v-card style="height: 370px">
             <p class="tw-font-medium tw-text-xl tw-pl-2 tw-pt-2 tw-mb-2">
               Internal Forecast vs Sales
             </p>
@@ -244,27 +256,19 @@ export default {
                 <div style="height: 12px" class="tw-text-xs tw-ml-1">Sales</div>
               </div>
             </div>
+            <div class="tw-flex tw-mt-3">
+              <div class="tw-flex-auto tw-w-full" style="text-align: center"> <div style="width:40px; margin: 0 auto;border: 1px solid black;background: red;">1</div></div>
+              <div class="tw-flex-auto tw-w-full" style="text-align: center"> <div style="width:40px; margin: 0 auto;border: 1px solid black;background: red;">1</div></div>
+              <div class="tw-flex-auto tw-w-full" style="text-align: center"> <div style="width:40px; margin: 0 auto;border: 1px solid black;background: red;">1</div></div>
+              <div class="tw-flex-auto tw-w-full" style="text-align: center"> <div style="width:40px; margin: 0 auto;border: 1px solid black;background: red;">1</div></div>
+              <div class="tw-flex-auto tw-w-full" style="text-align: center"> <div style="width:40px; margin: 0 auto;border: 1px solid black;background: red;">1</div></div>
+              <div class="tw-flex-auto tw-w-full" style="text-align: center"> <div style="width:40px; margin: 0 auto;border: 1px solid black;background: red;">1</div></div>
+            </div>
             <GChart
               type="ColumnChart"
               :data="columnChartData"
               :options="columnChartOptions"
               height="370"
-            />
-          </v-card>
-        </div>
-        <div style="overflow-x: auto !important">
-          <v-card style="width: 3500px; height: 370px">
-            <p class="tw-font-medium tw-text-xl tw-pl-2 tw-pt-2 tw-mb-2">
-              Projections of Market Sensing Forecast vs Internal Forecast vs
-              Sales
-            </p>
-            <div
-              class="tw-flex tw-w-full tw-flex-auto tw-border-t tw-border-solid tw-border-brand-gray-2"
-            />
-            <GChart
-              type="LineChart"
-              :options="lineChartOptions"
-              :data="lineChartData"
             />
           </v-card>
         </div>

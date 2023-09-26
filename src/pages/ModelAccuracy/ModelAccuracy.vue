@@ -3,7 +3,7 @@ import { GChart }  from 'vue-google-charts'
 import fetchModelAccuracyData from "@/api/fetchModelAccuracyData";
 import fetchCVRollingAccuracyData from '@/api/fetchCVRollingAccuracyData';
 import _ from "lodash";
-import fetchModelAccuracyOptions from "@/api/fetchModelAccuracyOptions";
+import fetchModelAccuracyOptions from "@/api/fetchDashboardOptions";
 export const ALL_OPTION = "All";
 export default {
   name: "InternalCharts",
@@ -19,6 +19,7 @@ export default {
       cvAccuracy:false,
       accuracy_disabled:false,
       historic_disabled:false,
+      ms_refresh_date: null,
       apiData:[],
       filtersTestAccuracy : {
         categories: {
@@ -198,7 +199,7 @@ export default {
       this.lineChartData = [];
       this.columnChartData = [];
       //this.cvAccuracyData = [];
-      //this.rollingTestAccuracyData = [];      
+      //this.rollingTestAccuracyData = [];
       if(this.firstTimeLoad){
         this.isLoading = true;
         this.isHistoricPerformanceLoading = false;
@@ -209,7 +210,7 @@ export default {
       }
       const selectedHistoricCategories = _.get(this.filtersCharts, "categories.selected");
       const selectedprojectedPeriod = _.get(this.filtersCharts, "projected_period.selected");
-      const response = await fetchModelAccuracyData({categoriesHistoric: selectedHistoricCategories === ALL_OPTION ? "*" : selectedHistoricCategories,projected_period: selectedprojectedPeriod});
+      const response = await fetchModelAccuracyData({msRefreshDate: this.ms_refresh_date, categoriesHistoric: selectedHistoricCategories === ALL_OPTION ? "*" : selectedHistoricCategories,projected_period: selectedprojectedPeriod});
       if (!_.isEmpty(response)){
         this.apiData = response;
 
@@ -220,7 +221,7 @@ export default {
           v.columnChartData.push(data);
           });
         }
-        
+
       //Historic performance end
 
      //Historic Performance accuracy data
@@ -231,7 +232,7 @@ export default {
           v.lineChartData.push([data[0],data[1],data[1]+'%']);
         });
      }
-      
+
     }
     if(this.firstTimeLoad){
         this.isLoading = false;
@@ -242,7 +243,7 @@ export default {
         this.historic_disabled = false;
       }
       this.firstTimeLoad = false;
-    },2000),
+    }, 300),
     async filtersAccuracyUpdated(){
       let v = this;
       //this.lineChartData = [];
@@ -258,11 +259,11 @@ export default {
         this.accuracy_disabled = true;
       }
       const selectedAccuracyCategories = _.get(this.filtersTestAccuracy, "categories.selected");
-      const response = await fetchCVRollingAccuracyData({categoriesAccuracy: selectedAccuracyCategories === ALL_OPTION ? "*" : selectedAccuracyCategories});
+      const response = await fetchCVRollingAccuracyData({msRefreshDate: this.ms_refresh_date, categoriesAccuracy: selectedAccuracyCategories === ALL_OPTION ? "*" : selectedAccuracyCategories});
             if (!_.isEmpty(response)){
                   this.apiData = response;
 
-      
+
       //Historic Performance accuracy data --end
 
       //CV Accuracy Data
@@ -271,7 +272,7 @@ export default {
         _.forEach(this.apiData.cvAccuracyData, function (data) {
           v.cvAccuracyData.push([data['period'],data['value'],data['value']+'%',`color: ${v.getColorCode(data['value'])}`]);
         });
-        
+
       }
       //CV Accuracy Data --end
 
@@ -279,7 +280,7 @@ export default {
        //Rolling Test Accuracy Data
        if(!this.rollingTestAccuracyData.length){
           this.rollingTestAccuracyData.push(['Period','Predicted Values',{ role: 'annotation' },{ role: 'style' }]);
-        
+
           _.forEach(this.apiData.rollingAccuracyData, function (data) {
             v.rollingTestAccuracyData.push([data['period'],data['value'],data['value']+'%',`color: ${v.getColorCode(data['value'])}`]);
           });
@@ -287,7 +288,7 @@ export default {
       }
         //Rolling Test Accuracy Data --end
         //Rolling Test Accuracy Data --end
-    
+
         if(this.firstTimeLoad){
         this.isLoading = false;
         this.isCVAccuracyLoading = false;
@@ -304,16 +305,18 @@ export default {
     this.isLoading = true;
     this.isCVAccuracyLoading = false;
     this.isHistoricPerformanceLoading = false;
-    
-    const options = await fetchModelAccuracyOptions().catch(() => null);
+
+    const filtersApiData = await fetchModelAccuracyOptions().catch(() => null);
+    this.ms_refresh_date = _.get(filtersApiData, "updateDates[0]", null);
+    const options = _.get(filtersApiData, "ms");
     if (options){
       this.filtersCharts.categories.items = options.categories;
       this.filtersCharts.projected_period.items = options.msTimeHorizon;
       this.filtersTestAccuracy.categories.items = options.categories;
     }
     // Add all option to the categories and customers filters
-    this.filtersCharts.categories.items = this.filtersCharts.categories.items;
-    this.filtersTestAccuracy.categories.items =this.filtersTestAccuracy.categories.items;
+    // this.filtersCharts.categories.items = this.filtersCharts.categories.items;
+    // this.filtersTestAccuracy.categories.items =this.filtersTestAccuracy.categories.items;
 
     this.selectFilterUpdated("categories", this.filtersCharts.categories.items[0]);
     this.selectAccuracyFilterUpdated("categories", this.filtersTestAccuracy.categories.items[0]);
@@ -394,7 +397,7 @@ export default {
         </div>
         <div>
           <v-card>
-          <h3 class="tw-font-bold  tw-py-2 tw-pl-2 tw-text-lg">Historic Actual vs Predicted Market Value</h3>
+          <h3 class="tw-font-bold  tw-py-2 tw-pl-2 tw-text-lg">Historic Actual vs Predicted Market Volume</h3>
             <div class="tw-flex tw-w-full tw-flex-auto tw-border-t tw-border-solid tw-border-brand-gray-2" />
             <div class="tw-flex tw-gap-x-4 tw-w-full tw-bg-white tw-px-3">
               <div class="tw-pt-3 tw-min-w-[14%] tw--mb-3">
@@ -423,11 +426,11 @@ export default {
               <div class="tw-flex tw-ml-5">
                 <div style="width:12px;height:12px;background: #A5A5A5;" class="tw-ml-3">
                 </div>
-                <div style="height:14px;" class="tw-text-xs tw-ml-1">Predicted Values(USD)</div>
+                <div style="height:14px;" class="tw-text-xs tw-ml-1">Predicted Values</div>
                 <div class="tw-flex">
                 <div style="width:12px;height:12px;background: #5F5F5F;" class="tw-ml-3">
                 </div>
-                <div style="height:14px" class="tw-text-xs tw-ml-1">Actual Values(USD)</div>
+                <div style="height:14px" class="tw-text-xs tw-ml-1">Actual Values</div>
                 <div style="width:24px;height:3px;background: #7823DC;" class="tw-ml-3 tw-mt-1.5">
                 </div>
                 <div style="height:14px" class="tw-text-xs tw-ml-1">Prediction Accuracy</div>

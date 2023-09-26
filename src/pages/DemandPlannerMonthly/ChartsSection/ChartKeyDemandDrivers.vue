@@ -1,7 +1,7 @@
 <script>
 import _ from 'lodash';
 import { GChart } from 'vue-google-charts';
-import fetchKeyDemandDriverDetails from '@/api/DemandPlanner/fetchKeyDemandDriverDetails';
+import fetchKeyDemandDriverDetails from '@/api/DemandPlannerMonthly/fetchKeyDemandDriverDetails';
 
 const OTHERS_START_INDEX = 5;
 const OTHER_DRIVERS = 'Others';
@@ -24,16 +24,15 @@ export default {
       selectedDriverDetails: null,
       chartEvents: {
         click: (e) => {
-          // const { targetID } = e;
-          // const [el, , index] = _.split(targetID, '#');
-          // if (el === 'bar' || el === 'annotationtext') {
-          //   this.selectedDriver = _.head(this.chartData[_.toNumber(index) + 1]);
-          //   this.fetchDriverDetails(this.selectedDriver);
-          //   this.dialogIsShown = true;
-          // } else {
-          //   this.dialogIsShown = false;
-          // }
-          console.log("Event disabled", e);
+          const { targetID } = e;
+          const [el, , index] = _.split(targetID, '#');
+          if (el === 'bar' || el === 'annotationtext') {
+            this.selectedDriver = _.head(this.chartData[_.toNumber(index) + 1]);
+            this.fetchDriverDetails(this.selectedDriver);
+            this.dialogIsShown = true;
+          } else {
+            this.dialogIsShown = false;
+          }
         },
       },
       lodSize: _.size,

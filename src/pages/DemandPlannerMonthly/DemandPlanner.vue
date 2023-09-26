@@ -5,8 +5,8 @@ import { getPeriodDataLabel, getConcisePeriodLabel } from './helpers';
 import EyeIcon from '@/images/eye-icon.svg';
 import EyeOffIcon from '@/images/eye-off-icon.svg';
 import { FORECAST_PERIOD_TYPES } from './constants';
-import fetchR3MData from '@/api/DemandPlanner/fetchR3MData';
-import fetchQuarterlyData from '@/api/DemandPlanner/fetchQuarterlyData';
+import fetchR3MData from '@/api/DemandPlannerMonthly/fetchR3MData';
+import fetchQuarterlyData from '@/api/DemandPlannerMonthly/fetchQuarterlyData';
 
 import FiltersSection, {
   ALL_OPTION,
@@ -185,6 +185,7 @@ export default {
           throw new Error('Unable to fetch data');
         }
       } catch (e) {
+        console.error(e);
         this.error = e;
       }
       this.dataLoading = false;
@@ -229,6 +230,7 @@ export default {
 
         this.fetchDashboardData();
       } catch (e) {
+        console.error(e);
         this.error = e;
         this.dataLoading = false;
       }
@@ -320,28 +322,11 @@ export default {
                 </span>
               </div>
             </button>
-            <button
-              class="tw-px-3 tw-py-1.5 small-laptop:tw-px-1 small-laptop:tw-py-1 tw-bg-brand-primary"
-              @click="toggleForecastPeriodType"
-              :disabled="dataLoading"
-            >
-              <span
-                class="tw-text-white tw-text-sm desktop:tw-text-xs small-laptop:tw-text-xs"
-              >
-                Switch to
-                {{
-                  forecastPeriodType === R3M_VIEW
-                    ? 'Fixed/Quarterly'
-                    : 'Rolling 3 Months'
-                }}
-                View
-              </span>
-            </button>
           </div>
         </div>
       </div>
       <div
-        class="tw-flex tw-justify-center tw-gap-2.5 tw-w-full tw-py-5"
+        class="tw-flex tw-justify-center tw-gap-1 tw-w-full tw-py-5"
         v-if="lodGet(dashboardData, 'periodsData.length')"
       >
         <CardsList

@@ -1,4 +1,5 @@
 import DemandPlanner from '@/pages/DemandPlanner/DemandPlanner.vue';
+import DemandPlannerMonthly from '@/pages/DemandPlannerMonthlyNew/DemandPlanner.vue';
 import HeatMap from '@/pages/HeatMap/HeatMap.vue';
 import InternalCharts from '@/pages/InternalCharts/InternalCharts.vue';
 import ModelAccuracy from '@/pages/ModelAccuracy/ModelAccuracy.vue';
@@ -19,6 +20,7 @@ import HelpSupportIconActive from '@/images/help-support-icon-active.svg';
 
 export const PAGE_KEYS = {
   DEMAND_PLANNER: 'demandPlanner',
+  DEMAND_PLANNER_MONTHLY: 'demandPlannerMonthly',
   HEAT_MAP: 'heatMap',
   INTERNAL_CHARTS: 'internalCharts',
   MODEL_ACCURACY: 'modelAccuracy',
@@ -32,6 +34,12 @@ const PAGES_CONFIG = {
     icon: DemandPlannerIcon,
     icon_active: DemandPlannerIconActive,
     component: DemandPlanner,
+  },
+  demandPlannerMonthly: {
+    label: 'Demand Planner (M)',
+    icon: DemandPlannerIcon,
+    icon_active: DemandPlannerIconActive,
+    component: DemandPlannerMonthly,
   },
   heatMap: {
     label: 'Heat-map View',

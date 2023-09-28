@@ -408,18 +408,18 @@ export default async function ({
   customers,
   valueORvolume,
 }) {
-  // const data = await apiBase('maindashboardmonthly', {
-  //   marketSensingRefreshDate,
-  //   categories,
-  //   customers,
-  //   valueORvolume,
-  // });
-
-  const data = await new Promise((res) => {
-    setTimeout(() => {
-      res({ result: apiRes });
-    }, 100);
+  const data = await apiBase('maindashboardmonthly', {
+    marketSensingRefreshDate,
+    categories,
+    customers,
+    valueORvolume,
   });
+
+  // const data = await new Promise((res) => {
+  //   setTimeout(() => {
+  //     res({ result: apiRes });
+  //   }, 100);
+  // });
   let dataForUi = _.cloneDeep(_.get(data, 'result', {}));
   _.forEach(dataForUi, (v) => {
     const periodData = _.get(_.values(v), '[0]');

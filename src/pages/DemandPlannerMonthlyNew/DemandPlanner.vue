@@ -167,7 +167,7 @@ export default {
         'period',
         'Internal',
         { role: 'annotation' },
-        'Actual',
+        'Market Sensing',
         { role: 'annotation' },
       ]);
       _.forEach(this.dashboardData.periodsData, function (v) {

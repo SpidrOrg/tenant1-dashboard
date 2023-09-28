@@ -12,11 +12,10 @@ import fetchQuarterlyData from '@/api/DemandPlannerMonthly/fetchQuarterlyData';
 import FiltersSection, {
   ALL_OPTION,
 } from '@/pages/DemandPlanner/FiltersSection.vue';
-import CardsList from './CardsList.vue';
-import ChartsSection from '@/pages/DemandPlanner/ChartsSection/ChartsSection.vue';
-import ChartKeyDemandDrivers from "@/pages/DemandPlanner/ChartsSection/ChartKeyDemandDrivers.vue";
+import ChartKeyDemandDrivers from "@/pages/DemandPlannerMonthlyNew/ChartsSection/ChartKeyDemandDrivers.vue";
 import ModelAccuracySection from "@/pages/DemandPlannerMonthlyNew/ModelAccuracySection/ModelAccuracySection.vue";
 import ActionForm from "@/pages/DemandPlanner/ActionForm.vue";
+import VarianceAction from "@/pages/DemandPlannerMonthlyNew/VarianceAction/VarianceAction.vue";
 
 const { R3M_VIEW, QUARTERLY_VIEW } = FORECAST_PERIOD_TYPES;
 const FILTER_UPDATE_GAP_MS = 300;
@@ -30,8 +29,7 @@ export default {
     ChartKeyDemandDrivers,
     GChart,
     FiltersSection,
-    CardsList,
-    ChartsSection,
+    VarianceAction
   },
   props: {
     userdata: {
@@ -40,7 +38,7 @@ export default {
     },
   },
   data() {
-    return {
+    const toReturn = {
       dataLoading: true,
       error: null,
       actionFormIsShown: false,
@@ -70,13 +68,37 @@ export default {
       R3M_VIEW,
       EyeIcon,
       EyeOffIcon,
-      lodGet: _.get,
-      columnChartOptions: {
+      lodGet: _.get
+    };
+    return toReturn;
+  },
+  computed: {
+    columnChartOptions(){
+      const jdaGrowthNumbers = _.map(_.get(this.dashboardData, 'periodsData'), v =>{
+        return _.toNumber(_.get(v, 'metrics.jdaGrowth'))
+      });
+      const msGrowthNumbers = _.map(_.get(this.dashboardData, 'periodsData'), v =>{
+        return _.toNumber(_.get(v, 'metrics.marketSensingGrowth'))
+      })
+      const jdaMax = _.max(jdaGrowthNumbers);
+      const jdaMin = _.min(jdaGrowthNumbers);
+      const msMax = _.max(msGrowthNumbers);
+      const msMin = _.min(msGrowthNumbers);
+      let maxY = _.max([jdaMax, msMax]);
+      let minY = _.min([jdaMin, msMin]);
+      if (!(_.isNumber(maxY) && _.isFinite(maxY))){
+        maxY = 0
+      }
+      if (!(_.isNumber(minY) && _.isFinite(minY))){
+        minY = 0
+      }
+
+      return {
         height: 320,
         explorer: {
           axis: 'horizontal',
         },
-        legend: { position: 'none' },
+        legend: { position: 'bottom', alignment: 'center' },
         tooltip: { trigger: 'none' },
         colors: ['#787878', '#B991EB'],
         hAxis: {
@@ -85,15 +107,10 @@ export default {
           },
         },
         vAxis: {
-          textPosition: 'none',
-          viewWindow: {
-            max: 40,
-            min: -40,
-          },
+          format: '#\'%\''
         },
         chartArea: {
-          left: '1%',
-          width: '100%',
+          width: '90%',
         },
         annotations: {
           textStyle: {
@@ -103,10 +120,8 @@ export default {
           datum: { stem: { length: 0 } },
           alwaysOutside: true,
         }
-      },
-    };
-  },
-  computed: {
+      }
+    },
     horizonSelection(){
       return _.get(_.find(
         _.get(this.dashboardData, 'periodsData'),
@@ -381,43 +396,26 @@ export default {
         class="tw-flex tw-flex-col tw-w-full tw-border-b tw-border-solid tw-border-brand-gray-2"
       >
         <h1
-          class="desktop:tw-text-2xl small-laptop:tw-text-2xl tw-text-3xl tw-font-bold"
+          class="desktop:tw-text-xl small-laptop:tw-text-xl tw-text-xl tw-font-bold"
         >
-          Future Demand Forecasting
+          Demand Forecast For Next Six Months
         </h1>
       </div>
       <v-card
-        style="height: 730px"
+        style="height: 770px"
         v-if="lodGet(dashboardData, 'periodsData.length')"
       >
-        <div class="tw-flex tw-mt-3">
+        <div class="tw-flex tw-mt-3" style='padding: 0 70px'>
           <div v-for="periodData in dashboardData.periodsData"
                :key="periodData.horizon"
                class="tw-flex-auto tw-w-full" style="text-align: center"
           >
-            <v-menu open-on-hover location="top">
-              <template v-slot:activator="{ props }">
-                <div v-bind="props" class="tw-flex tw-flex-col tw-items-center">
-            <span
-              class="tw-text-4xl desktop:tw-text-2xl small-laptop:tw-text-lg tw-font-semibold"
-              :style="{ color: getColorCode(lodGetNumeric(periodData, 'metrics.variance')) }"
-            >
-              {{ `${lodGetNumeric(periodData, 'metrics.variance')}` }}
-            </span>
-                  <span class="tw-text-xs desktop:tw-text-xxs small-laptop:tw-text-xxs">Variance</span>
-                </div>
-              </template>
-              <div
-                class="tw-w-80 tw-h-20 tw-p-2 tw-bg-white tw-border tw-rounded tw-border-[#D9D9D9] tw-shadow-2xl"
-              >
-                <p class="tw-text-sm tw-text-center">
-                  {{
-                    `The difference between market sensing and the internal forecast results in a
-              ${lodGetNumeric(data, 'metrics.variance')} variance.`
-                  }}
-                </p>
-              </div>
-            </v-menu>
+            <VarianceAction :data="periodData" :options="{
+            isModelAccuracyHidden,
+            selectedFilters,
+            userData: { userId, userDisplayName },
+            forecastPeriodType,
+          }"/>
           </div>
         </div>
         <GChart
@@ -427,13 +425,22 @@ export default {
           height="370"
         />
         <div class="tw-flex tw-mt-3 tw-flex-col">
+          <div
+            class="tw-flex tw-flex-col tw-w-full tw-border-b tw-border-solid tw-border-brand-gray-2"
+          >
+            <h1
+              class="desktop:tw-text-xl small-laptop:tw-text-xl tw-text-xl tw-font-bold"
+            >
+              Additional Details Of The Forecast Model
+            </h1>
+          </div>
           <div class="tw-flex tw-w-full">
             <v-radio-group
               v-if="dashboardData.periodsData.length > 0"
               v-model="horizonSelection"
               inline
               direction="horizontal"
-              class="tw-flex tw-w-full"
+              class="tw-flex tw-w-full tw-bg-brand-gray-1"
             >
               <v-radio
                 v-for="(periodData, index) in dashboardData.periodsData"
@@ -444,7 +451,8 @@ export default {
               ></v-radio>
             </v-radio-group>
           </div>
-          <div style="width: 80%; height: 250px; margin: 0 auto; border: 1px solid black; display: flex; flex-direction: row">
+
+          <div style="width: 80%; height: 250px; margin: 0 auto; display: flex; flex-direction: row; padding-top: 10px">
             <div style="width: 50%">
               <ChartKeyDemandDrivers
                 v-if="activePeriodData"
@@ -453,10 +461,9 @@ export default {
                 :selectedFilters="selectedFilters"
               />
             </div>
-            <div class="tw-flex" style="width: 50%;">
+            <div class="tw-flex tw-flex-col" style="width: 50%;">
               <div
                 class="tw-flex tw-justify-center tw-w-full tw-flex-col tw-items-center"
-                v-if="!isModelAccuracyHidden"
               >
                 <ModelAccuracySection
                   :marketSensingRefreshDate="selectedFilters.marketSensingRefreshDate"
@@ -469,7 +476,19 @@ export default {
           </div>
         </div>
       </v-card>
-
+      <ActionForm
+        v-if="actionFormIsShown"
+        :actionFormIsShown="actionFormIsShown"
+        :variance="clickedVariance"
+        :reviews="reviews"
+        :actionStatus="actionStatus"
+        :isFetching="isFetchingReviews"
+        :isSubmitting="isSubmittingReview"
+        :responseSubmitted="responseSubmitted"
+        @close-form="hideFormHandler"
+        @fetch-reviews="fetchReviews"
+        @submit-review="submitHandler"
+      />
 <!--      <div-->
 <!--        class="tw-p-4 desktop:tw-p-1 tw-border tw-border-solid tw-border-brand-primary"-->
 <!--      >-->

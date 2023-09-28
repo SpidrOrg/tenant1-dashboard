@@ -80,7 +80,7 @@ const apiRes = [
     "Aug 21": {
       "metrics": {
         "marketSensingGrowth": 17.677189484265824,
-        "jdaGrowth": 88,
+        "jdaGrowth": 10,
         "pyGrowth": 12.39,
         "impliedGrowth": null,
         "keyDemandDrivers": [],
@@ -136,7 +136,7 @@ const apiRes = [
     "Sep 21": {
       "metrics": {
         "marketSensingGrowth": 17.677189484265824,
-        "jdaGrowth": 44,
+        "jdaGrowth": 28,
         "pyGrowth": 13.92,
         "impliedGrowth": null,
         "keyDemandDrivers": [
@@ -213,8 +213,8 @@ const apiRes = [
   {
     "Oct 21": {
       "metrics": {
-        "marketSensingGrowth": -93.53426541746668,
-        "jdaGrowth": -92,
+        "marketSensingGrowth": -13.53426541746668,
+        "jdaGrowth": -5,
         "pyGrowth": 11.64,
         "impliedGrowth": null,
         "keyDemandDrivers": [],
@@ -270,7 +270,7 @@ const apiRes = [
     "Nov 21": {
       "metrics": {
         "marketSensingGrowth": 21.339058515479504,
-        "jdaGrowth": 20,
+        "jdaGrowth": 2,
         "pyGrowth": 13.76,
         "impliedGrowth": null,
         "keyDemandDrivers": [],

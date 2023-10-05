@@ -18,6 +18,9 @@ const { R3M_VIEW, QUARTERLY_VIEW } = FORECAST_PERIOD_TYPES;
 const FILTER_UPDATE_GAP_MS = 300;
 const FILTER_INSTANT_UPDATE_GAP_MS = 500;
 
+const BY_VALUE = 'BY_VALUE';
+const BY_QUANTITY = 'BY_QUANTITY';
+
 export default {
   name: 'DemandPlanner',
   components: {
@@ -146,8 +149,8 @@ export default {
           marketSensingRefreshDate:
             this.selectedFilters.marketSensingRefreshDate,
           categories: this.selectedFilters.category,
-          customers: this.selectedFilters.customer,
-          valueORvolume: this.selectedFilters.valueOrQuantity,
+          valueORvolume: this.selectedFilters.valueOrQuantity === 'Value' ? BY_VALUE : BY_QUANTITY,
+          splits: this.selectedFilters.splits
         });
 
         if (!_.isEmpty(response)) {
@@ -199,8 +202,8 @@ export default {
         'refreshDates.selected'
       );
       const selectedCategories = _.get(filtersData, 'categories.selected');
-      const selectedCustomers = _.get(filtersData, 'customers.selected');
-      const selectedValueORvolume = _.get(filtersData, 'valueOrQuantity');
+      const selectedValueORvolume = _.get(filtersData, 'valueOrQuantity.selected');
+      const splits = _.get(filtersData, 'splits');
 
       try {
         if (selectedMarketSensingRefreshDate === null) {
@@ -227,8 +230,8 @@ export default {
         this.selectedFilters = {
           marketSensingRefreshDate: marketSensingRefreshDate,
           category: selectedCategories,
-          customer: selectedCustomers === ALL_OPTION ? '*' : selectedCustomers,
-          valueOrQuantity: selectedValueORvolume,
+          splits,
+          valueOrQuantity: selectedValueORvolume
         };
 
         this.fetchDashboardData();

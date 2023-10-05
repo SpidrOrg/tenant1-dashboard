@@ -108,7 +108,7 @@ export default {
       <div class="tw-flex tw-h-full tw-items-center">
         <h1 class="tw-text-lg">
           <span class="tw-font-bold">Heat-map View -</span>
-          Representation of variance across categories and stores
+          Representation of variance across categories and channels
         </h1>
       </div>
       <div

@@ -2,7 +2,7 @@ import _ from 'lodash';
 import DemandPlanner from '@/pages/DemandPlanner/DemandPlanner.vue';
 import DemandPlannerMonthly from '@/pages/DemandPlannerMonthlyNew/DemandPlanner.vue';
 import HeatMap from '@/pages/HeatMap/HeatMap.vue';
-import InternalCharts from '@/pages/InternalCharts/InternalCharts.vue';
+// import InternalCharts from '@/pages/InternalCharts/InternalCharts.vue';
 import ModelAccuracy from '@/pages/ModelAccuracy/ModelAccuracy.vue';
 import TheFaq from '@/pages/TheFAQ/TheFaq.vue';
 import TheSupport from '@/pages/TheSupport/TheSupport.vue';
@@ -11,8 +11,8 @@ import DemandPlannerIcon from '@/images/demand-planner-icon.svg';
 import DemandPlannerIconActive from '@/images/demand-planner-icon-active.svg';
 import HeatMapIcon from '@/images/heat-map-icon.svg';
 import HeatMapIconActive from '@/images/heat-map-icon-active.svg';
-import InternalChartsIcon from '@/images/internal-charts-icon.svg';
-import InternalChartsIconActive from '@/images/internal-charts-icon-active.svg';
+// import InternalChartsIcon from '@/images/internal-charts-icon.svg';
+// import InternalChartsIconActive from '@/images/internal-charts-icon-active.svg';
 import ModelAccuracyIcon from '@/images/model-accuracy-icon.svg';
 import ModelAccuracyIconActive from '@/images/model-accuracy-icon-active.svg';
 import FaqIcon from '@/images/faq-icon.svg';
@@ -39,12 +39,12 @@ const DASHBOARDS_DEFAULT_CONFIG =  {
     icon_active: HeatMapIconActive,
     component: HeatMap,
   },
-  internalCharts: {
-    label: 'Internal Charts',
-    icon: InternalChartsIcon,
-    icon_active: InternalChartsIconActive,
-    component: InternalCharts,
-  },
+  // internalCharts: {
+  //   label: 'Internal Charts',
+  //   icon: InternalChartsIcon,
+  //   icon_active: InternalChartsIconActive,
+  //   component: InternalCharts,
+  // },
   modelAccuracy: {
     label: 'Accuracy',
     icon: ModelAccuracyIcon,

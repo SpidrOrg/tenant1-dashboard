@@ -3,10 +3,29 @@ import _ from 'lodash';
 import { format as formatFn, parse, endOfMonth } from 'date-fns';
 import fetchDashboardOptions from '@/api/fetchDashboardOptions';
 
-const BY_VALUE = 'BY_VALUE';
-const BY_QUANTITY = 'BY_QUANTITY';
-
+const BY_VALUE = 'Value';
+const BY_QUANTITY = 'Quantity';
+const ITEMS_SEP = "___";
 export const ALL_OPTION = 'All';
+
+const splitOrderedData = ["Retailer Final", "Region Final", "Portfolio Final"];
+
+const AVAILABLE_SPLITS = {
+  split1: {
+    displayName: "Customers",
+    dataName: "Retailer Final"
+  },
+  split2: {
+    displayName: "Region",
+    dataName: "Region Final",
+    multiSelect: true
+  },
+  split3: {
+    displayName: "Portfolio",
+    dataName: "Portfolio Final",
+    multiSelect: true,
+  }
+}
 
 export default {
   name: 'FilterSelection',
@@ -18,7 +37,9 @@ export default {
     },
   },
   data() {
-    return {
+    const toReturn = {
+      availablePivots: AVAILABLE_SPLITS,
+      filterOptions: null,
       filters: {
         refreshDates: {
           items: [],
@@ -29,12 +50,11 @@ export default {
           selected: null,
           filterlabel: _.get(this.pageConfig, 'pageConfiguration.filters.category.label'),
         },
-        customers: {
-          items: [],
+        valueOrQuantity: {
+          items: [BY_VALUE, BY_QUANTITY],
           selected: null,
-          filterlabel: _.get(this.pageConfig, 'pageConfiguration.filters.split1.label'),
+          filterlabel: 'Value (USD) / Volume',
         },
-        valueOrQuantity: BY_QUANTITY,
       },
       currency: 'USD',
       dataLoaded: false,
@@ -44,22 +64,43 @@ export default {
       ALL_OPTION,
       includes: _.includes,
     };
+    _.forEach(_.keys(AVAILABLE_SPLITS), v => {
+      const splitConfig = AVAILABLE_SPLITS[v];
+      toReturn.filters[v] = {
+        items: [],
+        selected: null,
+        filterlabel: splitConfig.displayName,
+      }
+    })
+    return toReturn;
   },
 
   async created() {
     // Make API call to get available options for the filters
     const options = await fetchDashboardOptions().catch(() => null);
+    const msPivots = _.reduce(_.split(_.get(options, `ms.pivots`), "%^"), (acc, v) => {
+      const [splitName, splitItems] = _.split(v, "&^");
+      acc[splitName] = splitItems;
+      return acc;
+    }, {});
+    this.filterOptions = options;
     if (options) {
       this.filters.categories.items = _.get(options, 'ms.categories');
-      this.filters.customers.items = _.get(options, 'ms.customers');
+
+      _.forEach(_.keys(AVAILABLE_SPLITS), v => {
+        const splitConfig = AVAILABLE_SPLITS[v];
+        this.filters[v].items = _.split(_.get(msPivots, `${splitConfig.dataName}`), ITEMS_SEP);
+      })
       this.filters.refreshDates.items = _.get(options, 'updateDates');
     }
 
-    // Add all option to the customers filters
-    this.filters.customers.items = _.concat(
-      ALL_OPTION,
-      this.filters.customers.items
-    );
+    // Add all option to the splits filters
+    _.forEach(_.keys(AVAILABLE_SPLITS), v => {
+      this.filters[v].items = _.concat(
+        ALL_OPTION,
+        this.filters[v].items
+      );
+    });
 
     // Set default option on filters
     let earliestRefreshDate = null;
@@ -87,9 +128,16 @@ export default {
       this.filters.categories.items[0],
       true
     );
+    _.forEach(_.keys(AVAILABLE_SPLITS), v => {
+      this.selectFilterUpdated(
+        v,
+        this.filters[v].items[0],
+        true
+      );
+    });
     this.selectFilterUpdated(
-      'customers',
-      this.filters.customers.items[0],
+      'valueOrQuantity',
+      BY_QUANTITY,
       true
     );
     this.dataLoaded = true;
@@ -121,6 +169,13 @@ export default {
       this.$emit('latestRefreshDateUpdate', dateObj);
     },
     selectFilterUpdated(filterName, currentSelection, isInstant = false) {
+      if (AVAILABLE_SPLITS[filterName] && AVAILABLE_SPLITS[filterName].multiSelect){
+        if(_.indexOf(currentSelection, ALL_OPTION) > 0){
+          currentSelection = [ALL_OPTION];
+        } else if(_.indexOf(currentSelection, ALL_OPTION) === 0 && _.size(currentSelection) > 1){
+          currentSelection = _.slice(currentSelection, 1);
+        }
+      }
       this.filters[filterName].selected = currentSelection;
       isInstant ? this.filterUpdatedInstant() : this.filtersUpdated();
     },
@@ -128,18 +183,37 @@ export default {
       this.filters.refreshDates.selected = { month, year };
       isInstant ? this.filterUpdatedInstant() : this.filtersUpdated();
     },
-    valueOrQuantityUpdate(event, isInstant = false) {
-      this.filters.valueOrQuantity =
-        this.filters.valueOrQuantity === BY_VALUE ? BY_QUANTITY : BY_VALUE;
-      isInstant ? this.filterUpdatedInstant() : this.filtersUpdated();
-    },
+
     filtersUpdated() {
-      this.$emit('updateFilters', this.filters);
+      this.filters.splits = this.splitsSelectionVal;
+      this.$emit('updateFilters', _.assign({}, this.filters));
     },
     filterUpdatedInstant() {
-      this.$emit('updateFiltersInstant', this.filters);
-    },
+      this.filters.splits = this.splitsSelectionVal;
+      this.$emit('updateFiltersInstant', _.assign({}, this.filters));
+    }
   },
+  computed: {
+    splitsSelectionVal(){
+      let val = '';
+      _.forEach(splitOrderedData, v => {
+        const filterName = _.find(_.keys(AVAILABLE_SPLITS), k =>{
+          return AVAILABLE_SPLITS[k].dataName === v
+        });
+        const optionsJoin = Array.isArray(this.filters[filterName].selected)
+          ? _.join(this.filters[filterName].selected.map(v => {
+            return v === ALL_OPTION ? "*" : v;
+          }), ITEMS_SEP)
+          : (
+            this.filters[filterName].selected
+            ? (this.filters[filterName].selected === ALL_OPTION ? '*' : this.filters[filterName].selected)
+            : ''
+          )
+        val += `${val ? '^%' : ''}${v}_._${optionsJoin}`;
+      });
+      return val;
+    }
+  }
 };
 </script>
 
@@ -181,46 +255,58 @@ export default {
         id="category"
         :items="filters.categories.items"
         :model-value="filters.categories.selected"
-        @update:modelValue="(value) => selectFilterUpdated('categories', value)"
+        @update:modelValue="(value) => selectFilterUpdated('categories', value, true)"
+        density="comfortable"
+        :disabled="isDataLoading"
+      />
+    </div>
+    <div v-if="filters.split1" class="tw-pt-3 tw-min-w-[14%] tw--mb-3">
+      <label :for="filters.split1.filterlabel" class="tw-text-sm">{{ filters.split1.filterlabel }}</label>
+      <v-select
+        :id="filters.split1.filterlabel"
+        :items="filters.split1.items"
+        :model-value="filters.split1.selected"
+        @update:modelValue="(value) => selectFilterUpdated('split1', value, true)"
         density="comfortable"
         :disabled="isDataLoading"
       />
     </div>
     <div class="tw-pt-3 tw-min-w-[14%] tw--mb-3">
-      <label for="customers" class="tw-text-sm">{{ filters.customers.filterlabel }}</label>
+      <label for="valvol" class="tw-text-sm">Value (USD) / Volume</label>
       <v-select
         id="customers"
-        :items="filters.customers.items"
-        :model-value="filters.customers.selected"
-        @update:modelValue="(value) => selectFilterUpdated('customers', value)"
+        :items="filters.valueOrQuantity.items"
+        :model-value="filters.valueOrQuantity.selected"
+        @update:modelValue="(value) => selectFilterUpdated('valueOrQuantity', value, true)"
         density="comfortable"
         :disabled="isDataLoading"
       />
     </div>
-    <div class="tw-flex tw-gap-1.5 tw-pt-3 tw-pl-3 tw--mb-3">
-      <span
-        :class="`tw-pt-10 ${
-          filters.valueOrQuantity === BY_VALUE ? 'tw-font-medium' : ''
-        }`"
-      >
-        Value ({{ currency }})
-      </span>
-      <div class="tw-flex tw-pt-8 tw-text-brand-primary">
-        <v-switch
-          :model-value="filters.valueOrQuantity === BY_QUANTITY"
-          inset
-          density="compact"
-          @click="valueOrQuantityUpdate"
-          :disabled="isDataLoading"
-        />
-      </div>
-      <span
-        :class="`tw-pt-10 ${
-          filters.valueOrQuantity === BY_QUANTITY ? 'tw-font-medium' : ''
-        }`"
-      >
-        Volume
-      </span>
+    <div class="tw-pt-3 tw-min-w-[14%] tw--mb-3">
+      <label :for="filters.split2.filterlabel" class="tw-text-sm">{{ filters.split2.filterlabel }}</label>
+      <v-select
+        v-if="filters.split2"
+        :id="filters.split2.filterlabel"
+        :items="filters.split2.items"
+        :model-value="filters.split2.selected"
+        @update:modelValue="(value) => selectFilterUpdated('split2', value, false)"
+        density="comfortable"
+        :disabled="isDataLoading"
+        multiple
+      />
+    </div>
+    <div class="tw-pt-3 tw-min-w-[14%] tw--mb-3">
+      <label :for="filters.split3.filterlabel" class="tw-text-sm">{{ filters.split3.filterlabel }}</label>
+      <v-select
+        v-if="filters.split3"
+        :id="filters.split3.filterlabel"
+        :items="filters.split3.items"
+        :model-value="filters.split3.selected"
+        @update:modelValue="(value) => selectFilterUpdated('split3', value, false)"
+        density="comfortable"
+        :disabled="isDataLoading"
+        multiple
+      />
     </div>
   </div>
 </template>

@@ -273,14 +273,14 @@ import apiBase from '@/api/getApiBase';
 export default async function ({
   marketSensingRefreshDate,
   categories,
-  customers,
   valueORvolume,
+  splits
 }) {
   const data = await apiBase('maindashboard', {
     marketSensingRefreshDate,
     categories,
-    customers,
     valueORvolume,
+    splits
   });
 
   // const data = await new Promise((res) => {

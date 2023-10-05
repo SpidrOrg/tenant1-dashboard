@@ -102,7 +102,7 @@ export default {
       ></v-select>
     </div>
     <div class="tw-pt-3 tw-min-w-[14%] tw--mb-3">
-      <label for="customer" class="tw-text-sm">Customer(s)</label>
+      <label for="customer" class="tw-text-sm">Channel(s)</label>
       <v-select
         :disabled="filtersDisabled"
         :items="filters.customers.items"

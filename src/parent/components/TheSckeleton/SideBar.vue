@@ -47,11 +47,11 @@ export default {
         <div class="menu-item-content-image">
           <img
             :src="PAGES_CONFIG[pageKey].icon_active"
-            v-if="pageKey === activePageKey"
+            v-if="PAGES_CONFIG[pageKey] && pageKey === activePageKey"
           />
-          <img :src="PAGES_CONFIG[pageKey].icon" v-else />
+          <img v-if="PAGES_CONFIG[pageKey]" :src="PAGES_CONFIG[pageKey].icon" />
         </div>
-        <div>
+        <div v-if="PAGES_CONFIG[pageKey]">
           {{ PAGES_CONFIG[pageKey].label }}
         </div>
       </div>

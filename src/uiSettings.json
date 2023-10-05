@@ -1,0 +1,106 @@
+{
+  "availableDashboards": [
+    {
+      "key": "DEMAND_PLANNER",
+      "value": "demandPlanner",
+      "label": "Demand Planner",
+      "pageConfiguration": {
+        "filters": {
+          "datePicker": {},
+          "category": {
+            "label": "Category",
+            "control": "dropDown"
+          },
+          "measure": {
+            "label": "",
+            "control": "switch",
+            "values": ["Value (USD)", "Volume"],
+            "defaultValue": "Volume"
+          },
+          "split1": {
+            "label": "Channel(s)",
+            "control": "dropDown"
+          }
+        }
+      }
+    },
+    {
+      "key": "DEMAND_PLANNER_MONTHLY",
+      "value": "demandPlannerMonthly",
+      "label": "Demand Planner (M)",
+      "pageConfiguration": {
+        "filters": {
+          "datePicker": {},
+          "category": {
+            "label": "Category",
+            "control": "dropDown"
+          },
+          "measure": {
+            "label": "",
+            "control": "switch",
+            "values": ["Value (USD)", "Volume"],
+            "defaultValue": "Volume"
+          },
+          "split1": {
+            "label": "Channel(s)",
+            "control": "dropDown"
+          }
+        }
+      }
+    },
+    {
+      "key": "HEAT_MAP",
+      "value": "heatMap",
+      "label": "Heat-map View",
+      "pageConfiguration": {
+        "filters": {
+          "datePicker": {},
+          "measure": {
+            "label": "",
+            "control": "switch",
+            "values": ["Value (USD)", "Volume"],
+            "defaultValue": "Volume"
+          }
+        }
+      }
+    },
+    {
+      "key": "INTERNAL_CHARTS",
+      "value": "internalCharts",
+      "label": "Internal Charts",
+      "pageConfiguration": {
+        "filters": {
+          "category": {
+            "label": "Category",
+            "control": "dropDown"
+          },
+          "measure": {
+            "label": "",
+            "control": "switch",
+            "values": ["Value (USD)", "Volume"],
+            "defaultValue": "Volume"
+          },
+          "split1": {
+            "label": "Channel(s)",
+            "control": "dropDown"
+          }
+        }
+      }
+    },
+    {
+      "key": "MODEL_ACCURACY",
+      "value": "modelAccuracy",
+      "label": "Accuracy"
+    },
+    {
+      "key": "FAQS",
+      "value": "faqs",
+      "label": "FAQs"
+    },
+    {
+      "key": "HELP",
+      "value": "help",
+      "label": "Help & Support"
+    }
+  ]
+}

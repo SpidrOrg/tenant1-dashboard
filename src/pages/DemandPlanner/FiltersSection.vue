@@ -12,6 +12,10 @@ export default {
   name: 'FilterSelection',
   props: {
     isDataLoading: { type: Boolean, default: false },
+    pageConfig: {
+      type: Object,
+      required: false
+    },
   },
   data() {
     return {
@@ -23,12 +27,12 @@ export default {
         categories: {
           items: [],
           selected: null,
-          filterlabel: 'Categories',
+          filterlabel: _.get(this.pageConfig, 'pageConfiguration.filters.category.label'),
         },
         customers: {
           items: [],
           selected: null,
-          filterlabel: 'Customers',
+          filterlabel: _.get(this.pageConfig, 'pageConfiguration.filters.split1.label'),
         },
         valueOrQuantity: BY_QUANTITY,
       },
@@ -172,7 +176,7 @@ export default {
       </VueDatePicker>
     </div>
     <div class="tw-pt-3 tw-min-w-[14%] tw--mb-3">
-      <label for="category" class="tw-text-sm">Category</label>
+      <label for="category" class="tw-text-sm">{{ filters.categories.filterlabel }}</label>
       <v-select
         id="category"
         :items="filters.categories.items"
@@ -183,7 +187,7 @@ export default {
       />
     </div>
     <div class="tw-pt-3 tw-min-w-[14%] tw--mb-3">
-      <label for="customers" class="tw-text-sm">Channel(s)</label>
+      <label for="customers" class="tw-text-sm">{{ filters.customers.filterlabel }}</label>
       <v-select
         id="customers"
         :items="filters.customers.items"

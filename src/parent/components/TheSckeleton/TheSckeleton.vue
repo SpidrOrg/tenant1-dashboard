@@ -28,18 +28,21 @@ export default {
     },
     PAGES_CONFIG: { type: Object, required: true },
     PAGE_KEYS: { type: Object, required: true },
+    uiConfig: { type: Object, required: true },
   },
   data() {
     return {
       activePageKey: this.PAGE_KEYS.DEMAND_PLANNER,
-
       isSidebarCollapsed: false,
     };
   },
   computed: {
     ActiveComponent() {
-      return this.PAGES_CONFIG[this.activePageKey].component;
+      return _.get(this.PAGES_CONFIG, `${this.activePageKey}.component`, false);
     },
+    pageConfig(){
+      return _.get(this.PAGES_CONFIG, `${this.activePageKey}`, false);
+    }
   },
   methods: {
     pageSelectionHandler(key) {
@@ -104,7 +107,7 @@ export default {
 
 <template>
   <v-app>
-    <div class="screen">
+    <div  class="screen">
       <div
         class="sidebar"
         @mouseover="expandSidebarHandler"
@@ -126,8 +129,8 @@ export default {
               <TheHeader :userdata="userdata" />
             </div>
           </div>
-          <div class="content-container">
-            <component :is="ActiveComponent" v-bind="{ userdata }"></component>
+          <div class="content-container" v-if='ActiveComponent'>
+            <component :is="ActiveComponent" v-bind="{ userdata, pageConfig, uiConfig }"></component>
           </div>
           <div class="tw-px-5 tw-bg-brand-gray-1">
             <footer

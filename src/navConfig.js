@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import DemandPlanner from '@/pages/DemandPlanner/DemandPlanner.vue';
 import DemandPlannerMonthly from '@/pages/DemandPlannerMonthlyNew/DemandPlanner.vue';
 import HeatMap from '@/pages/HeatMap/HeatMap.vue';
@@ -5,6 +6,7 @@ import InternalCharts from '@/pages/InternalCharts/InternalCharts.vue';
 import ModelAccuracy from '@/pages/ModelAccuracy/ModelAccuracy.vue';
 import TheFaq from '@/pages/TheFAQ/TheFaq.vue';
 import TheSupport from '@/pages/TheSupport/TheSupport.vue';
+import AdminPage from '@/pages/AdminPage/AdminPage.vue';
 import DemandPlannerIcon from '@/images/demand-planner-icon.svg';
 import DemandPlannerIconActive from '@/images/demand-planner-icon-active.svg';
 import HeatMapIcon from '@/images/heat-map-icon.svg';
@@ -18,17 +20,7 @@ import FaqIconActive from '@/images/faq-icon-active.svg';
 import HelpSupportIcon from '@/images/help-support-icon.svg';
 import HelpSupportIconActive from '@/images/help-support-icon-active.svg';
 
-export const PAGE_KEYS = {
-  DEMAND_PLANNER: 'demandPlanner',
-  DEMAND_PLANNER_MONTHLY: 'demandPlannerMonthly',
-  HEAT_MAP: 'heatMap',
-  INTERNAL_CHARTS: 'internalCharts',
-  MODEL_ACCURACY: 'modelAccuracy',
-  FAQS: 'faqs',
-  HELP: 'help',
-};
-
-const PAGES_CONFIG = {
+const DASHBOARDS_DEFAULT_CONFIG =  {
   demandPlanner: {
     label: 'Demand Planner',
     icon: DemandPlannerIcon,
@@ -71,6 +63,37 @@ const PAGES_CONFIG = {
     icon_active: HelpSupportIconActive,
     component: TheSupport,
   },
+}
+
+export const PAGE_KEYS = (uiConfig, isAdmin = false)=>{
+  const availableDashboards = _.get(uiConfig, "config.availableDashboards")
+  const toReturn = _.reduce(availableDashboards, (acc, v)=>{
+    acc[v.key] = v.value;
+    return acc;
+  }, {});
+  if (isAdmin){
+    toReturn["ADMIN"] = "admin"
+  }
+  return toReturn;
+};
+
+const PAGES_CONFIG = (uiConfig, isAdmin = false) => {
+  const availableDashboards = _.get(uiConfig, "config.availableDashboards")
+
+  const toReturn = _.reduce(availableDashboards, (acc, v)=>{
+    acc[v.value] = _.assign({}, _.get(DASHBOARDS_DEFAULT_CONFIG, `${v.value}`), v);
+    return acc;
+  }, {});
+
+  if (isAdmin){
+    toReturn['admin'] = {
+      label: 'Admin',
+      icon: HelpSupportIcon,
+      icon_active: HelpSupportIconActive,
+      component: AdminPage,
+    }
+  }
+  return toReturn;
 };
 
 export default PAGES_CONFIG;

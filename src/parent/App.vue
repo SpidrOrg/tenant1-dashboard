@@ -4,6 +4,8 @@ import jwt_decode from 'jwt-decode';
 import TheSckeleton from './components/TheSckeleton/TheSckeleton.vue';
 import LoginPage from './pages/LoginPage.vue';
 import { setIdpData, getAuthDetails } from './idpUtils';
+import PAGES_CONFIG, { PAGE_KEYS } from '@/navConfig';
+import fetchUIConfig from '@/api/fetchUIConfig';
 
 export default {
   name: 'App',
@@ -24,14 +26,16 @@ export default {
       type: String,
       required: true,
     },
-    PAGES_CONFIG: { type: Object, required: true },
-    PAGE_KEYS: { type: Object, required: true },
   },
   data() {
     return {
       isLoggedIn: false,
       loading: true,
       loggedInUserData: {},
+      PAGES_CONFIG: {},
+      PAGE_KEYS: {},
+      uiConfig: {},
+      pageConfigLoaded: false
     };
   },
   created() {
@@ -42,7 +46,7 @@ export default {
     this.userHasAuthenticated(!!token, token, userPoolId);
   },
   methods: {
-    userHasAuthenticated(autheticated, token, usrPoolId) {
+    userHasAuthenticated: async function (autheticated, token, usrPoolId){
       this.isLoggedIn = autheticated;
       this.loading = false;
       if (autheticated) {
@@ -53,10 +57,16 @@ export default {
         this.loggedInUserData.isAdmin =
           _.filter(
             _.get(jwtDecoded, "['cognito:groups']", []),
-            (v) => v === 'admin'
+            (v) => _.toLower(v) === 'admin'
           ).length > 0;
         this.loggedInUserData.userName =
           _.get(jwtDecoded, 'name', null) ?? _.get(jwtDecoded, 'email', '---');
+
+        const uiConfig = await fetchUIConfig();
+        this.uiConfig = uiConfig;
+        this.pageConfigLoaded = true;
+        this.PAGES_CONFIG = PAGES_CONFIG(uiConfig, this.loggedInUserData.isAdmin);
+        this.PAGE_KEYS = PAGE_KEYS(uiConfig, this.loggedInUserData.isAdmin)
       } else {
         this.loggedInUserData.token = null;
         this.loggedInUserData.userPoolId = null;
@@ -69,11 +79,20 @@ export default {
 <template>
   <LoginPage v-if="!isLoggedIn && !loading" />
   <TheSckeleton
-    v-if="isLoggedIn && !loading"
+    v-if="isLoggedIn && !loading && pageConfigLoaded"
     :org-logo="OrgLogo"
     :org-logo-small="OrgLogoSmall"
     :userdata="this.loggedInUserData"
     :PAGES_CONFIG="PAGES_CONFIG"
     :PAGE_KEYS="PAGE_KEYS"
+    :uiConfig='uiConfig'
   />
+  <div style='display: flex; align-items: center; justify-content: center; height: 100vh;' v-if='isLoggedIn && !pageConfigLoaded'>
+    <v-progress-circular
+      indeterminate
+      color="#7823DC"
+      :size="80"
+      :width="10"
+    />
+  </div>
 </template>

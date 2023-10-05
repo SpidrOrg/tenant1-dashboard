@@ -30,6 +30,10 @@ export default {
       type: Object,
       required: true,
     },
+    pageConfig: {
+      type: Object,
+      required: false
+    }
   },
   data() {
     return {
@@ -260,6 +264,7 @@ export default {
         @update-filters-instant="debounceUpdateFiltersInstant"
         @latestRefreshDateUpdate="latestRefreshDateUpdateHandler"
         :isDataLoading="dataLoading"
+        :pageConfig='pageConfig'
       />
     </div>
     <div

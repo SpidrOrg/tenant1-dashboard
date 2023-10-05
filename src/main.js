@@ -23,6 +23,12 @@ import OrgLogo from '@/images/orgLogo.svg';
 import OrgLogoSmall from '@/images/orgLogoSmall.svg';
 
 import './index.css';
+// new Promise((resolve)=>{
+//   setTimeout(()=>{
+//
+//     resolve();
+//   }, 13000)
+// })
 
 const app = createApp(App, { idpConfig, OrgLogo, OrgLogoSmall, PAGES_CONFIG, PAGE_KEYS });
 app.component('VueDatePicker', VueDatePicker);

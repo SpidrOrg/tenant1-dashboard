@@ -116,6 +116,7 @@ export default {
         ]);
       }
 
+      console.log("returning reuslt", result);
       return result;
     },
     dataValues() {
@@ -178,12 +179,13 @@ export default {
 </script>
 
 <template>
-  <div class="tw-flex tw-flex-col tw-justify-between tw-h-full">
+  <div class="tw-flex tw-flex-col tw-h-full">
     <v-menu open-on-hover location="top">
       <template v-slot:activator="{ props }">
         <span
           v-bind="props"
-          class="tw-font-medium tw-text-lg small-laptop:tw-text-base desktop:tw-text-base tw-cursor-default"
+          class="tw-font-medium tw-text-lg small-laptop:tw-text-lg desktop:tw-text-lg tw-cursor-default"
+          style='margin: 0 auto'
         >
           Key Demand Drivers
         </span>
@@ -200,11 +202,20 @@ export default {
     </v-menu>
     <GChart
       type="BarChart"
+      v-if='chartData.length > 1'
       :data="chartData"
       :options="chartOptions"
       :events="chartEvents"
       ref="chartKeyDemandDrivers"
+      @error='(googleError, a, b, c)=>{
+        console.log(googleError, a,b, c);
+      }'
     />
+    <div v-if='chartData.length <= 1'>
+      <div class='tw-flex tw-justify-center tw-text-red-500 tw-font-bold'>
+        No Data
+      </div>
+    </div>
     <v-dialog
       :width="1040"
       :close-on-content-click="false"

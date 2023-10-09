@@ -274,13 +274,17 @@ export default async function ({
   marketSensingRefreshDate,
   categories,
   valueORvolume,
-  splits
+  splits,
+  msModels,
+  isMonthlyMode
 }) {
   const data = await apiBase('maindashboard', {
     marketSensingRefreshDate,
     categories,
     valueORvolume,
-    splits
+    splits,
+    msModels,
+    isMonthlyMode
   });
 
   // const data = await new Promise((res) => {

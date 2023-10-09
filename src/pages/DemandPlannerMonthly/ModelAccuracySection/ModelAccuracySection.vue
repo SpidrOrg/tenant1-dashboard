@@ -26,6 +26,7 @@ export default {
       modelAccuracy: null,
       isLoading: true,
       error: null,
+      horizonLoaded: null
     };
   },
   methods: {
@@ -59,11 +60,17 @@ export default {
         this.error = e;
       }
       this.isLoading = false;
+      this.horizonLoaded = this.horizon;
     },
   },
   created() {
     this.fetchData();
   },
+  updated(a, b, c) {
+    if (this.horizonLoaded !== this.horizon){
+      this.fetchData();
+    }
+  }
 };
 </script>
 
@@ -72,7 +79,7 @@ export default {
     <template v-slot:activator="{ props }">
       <p
         v-bind="props"
-        class="tw-text-sm desktop:tw-text-xs small-laptop:tw-text-xs tw-font-medium tw-text-center tw-pb-2"
+        class="tw-text-lg desktop:tw-text-lg small-laptop:tw-text-lg tw-font-medium tw-text-center tw-pb-2"
       >
         ML Model Accuracy
       </p>

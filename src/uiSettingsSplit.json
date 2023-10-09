@@ -103,23 +103,9 @@
       "label": "Help & Support"
     }
   ],
-  "pivot": [{
-      "dataName": "Retailer Final",
-      "uiOptions": {
-        "multiSelect": false
-      }
-    },
-    {
-      "dataName": "Region Final",
-      "uiOptions": {
-        "multiSelect": true
-      }
-    },
-    {
-      "dataName": "Portfolio Final",
-      "uiOptions": {
-        "multiSelect": true
-      }
-    }
-  ]
+  "splitsDataName": {
+    "split1": "Retailer Final",
+    "split2": "Region Final",
+    "split3": "Portfolio Final"
+  }
 }

@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import DemandPlanner from '@/pages/DemandPlanner/DemandPlanner.vue';
-import DemandPlannerMonthly from '@/pages/DemandPlannerMonthlyNew/DemandPlanner.vue';
+import DemandPlannerMonthly from '@/pages/DemandPlannerMonthly/DemandPlannerMonthly.vue';
 import HeatMap from '@/pages/HeatMap/HeatMap.vue';
 // import InternalCharts from '@/pages/InternalCharts/InternalCharts.vue';
 import ModelAccuracy from '@/pages/ModelAccuracy/ModelAccuracy.vue';

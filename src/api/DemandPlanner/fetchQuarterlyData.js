@@ -9,10 +9,10 @@ import {
 import apiBase from '@/api/getApiBase';
 
 export default async function ({
-                                 marketSensingRefreshDate,
-                                 categories,
-                                 valueORvolume,
-                                 splits
+  marketSensingRefreshDate,
+  categories,
+  valueORvolume,
+  splits
 }) {
   const data = await apiBase('maindashboard', {
     marketSensingRefreshDate: formatFn(

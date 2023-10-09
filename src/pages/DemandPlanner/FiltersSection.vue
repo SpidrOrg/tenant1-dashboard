@@ -8,8 +8,6 @@ const BY_QUANTITY = 'Quantity';
 const ITEMS_SEP = "___";
 export const ALL_OPTION = 'All';
 
-const splitOrderedData = ["Retailer Final", "Region Final", "Portfolio Final"];
-
 const AVAILABLE_SPLITS = {
   split1: {
     displayName: "Customers",
@@ -35,10 +33,13 @@ export default {
       type: Object,
       required: false
     },
+    uiConfig: {
+      type: Object,
+      required: false
+    },
   },
   data() {
     const toReturn = {
-      availablePivots: AVAILABLE_SPLITS,
       filterOptions: null,
       filters: {
         refreshDates: {
@@ -54,7 +55,7 @@ export default {
           items: [BY_VALUE, BY_QUANTITY],
           selected: null,
           filterlabel: 'Value (USD) / Volume',
-        },
+        }
       },
       currency: 'USD',
       dataLoaded: false,
@@ -196,7 +197,7 @@ export default {
   computed: {
     splitsSelectionVal(){
       let val = '';
-      _.forEach(splitOrderedData, v => {
+      _.forEach(_.get(this.uiConfig, 'pivot'), (v, i) => {
         const filterName = _.find(_.keys(AVAILABLE_SPLITS), k =>{
           return AVAILABLE_SPLITS[k].dataName === v
         });

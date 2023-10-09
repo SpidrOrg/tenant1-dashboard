@@ -1,18 +1,20 @@
 <script>
 import _ from 'lodash';
+import { GChart } from 'vue-google-charts';
 import { format as formatFn, parse } from 'date-fns';
 import { getPeriodDataLabel, getConcisePeriodLabel } from './helpers';
 import EyeIcon from '@/images/eye-icon.svg';
 import EyeOffIcon from '@/images/eye-off-icon.svg';
 import { FORECAST_PERIOD_TYPES } from './constants';
-import fetchR3MData from '@/api/DemandPlannerMonthly/fetchR3MData';
-import fetchQuarterlyData from '@/api/DemandPlannerMonthly/fetchQuarterlyData';
+import fetchR3MData from '@/api/DemandPlanner/fetchR3MData';
 
 import FiltersSection, {
   ALL_OPTION,
 } from '@/pages/DemandPlanner/FiltersSection.vue';
-import CardsList from './CardsList.vue';
-import ChartsSection from '@/pages/DemandPlanner/ChartsSection/ChartsSection.vue';
+import ChartKeyDemandDrivers from "@/pages/DemandPlannerMonthly/ChartsSection/ChartKeyDemandDrivers.vue";
+import ModelAccuracySection from "@/pages/DemandPlannerMonthly/ModelAccuracySection/ModelAccuracySection.vue";
+import ActionForm from "@/pages/DemandPlanner/ActionForm.vue";
+import VarianceAction from "@/pages/DemandPlannerMonthly/VarianceAction/VarianceAction.vue";
 
 const { R3M_VIEW, QUARTERLY_VIEW } = FORECAST_PERIOD_TYPES;
 const FILTER_UPDATE_GAP_MS = 300;
@@ -21,9 +23,12 @@ const FILTER_INSTANT_UPDATE_GAP_MS = 500;
 export default {
   name: 'DemandPlanner',
   components: {
+    ActionForm,
+    ModelAccuracySection,
+    ChartKeyDemandDrivers,
+    GChart,
     FiltersSection,
-    CardsList,
-    ChartsSection,
+    VarianceAction
   },
   props: {
     userdata: {
@@ -32,9 +37,10 @@ export default {
     },
   },
   data() {
-    return {
+    const toReturn = {
       dataLoading: true,
       error: null,
+      actionFormIsShown: false,
       debounceUpdateFilters: _.debounce(
         this.updateFilters,
         FILTER_UPDATE_GAP_MS
@@ -61,10 +67,66 @@ export default {
       R3M_VIEW,
       EyeIcon,
       EyeOffIcon,
-      lodGet: _.get,
+      lodGet: _.get
     };
+    return toReturn;
   },
   computed: {
+    columnChartOptions(){
+      const jdaGrowthNumbers = _.map(_.get(this.dashboardData, 'periodsData'), v =>{
+        return _.toNumber(_.get(v, 'metrics.jdaGrowth'))
+      });
+      const msGrowthNumbers = _.map(_.get(this.dashboardData, 'periodsData'), v =>{
+        return _.toNumber(_.get(v, 'metrics.marketSensingGrowth'))
+      })
+      const jdaMax = _.max(jdaGrowthNumbers);
+      const jdaMin = _.min(jdaGrowthNumbers);
+      const msMax = _.max(msGrowthNumbers);
+      const msMin = _.min(msGrowthNumbers);
+      let maxY = _.max([jdaMax, msMax]);
+      let minY = _.min([jdaMin, msMin]);
+      if (!(_.isNumber(maxY) && _.isFinite(maxY))){
+        maxY = 0
+      }
+      if (!(_.isNumber(minY) && _.isFinite(minY))){
+        minY = 0
+      }
+
+      return {
+        height: 320,
+        explorer: {
+          axis: 'horizontal',
+        },
+        legend: { position: 'bottom', alignment: 'center' },
+        tooltip: { trigger: 'none' },
+        colors: ['#787878', '#B991EB'],
+        hAxis: {
+          textStyle: {
+            fontSize: 12,
+          },
+        },
+        vAxis: {
+          format: '#\'%\''
+        },
+        chartArea: {
+          width: '90%',
+        },
+        annotations: {
+          textStyle: {
+            color: '#000000',
+            fontSize: 12,
+          },
+          datum: { stem: { length: 0 } },
+          alwaysOutside: true,
+        }
+      }
+    },
+    horizonSelection(){
+      return _.get(_.find(
+        _.get(this.dashboardData, 'periodsData'),
+        (v) => v.isActive
+      ), "horizon");
+    },
     selectedCards() {
       return _.filter(
         _.get(this.dashboardData, 'periodsData'),
@@ -90,16 +152,63 @@ export default {
       return userDisplayName;
     },
     fetchApi() {
-      if (this.forecastPeriodType === QUARTERLY_VIEW) {
-        return fetchQuarterlyData;
-      }
       return fetchR3MData;
     },
     isApiDataAvailable() {
       return _.size(_.get(this.dashboardData, 'periodsData')) > 0;
     },
+    columnChartData() {
+      const toReturn = [];
+      toReturn.push([
+        'period',
+        'Internal',
+        { role: 'annotation' },
+        'Market Sensing',
+        { role: 'annotation' },
+      ]);
+      _.forEach(this.dashboardData.periodsData, function (v) {
+        const internalGrowthApiVal = _.get(v, "metrics.jdaGrowth", "");
+        let internalGrowthVal = null;
+        if (typeof internalGrowthApiVal !== 'string'){
+          internalGrowthVal = internalGrowthApiVal
+        }
+        const msGrowthApiVal = _.get(v, "metrics.marketSensingGrowth", "");
+        let msGrowthVal = null;
+        if (typeof msGrowthApiVal !== 'string'){
+          msGrowthVal = msGrowthApiVal
+        }
+        internalGrowthVal = internalGrowthVal === null ? 0 : internalGrowthVal;
+        msGrowthVal = msGrowthVal === null ? 0 : msGrowthVal
+
+        toReturn.push([
+          _.get(v, "label", ""),
+          internalGrowthVal,
+          internalGrowthVal + "%",
+          msGrowthVal,
+          msGrowthVal + "%",
+        ]);
+      });
+      return toReturn;
+    }
   },
   methods: {
+    lodGetNumeric(obj, path, isPercentValue = true) {
+      const val = _.get(obj, path, null);
+      if (val === null || _.isNaN(val) || !_.isNumber(val)) {
+        return 'NA';
+      }
+      return `${val}${isPercentValue ? '%' : ''}`;
+    },
+    getColorCode(num) {
+      const n = _.toNumber(_.replace(num, "%", ''));
+      if (Math.abs(n) >= 20) {
+        return '#DC3545';
+      }
+      if (Math.abs(n) >= 6) {
+        return '#FF9900';
+      }
+      return '#04BB46';
+    },
     formatHorizon(value) {
       if (!value) return '';
       const formattedValue = value.replaceAll('_', '-').replaceAll('m', '');
@@ -140,7 +249,7 @@ export default {
       try {
         const response = await this.fetchApi({
           marketSensingRefreshDate:
-            this.selectedFilters.marketSensingRefreshDate,
+          this.selectedFilters.marketSensingRefreshDate,
           categories: this.selectedFilters.category,
           customers: this.selectedFilters.customer,
           valueORvolume: this.selectedFilters.valueOrQuantity,
@@ -283,78 +392,123 @@ export default {
         class="tw-flex tw-flex-col tw-w-full tw-border-b tw-border-solid tw-border-brand-gray-2"
       >
         <h1
-          class="desktop:tw-text-2xl small-laptop:tw-text-2xl tw-text-3xl tw-font-bold"
+          class="desktop:tw-text-xl small-laptop:tw-text-xl tw-text-xl tw-font-bold"
         >
-          Future Demand Forecasting
+          Demand Forecast For Next Six Months
         </h1>
-        <div class="tw-flex tw-items-center tw-w-full">
-          <p class="desktop:tw-text-sm small-laptop:tw-text-sm">
-            Show demand projections for:
-          </p>
-          <div
-            v-for="periodData in dashboardData.periodsData"
-            :key="periodData.label"
-            class="tw-flex tw-items-center tw-text-brand-primary"
-          >
-            <v-checkbox
-              :id="`period${periodData.checkboxLabel}`"
-              hide-details
-              :disabled="isCheckDisabled(periodData.isChecked)"
-              v-model="periodData.isChecked"
-            />
-            <label
-              :for="`period${periodData.checkboxLabel}`"
-              class="tw-text-black desktop:tw-text-sm small-laptop:tw-text-sm"
-              >{{ periodData.checkboxLabel }}
-            </label>
-          </div>
-          <div class="tw-flex tw-gap-x-3 tw-ml-auto small-laptop:tw-ml-3">
-            <button
-              class="small-laptop:tw-hidden tw-px-2 tw-py-1.5 tw-border tw-border-solid tw-border-brand-primary"
-              @click="isModelAccuracyHidden = !isModelAccuracyHidden"
-            >
-              <div
-                class="tw-flex tw-gap-x-2 desktop:tw-gap-x-1 small-laptop:tw-gap-x-0"
-              >
-                <img :src="isModelAccuracyHidden ? EyeIcon : EyeOffIcon" />
-                <span class="tw-text-sm desktop:tw-text-xs">
-                  {{ isModelAccuracyHidden ? 'Show' : 'Hide' }} Model Accuracy
-                </span>
-              </div>
-            </button>
-          </div>
-        </div>
       </div>
-      <div
-        class="tw-flex tw-justify-center tw-gap-1 tw-w-full tw-py-5"
+      <v-card
+        style="height: 770px"
         v-if="lodGet(dashboardData, 'periodsData.length')"
       >
-        <CardsList
-          :data="selectedCards"
-          @setActiveCard="setActiveCard"
-          :options="{
+        <div class="tw-flex tw-mt-3" style='padding: 0 70px'>
+          <div v-for="periodData in dashboardData.periodsData"
+               :key="periodData.horizon"
+               class="tw-flex-auto tw-w-full" style="text-align: center"
+          >
+            <VarianceAction :data="periodData" :options="{
             isModelAccuracyHidden,
             selectedFilters,
             userData: { userId, userDisplayName },
             forecastPeriodType,
-          }"
+          }"/>
+          </div>
+        </div>
+        <GChart
+          type="ColumnChart"
+          :data="columnChartData"
+          :options="columnChartOptions"
+          height="370"
         />
-      </div>
-      <div
-        class="tw-p-4 desktop:tw-p-1 tw-border tw-border-solid tw-border-brand-primary"
-      >
-        <ChartsSection
-          v-if="activePeriodData"
-          :activePeriodData="activePeriodData"
-          :options="{
-            selectedFilters,
-            forecastPeriodType,
-          }"
-        />
-      </div>
+        <div class="tw-flex tw-mt-3 tw-flex-col">
+          <div
+            class="tw-flex tw-flex-col tw-w-full tw-border-b tw-border-solid tw-border-brand-gray-2"
+          >
+            <h1
+              class="desktop:tw-text-xl small-laptop:tw-text-xl tw-text-xl tw-font-bold"
+            >
+              Additional Details Of The Forecast Model
+            </h1>
+          </div>
+          <div class="tw-flex tw-w-full">
+            <v-radio-group
+              v-if="dashboardData.periodsData.length > 0"
+              v-model="horizonSelection"
+              inline
+              direction="horizontal"
+              class="tw-flex tw-w-full tw-bg-brand-gray-1"
+            >
+              <v-radio
+                v-for="(periodData, index) in dashboardData.periodsData"
+                :key="periodData.horizon"
+                :label="periodData.horizon"
+                :value="periodData.horizon"
+                @click="setActiveCard(index)"
+              ></v-radio>
+            </v-radio-group>
+          </div>
+
+          <div style="width: 80%; height: 250px; margin: 0 auto; display: flex; flex-direction: row; padding-top: 10px">
+            <div style="width: 50%">
+              <ChartKeyDemandDrivers
+                v-if="activePeriodData"
+                :data="activePeriodData.metrics.keyDemandDrivers"
+                :horizon="activePeriodData.horizon"
+                :selectedFilters="selectedFilters"
+              />
+            </div>
+            <div class="tw-flex tw-flex-col" style="width: 50%;">
+              <div
+                class="tw-flex tw-justify-center tw-w-full tw-flex-col tw-items-center"
+              >
+                <ModelAccuracySection
+                  :marketSensingRefreshDate="selectedFilters.marketSensingRefreshDate"
+                  :category="selectedFilters.category"
+                  :horizon="activePeriodData.horizon"
+                  :forecastPeriodType="forecastPeriodType"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </v-card>
+      <ActionForm
+        v-if="actionFormIsShown"
+        :actionFormIsShown="actionFormIsShown"
+        :variance="clickedVariance"
+        :reviews="reviews"
+        :actionStatus="actionStatus"
+        :isFetching="isFetchingReviews"
+        :isSubmitting="isSubmittingReview"
+        :responseSubmitted="responseSubmitted"
+        @close-form="hideFormHandler"
+        @fetch-reviews="fetchReviews"
+        @submit-review="submitHandler"
+      />
+<!--      <div-->
+<!--        class="tw-p-4 desktop:tw-p-1 tw-border tw-border-solid tw-border-brand-primary"-->
+<!--      >-->
+<!--        <ChartsSection-->
+<!--          v-if="activePeriodData"-->
+<!--          :activePeriodData="activePeriodData"-->
+<!--          :options="{-->
+<!--            selectedFilters,-->
+<!--            forecastPeriodType,-->
+<!--          }"-->
+<!--        />-->
+<!--      </div>-->
     </div>
     <div v-if="!dataLoading && error">
       <v-alert type="error" :text="error.toString()"></v-alert>
     </div>
   </div>
 </template>
+<style>
+.v-input__control {
+  width: 80%;
+  margin: 0 auto;
+}
+.v-selection-control-group--inline {
+  justify-content: space-evenly;
+}
+</style>

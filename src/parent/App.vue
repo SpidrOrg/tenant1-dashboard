@@ -72,6 +72,17 @@ export default {
         this.loggedInUserData.userPoolId = null;
       }
     },
+    handleUiSettingUpdate: async function(uiConfigRes){
+      this.pageConfigLoaded = false;
+      let uiConfig = uiConfigRes;
+      if (!uiConfig){
+        uiConfig = await fetchUIConfig();
+      }
+      this.uiConfig = uiConfig;
+      this.pageConfigLoaded = true;
+      this.PAGES_CONFIG = PAGES_CONFIG(uiConfig, this.loggedInUserData.isAdmin);
+      this.PAGE_KEYS = PAGE_KEYS(uiConfig, this.loggedInUserData.isAdmin)
+    }
   },
 };
 </script>
@@ -86,6 +97,7 @@ export default {
     :PAGES_CONFIG="PAGES_CONFIG"
     :PAGE_KEYS="PAGE_KEYS"
     :uiConfig='uiConfig'
+    :onUiSettingUpdate='handleUiSettingUpdate'
   />
   <div style='display: flex; align-items: center; justify-content: center; height: 100vh;' v-if='isLoggedIn && !pageConfigLoaded'>
     <v-progress-circular

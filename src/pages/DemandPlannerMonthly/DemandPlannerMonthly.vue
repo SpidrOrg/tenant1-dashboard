@@ -2,24 +2,25 @@
 import _ from 'lodash';
 import { GChart } from 'vue-google-charts';
 import { format as formatFn, parse } from 'date-fns';
-import { getPeriodDataLabel, getConcisePeriodLabel } from './helpers';
+import { getPeriodDataLabel, getConcisePeriodLabel } from '../DemandPlanner/helpers';
 import EyeIcon from '@/images/eye-icon.svg';
 import EyeOffIcon from '@/images/eye-off-icon.svg';
 import { FORECAST_PERIOD_TYPES } from './constants';
 import fetchR3MData from '@/api/DemandPlanner/fetchR3MData';
 
 import FiltersSection, {
-  ALL_OPTION,
 } from '@/pages/DemandPlanner/FiltersSection.vue';
+import ActionForm from "@/pages/DemandPlanner/ActionForm.vue";
+
 import ChartKeyDemandDrivers from "@/pages/DemandPlannerMonthly/ChartsSection/ChartKeyDemandDrivers.vue";
 import ModelAccuracySection from "@/pages/DemandPlannerMonthly/ModelAccuracySection/ModelAccuracySection.vue";
-import ActionForm from "@/pages/DemandPlanner/ActionForm.vue";
 import VarianceAction from "@/pages/DemandPlannerMonthly/VarianceAction/VarianceAction.vue";
 
 const { R3M_VIEW, QUARTERLY_VIEW } = FORECAST_PERIOD_TYPES;
 const FILTER_UPDATE_GAP_MS = 300;
 const FILTER_INSTANT_UPDATE_GAP_MS = 500;
-
+const BY_VALUE = 'BY_VALUE';
+const BY_QUANTITY = 'BY_QUANTITY';
 export default {
   name: 'DemandPlanner',
   components: {
@@ -35,9 +36,17 @@ export default {
       type: Object,
       required: true,
     },
+    pageConfig: {
+      type: Object,
+      required: false
+    },
+    uiConfig: {
+      type: Object,
+      required: false
+    },
   },
   data() {
-    const toReturn = {
+    return {
       dataLoading: true,
       error: null,
       actionFormIsShown: false,
@@ -53,7 +62,7 @@ export default {
       selectedFilters: {
         marketSensingRefreshDate: null,
         category: '',
-        customer: '',
+        splits: '',
         valueORvolume: null,
       },
       latestRefreshDate: null,
@@ -69,7 +78,6 @@ export default {
       EyeOffIcon,
       lodGet: _.get
     };
-    return toReturn;
   },
   computed: {
     columnChartOptions(){
@@ -247,16 +255,30 @@ export default {
       this.dataLoading = true;
       this.error = null;
       try {
+        // marketSensingRefreshDate,
+        //   categories,
+        //   valueORvolume,
+        //   splits,
+        //   msModels,
+        //   isMonthlyMode
         const response = await this.fetchApi({
-          marketSensingRefreshDate:
-          this.selectedFilters.marketSensingRefreshDate,
+          marketSensingRefreshDate: this.selectedFilters.marketSensingRefreshDate,
           categories: this.selectedFilters.category,
-          customers: this.selectedFilters.customer,
-          valueORvolume: this.selectedFilters.valueOrQuantity,
+          splits: this.selectedFilters.splits,
+          valueORvolume: this.selectedFilters.valueOrQuantity === 'Value' ? BY_VALUE : BY_QUANTITY,
+          isMonthlyMode: true
         });
 
         if (!_.isEmpty(response)) {
-          this.dashboardData.periodsData = response;
+          this.dashboardData.periodsData = [];
+          const orderedHorizons =  _.get(this.pageConfig, 'etc.orderedHorizons');
+          _.forEach(orderedHorizons, horizon => {
+            const periodData = _.find(response, v => {
+              const key0 = _.get(_.keys(v), '[0]');
+              return _.get(v, `${key0}.horizon`) === horizon;
+            })
+            this.dashboardData.periodsData.push(periodData);
+          });
           _.forEach(this.dashboardData.periodsData, (v, i) => {
             v.period = _.get(_.keys(v), '[0]');
             v.label = this.getPeriodDataLabel(
@@ -305,8 +327,8 @@ export default {
         'refreshDates.selected'
       );
       const selectedCategories = _.get(filtersData, 'categories.selected');
-      const selectedCustomers = _.get(filtersData, 'customers.selected');
-      const selectedValueORvolume = _.get(filtersData, 'valueOrQuantity');
+      const splitsSelectionString = _.get(filtersData, 'splits');
+      const selectedValueORvolume = _.get(filtersData, 'valueOrQuantity.selected');
 
       try {
         if (selectedMarketSensingRefreshDate === null) {
@@ -333,7 +355,7 @@ export default {
         this.selectedFilters = {
           marketSensingRefreshDate: marketSensingRefreshDate,
           category: selectedCategories,
-          customer: selectedCustomers === ALL_OPTION ? '*' : selectedCustomers,
+          splits: splitsSelectionString,
           valueOrQuantity: selectedValueORvolume,
         };
 
@@ -352,7 +374,7 @@ export default {
   <div class="tw-h-full tw-w-full tw-bg-brand-gray-1">
     <div class="tw-flex tw-w-full tw-h-8 tw-bg-brand-gray-1">
       <h1 class="tw-flex tw-h-full tw-items-center tw-font-bold tw-text-lg">
-        Demand Planner Dashboard
+        {{lodGet(pageConfig, 'pageConfiguration.headings.mainHeading')}}
         {{ selectedRefreshDate ? `as of ${selectedRefreshDate}` : '' }}
       </h1>
       <div
@@ -371,6 +393,8 @@ export default {
         @update-filters-instant="debounceUpdateFiltersInstant"
         @latestRefreshDateUpdate="latestRefreshDateUpdateHandler"
         :isDataLoading="dataLoading"
+        :page-config='pageConfig'
+        :ui-config='uiConfig'
       />
     </div>
     <div
@@ -394,7 +418,7 @@ export default {
         <h1
           class="desktop:tw-text-xl small-laptop:tw-text-xl tw-text-xl tw-font-bold"
         >
-          Demand Forecast For Next Six Months
+          {{lodGet(pageConfig, 'pageConfiguration.headings.subHeading1')}}
         </h1>
       </div>
       <v-card
@@ -427,7 +451,7 @@ export default {
             <h1
               class="desktop:tw-text-xl small-laptop:tw-text-xl tw-text-xl tw-font-bold"
             >
-              Additional Details Of The Forecast Model
+              {{lodGet(pageConfig, 'pageConfiguration.headings.subHeading2')}}
             </h1>
           </div>
           <div class="tw-flex tw-w-full">
@@ -504,7 +528,7 @@ export default {
   </div>
 </template>
 <style>
-.v-input__control {
+.v-radio-group > .v-input__control {
   width: 80%;
   margin: 0 auto;
 }

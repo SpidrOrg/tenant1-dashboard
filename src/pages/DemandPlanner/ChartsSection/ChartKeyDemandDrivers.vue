@@ -201,11 +201,17 @@ export default {
     </v-menu>
     <GChart
       type="BarChart"
+      v-if='chartData.length > 1'
       :data="chartData"
       :options="chartOptions"
       :events="chartEvents"
       ref="chartKeyDemandDrivers"
     />
+    <div style='height: 100%' v-if='chartData.length <= 1'>
+      <div class='tw-flex tw-text-red-500 tw-font-bold'>
+        No Data
+      </div>
+    </div>
     <v-dialog
       :width="1040"
       :close-on-content-click="false"

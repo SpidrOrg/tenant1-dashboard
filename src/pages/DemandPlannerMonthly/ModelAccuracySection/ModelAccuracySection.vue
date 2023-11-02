@@ -1,7 +1,7 @@
 <script>
 import _ from 'lodash';
 import { GChart } from 'vue-google-charts';
-import fetchHistoricalModelAccuracyData from '@/api/DemandPlannerMonthly/fetchHistoricalModelAccuracyData';
+import fetchHistoricalModelAccuracyData from '@/api/DemandPlanner/fetchHistoricalModelAccuracyData';
 
 import ModelAccuracyChart from './ModelAccuracyChart.vue';
 

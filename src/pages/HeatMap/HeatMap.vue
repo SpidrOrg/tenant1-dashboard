@@ -11,6 +11,16 @@ const FILTER_INSTANT_UPDATE_GAP_MS = 500;
 
 export default {
   name: 'HeatMap',
+  props: {
+    pageConfig: {
+      type: Object,
+      required: false
+    },
+    uiConfig: {
+      type: Object,
+      required: false
+    },
+  },
   components: {
     FiltersSection,
     CardsList,
@@ -127,6 +137,7 @@ export default {
         @update-filters-instant="debounceUpdateFiltersInstant"
         @latestRefreshDateUpdate="latestRefreshDateUpdateHandler"
         :isDataLoading="isFetchingData"
+        :ui-config='uiConfig'
       />
     </div>
     <div

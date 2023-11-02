@@ -9,6 +9,16 @@ const FILTER_UPDATE_GAP_MS = 300;
 
 export default {
   name: 'InternalCharts',
+  props: {
+    pageConfig: {
+      type: Object,
+      required: false
+    },
+    uiConfig: {
+      type: Object,
+      required: false
+    },
+  },
   components: {
     GChart,
     FiltersSection,
@@ -174,6 +184,8 @@ export default {
             });
           }
         }
+        this.isLoading = false;
+        this.filtersDisabled = false;
       } catch (e) {
         console.log(e);
         this.isLoading = false;
@@ -202,6 +214,7 @@ export default {
       <FiltersSection
         @update-filters="debounceUpdateFilters"
         :filtersDisabled="filtersDisabled"
+        :ui-config='uiConfig'
       />
     </div>
     <div
@@ -246,10 +259,16 @@ export default {
             </div>
             <GChart
               type="ColumnChart"
+              v-if='columnChartData.length > 0'
               :data="columnChartData"
               :options="columnChartOptions"
               height="370"
             />
+            <div style='height: 100%' v-if='columnChartData.length <= 0'>
+              <div class='tw-flex tw-p-2 tw-text-red-500 tw-font-bold'>
+                Not Available
+              </div>
+            </div>
           </v-card>
         </div>
         <div style="overflow-x: auto !important">
@@ -264,8 +283,14 @@ export default {
             <GChart
               type="LineChart"
               :options="lineChartOptions"
+              v-if='lineChartData.length > 0'
               :data="lineChartData"
             />
+            <div style='height: 100%' v-if='lineChartData.length <= 0'>
+              <div class='tw-flex tw-p-2 tw-text-red-500 tw-font-bold'>
+                Not Available
+              </div>
+            </div>
           </v-card>
         </div>
       </div>

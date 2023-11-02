@@ -5,6 +5,7 @@ import { FORECAST_PERIOD_TYPES } from './constants';
 const { R3M_VIEW } = FORECAST_PERIOD_TYPES;
 
 const formatPeriodLabel = (period) => {
+  if (period.indexOf('-') === -1) return period;
   const periodStartDate = formatFn(
     parse(period.split('-')[0].trim(), 'MMM yy', new Date()),
     'MMM ‘yy'

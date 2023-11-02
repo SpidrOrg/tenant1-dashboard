@@ -7,6 +7,16 @@ import fetchModelAccuracyOptions from "@/api/fetchDashboardOptions";
 export const ALL_OPTION = "All";
 export default {
   name: "InternalCharts",
+  props: {
+    pageConfig: {
+      type: Object,
+      required: false
+    },
+    uiConfig: {
+      type: Object,
+      required: false
+    },
+  },
   components:{
     GChart
   },

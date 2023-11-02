@@ -9,7 +9,6 @@ import fetchR3MData from '@/api/DemandPlanner/fetchR3MData';
 import fetchQuarterlyData from '@/api/DemandPlanner/fetchQuarterlyData';
 
 import FiltersSection, {
-  ALL_OPTION,
 } from '@/pages/DemandPlanner/FiltersSection.vue';
 import CardsList from './CardsList.vue';
 import ChartsSection from '@/pages/DemandPlanner/ChartsSection/ChartsSection.vue';
@@ -36,7 +35,11 @@ export default {
     pageConfig: {
       type: Object,
       required: false
-    }
+    },
+    uiConfig: {
+      type: Object,
+      required: false
+    },
   },
   data() {
     return {
@@ -146,15 +149,22 @@ export default {
       this.error = null;
       try {
         const response = await this.fetchApi({
-          marketSensingRefreshDate:
-            this.selectedFilters.marketSensingRefreshDate,
+          marketSensingRefreshDate: this.selectedFilters.marketSensingRefreshDate,
           categories: this.selectedFilters.category,
           valueORvolume: this.selectedFilters.valueOrQuantity === 'Value' ? BY_VALUE : BY_QUANTITY,
           splits: this.selectedFilters.splits
         });
 
         if (!_.isEmpty(response)) {
-          this.dashboardData.periodsData = response;
+          this.dashboardData.periodsData = [];
+          const orderedHorizons =  _.get(this.pageConfig, 'etc.orderedHorizons');
+          _.forEach(orderedHorizons, horizon => {
+            const periodData = _.find(response, v => {
+              const key0 = _.get(_.keys(v), '[0]');
+              return _.get(v, `${key0}.horizon`) === horizon;
+            })
+            this.dashboardData.periodsData.push(periodData);
+          });
           _.forEach(this.dashboardData.periodsData, (v, i) => {
             v.period = _.get(_.keys(v), '[0]');
             v.label = this.getPeriodDataLabel(
@@ -192,6 +202,7 @@ export default {
           throw new Error('Unable to fetch data');
         }
       } catch (e) {
+        console.log(e);
         this.error = e;
       }
       this.dataLoading = false;
@@ -236,6 +247,7 @@ export default {
 
         this.fetchDashboardData();
       } catch (e) {
+        console.log(e);
         this.error = e;
         this.dataLoading = false;
       }
@@ -248,7 +260,7 @@ export default {
   <div class="tw-h-full tw-w-full tw-bg-brand-gray-1">
     <div class="tw-flex tw-w-full tw-h-8 tw-bg-brand-gray-1">
       <h1 class="tw-flex tw-h-full tw-items-center tw-font-bold tw-text-lg">
-        Demand Planner Dashboard
+        {{lodGet(pageConfig, 'pageConfiguration.headings.mainHeading')}}
         {{ selectedRefreshDate ? `as of ${selectedRefreshDate}` : '' }}
       </h1>
       <div
@@ -267,7 +279,8 @@ export default {
         @update-filters-instant="debounceUpdateFiltersInstant"
         @latestRefreshDateUpdate="latestRefreshDateUpdateHandler"
         :isDataLoading="dataLoading"
-        :pageConfig='pageConfig'
+        :page-config='pageConfig'
+        :ui-config='uiConfig'
       />
     </div>
     <div
@@ -291,7 +304,7 @@ export default {
         <h1
           class="desktop:tw-text-2xl small-laptop:tw-text-2xl tw-text-3xl tw-font-bold"
         >
-          Future Demand Forecasting
+          {{lodGet(pageConfig, 'pageConfiguration.headings.subHeading1')}}
         </h1>
         <div class="tw-flex tw-items-center tw-w-full">
           <p class="desktop:tw-text-sm small-laptop:tw-text-sm">

@@ -7,13 +7,16 @@ import {
   parse,
 } from 'date-fns';
 import apiBase from '@/api/getApiBase';
+import fetchDashboardOptions from '@/api/fetchDashboardOptions';
 
 export default async function ({
   marketSensingRefreshDate,
   categories,
   valueORvolume,
-  splits
+  splits,
+   isMonthlyMode = false
 }) {
+  const filterOptions = await fetchDashboardOptions();
   const data = await apiBase('maindashboard', {
     marketSensingRefreshDate: formatFn(
       startOfMonth(
@@ -31,6 +34,8 @@ export default async function ({
     categories,
     valueORvolume,
     splits,
+    msModels: _.join(_.get(filterOptions, 'ms.msTimeHorizon'), '___'),
+    isMonthlyMode,
     isFixed: true
   });
 

@@ -51,15 +51,15 @@ const mockedData = {
   }
 }
 export default async function ({categories, customers,valueORvolume,msTimeHorizon,internalModel, refreshDate}) {
-  // const data = await getApiBase('internalcharts',{
-  //   marketSensingRefreshDate:refreshDate,
-  //   categories,
-  //   customers,
-  //   valueORvolume,
-  //   msTimeHorizon,
-  //   internalModel
-  // });
-  const data = await Promise.resolve(mockedData)
+  const data = await getApiBase('internalcharts',{
+    marketSensingRefreshDate:refreshDate,
+    categories,
+    customers,
+    valueORvolume,
+    msTimeHorizon,
+    internalModel
+  });
+  // const data = await Promise.resolve(mockedData)
   let dataForUi = _.get(data, "result.data", {});
   let unit = _.get(data, "result.unit", {});
 

@@ -10,6 +10,10 @@ export default {
   name: 'FiltersSection',
   props: {
     filtersDisabled: { type: Boolean, default: false },
+    uiConfig: {
+      type: Object,
+      required: true
+    },
   },
   data() {
     return {
@@ -48,8 +52,15 @@ export default {
     const options = await fetchDashboardOptions().catch(() => null);
 
     if (options) {
+      const msPivots = _.reduce(_.split(_.get(options, `ms.pivots`), "%^"), (acc, v) => {
+        const [splitName, splitItems] = _.split(v, "&^");
+        acc[splitName] = splitItems;
+        return acc;
+      }, {});
+      const split0Config = _.get(this.uiConfig, "config.splits[0]");
+
       this.filters.categories.items = options.ms.categories;
-      this.filters.customers.items = options.ms.customers;
+      this.filters.customers.items = _.split(_.get(msPivots, `${_.get(split0Config, 'dataName')}`), '___');
       // Add all option to the customers filters
       this.filters.customers.items = _.concat(
         ALL_OPTION,

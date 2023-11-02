@@ -13,6 +13,10 @@ export default {
   name: 'FiltersSection',
   props: {
     isDataLoading: { type: Boolean, default: false },
+    uiConfig: {
+      type: Object,
+      required: true
+    },
   },
   data() {
     return {
@@ -38,9 +42,17 @@ export default {
   async created() {
     // Make API call to get available options for the filters
     const options = await fetchDashboardOptions().catch(() => null);
+
     if (options) {
+      const msPivots = _.reduce(_.split(_.get(options, `ms.pivots`), "%^"), (acc, v) => {
+        const [splitName, splitItems] = _.split(v, "&^");
+        acc[splitName] = splitItems;
+        return acc;
+      }, {});
+      const split0Config = _.get(this.uiConfig, "config.splits[0]");
+
       this.filters.refreshDates.items = _.get(options, 'updateDates');
-      this.customers = _.get(options, 'ms.customers', []);
+      this.customers = _.split(_.get(msPivots, `${_.get(split0Config, 'dataName')}`), '___');
       this.categories = _.get(options, 'ms.categories', []);
     }
 

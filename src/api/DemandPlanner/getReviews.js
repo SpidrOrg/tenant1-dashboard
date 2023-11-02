@@ -3,7 +3,7 @@ import getApiBase from '../getApiBase';
 
 export default async function ({
   refreshDate,
-  customer,
+  splits,
   category,
   valueOrQuantity,
   periodStart,
@@ -12,7 +12,7 @@ export default async function ({
 }) {
   const data = await getApiBase('reviews', {
     refreshDate,
-    customer,
+    customer: splits,
     category,
     valueOrQuantity,
     periodStart,

@@ -5,7 +5,6 @@ import getReviews from '@/api/DemandPlanner/getReviews';
 import addReview from '@/api/DemandPlanner/addReview';
 import { ACTION_STATUS_LABELS, FORECAST_PERIOD_TYPES } from '../../DemandPlanner/constants';
 
-import ActionButton from '../../DemandPlanner/ActionButton.vue';
 import ActionForm from '../../DemandPlanner/ActionForm.vue';
 
 const {
@@ -17,7 +16,6 @@ const {
 export default {
   name: 'VarianceAction',
   components: {
-    ActionButton,
     ActionForm,
   },
   props: {
@@ -134,7 +132,7 @@ export default {
           comment: userResponse,
           periodStartDate: this.periodStartDate,
           periodEndDate: this.periodEndDate,
-          customer: this.selectedFilters.customer,
+          splits: this.selectedFilters.splits,
           category: this.selectedFilters.category,
           byValueOrByVolume: this.selectedFilters.valueOrQuantity,
           forecastPeriodType: this.forecastPeriodType,
@@ -151,7 +149,7 @@ export default {
       try {
         this.reviews = await getReviews({
           refreshDate: this.selectedFilters.marketSensingRefreshDate,
-          customer: this.selectedFilters.customer,
+          splits: this.selectedFilters.splits,
           category: this.selectedFilters.category,
           valueOrQuantity: this.selectedFilters.valueOrQuantity,
           periodStart: this.periodStartDate,

@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import apiBase from '@/api/getApiBase';
+import fetchDashboardOptions from '@/api/fetchDashboardOptions';
 // const apiRes = [
 //   {
 //     'Mar 21 - May 21': {
@@ -275,15 +276,15 @@ export default async function ({
   categories,
   valueORvolume,
   splits,
-  msModels,
-  isMonthlyMode
+  isMonthlyMode = false
 }) {
+  const filterOptions = await fetchDashboardOptions();
   const data = await apiBase('maindashboard', {
     marketSensingRefreshDate,
     categories,
     valueORvolume,
     splits,
-    msModels,
+    msModels: _.join(_.get(filterOptions, 'ms.msTimeHorizon'), '___'),
     isMonthlyMode
   });
 

@@ -1,15 +1,15 @@
 const idpData = {
   region: "us-east-1",
   identityPoolId: "",
-  userPoolId: "us-east-1_2EBcceLkZ",
-  userPoolWebClientId: "2nnaomtlu27bas76j0inebb3qm",
-  oauthDomain: "uat-krny-spi-uat-1m.auth.us-east-1.amazoncognito.com",
+  userPoolId: "us-east-1_5TCk6Mtss",
+  userPoolWebClientId: "71dq3ht3eg31a0b01akfprqb6",
+  oauthDomain: "uat-krny-spi-uat-brelease.auth.us-east-1.amazoncognito.com",
   redirectSignIn: "http://localhost:3011",
   redirectSignOut: "http://localhost:3011",
-  apiPrefix: "6kpdra0ub6.execute-api.us-east-1.amazonaws.com",
-  stage: "uat/1726996466",
-  clientId: "1726996466",
-  clientDisplayName: "1m",
+  apiPrefix: "3b5zb2d3s3.execute-api.us-east-1.amazonaws.com",
+  stage: "uat/9029665608",
+  clientId: "9029665608",
+  clientDisplayName: "brelease",
   colorTheme: "teal"
 }
 

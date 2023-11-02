@@ -29,6 +29,10 @@ export default {
     PAGES_CONFIG: { type: Object, required: true },
     PAGE_KEYS: { type: Object, required: true },
     uiConfig: { type: Object, required: true },
+    onUiSettingUpdate: {
+      type: Function,
+      required: true
+    }
   },
   data() {
     return {
@@ -78,7 +82,11 @@ export default {
     if (_.includes(this.PAGE_KEYS, currentPageKey)) {
       this.activePageKey = currentPageKey;
     } else {
-      this.activePageKey = this.PAGE_KEYS.DEMAND_PLANNER;
+      if (this.userdata.isAdmin){
+        this.activePageKey = this.PAGE_KEYS.ADMIN;
+      } else {
+        this.activePageKey = _.get(_.values(this.PAGE_KEYS), '[0]');
+      }
       sessionStorage.setItem('pageKey', this.activePageKey);
     }
   },
@@ -130,7 +138,7 @@ export default {
             </div>
           </div>
           <div class="content-container" v-if='ActiveComponent'>
-            <component :is="ActiveComponent" v-bind="{ userdata, pageConfig, uiConfig }"></component>
+            <component :is="ActiveComponent" v-bind="{ userdata, pageConfig, uiConfig, onUiSettingUpdate }"></component>
           </div>
           <div class="tw-px-5 tw-bg-brand-gray-1">
             <footer

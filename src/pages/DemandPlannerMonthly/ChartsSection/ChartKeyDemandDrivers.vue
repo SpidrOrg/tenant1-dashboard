@@ -1,7 +1,7 @@
 <script>
 import _ from 'lodash';
 import { GChart } from 'vue-google-charts';
-import fetchKeyDemandDriverDetails from '@/api/DemandPlannerMonthly/fetchKeyDemandDriverDetails';
+import fetchKeyDemandDriverDetails from '@/api/DemandPlanner/fetchKeyDemandDriverDetails';
 
 const OTHERS_START_INDEX = 5;
 const OTHER_DRIVERS = 'Others';

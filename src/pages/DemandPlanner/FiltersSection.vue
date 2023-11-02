@@ -8,23 +8,6 @@ const BY_QUANTITY = 'Quantity';
 const ITEMS_SEP = "___";
 export const ALL_OPTION = 'All';
 
-const AVAILABLE_SPLITS = {
-  split1: {
-    displayName: "Customers",
-    dataName: "Retailer Final"
-  },
-  split2: {
-    displayName: "Region",
-    dataName: "Region Final",
-    multiSelect: true
-  },
-  split3: {
-    displayName: "Portfolio",
-    dataName: "Portfolio Final",
-    multiSelect: true,
-  }
-}
-
 export default {
   name: 'FilterSelection',
   props: {
@@ -54,23 +37,24 @@ export default {
         valueOrQuantity: {
           items: [BY_VALUE, BY_QUANTITY],
           selected: null,
-          filterlabel: 'Value (USD) / Volume',
+          filterlabel: _.get(this.pageConfig, 'pageConfiguration.filters.gtyGsv.label'),
         }
       },
-      currency: 'USD',
       dataLoaded: false,
 
       BY_VALUE,
       BY_QUANTITY,
       ALL_OPTION,
       includes: _.includes,
+      lodGet: _.get
     };
-    _.forEach(_.keys(AVAILABLE_SPLITS), v => {
-      const splitConfig = AVAILABLE_SPLITS[v];
-      toReturn.filters[v] = {
+    _.forEach(_.filter(_.keys(_.get(this.pageConfig, 'pageConfiguration.filters')), v => _.startsWith(v,'split')), filterName => {
+      const splitConfig = _.get(this.pageConfig, `pageConfiguration.filters.${filterName}`);
+      toReturn.filters[filterName] = {
         items: [],
         selected: null,
-        filterlabel: splitConfig.displayName,
+        filterlabel: _.get(splitConfig, `label`),
+        multiSelect: _.get(splitConfig, `multiSelect`, false),
       }
     })
     return toReturn;
@@ -88,20 +72,26 @@ export default {
     if (options) {
       this.filters.categories.items = _.get(options, 'ms.categories');
 
-      _.forEach(_.keys(AVAILABLE_SPLITS), v => {
-        const splitConfig = AVAILABLE_SPLITS[v];
-        this.filters[v].items = _.split(_.get(msPivots, `${splitConfig.dataName}`), ITEMS_SEP);
+      _.forEach(_.get(this.uiConfig, "config.splits"), (v, i) => {
+        const splitName = `split${i+1}`;
+
+        if (this.filters[splitName]){
+          this.filters[splitName].items = _.split(_.get(msPivots, `${v.dataName}`), ITEMS_SEP);
+        }
       })
       this.filters.refreshDates.items = _.get(options, 'updateDates');
     }
 
     // Add all option to the splits filters
-    _.forEach(_.keys(AVAILABLE_SPLITS), v => {
-      this.filters[v].items = _.concat(
-        ALL_OPTION,
-        this.filters[v].items
-      );
-    });
+    _.forEach(_.get(this.uiConfig, "config.splits"), (v, i) => {
+      const splitName = `split${i+1}`;
+      if (this.filters[splitName]){
+        this.filters[splitName].items = _.concat(
+          ALL_OPTION,
+          this.filters[splitName].items
+        );
+      }
+    })
 
     // Set default option on filters
     let earliestRefreshDate = null;
@@ -129,13 +119,16 @@ export default {
       this.filters.categories.items[0],
       true
     );
-    _.forEach(_.keys(AVAILABLE_SPLITS), v => {
-      this.selectFilterUpdated(
-        v,
-        this.filters[v].items[0],
-        true
-      );
-    });
+    _.forEach(_.get(this.uiConfig, "config.splits"), (v, i) => {
+      const splitName = `split${i+1}`;
+      if (this.filters[splitName]){
+        this.selectFilterUpdated(
+          splitName,
+          this.filters[splitName].items[0],
+          true
+        );
+      }
+    })
     this.selectFilterUpdated(
       'valueOrQuantity',
       BY_QUANTITY,
@@ -170,7 +163,8 @@ export default {
       this.$emit('latestRefreshDateUpdate', dateObj);
     },
     selectFilterUpdated(filterName, currentSelection, isInstant = false) {
-      if (AVAILABLE_SPLITS[filterName] && AVAILABLE_SPLITS[filterName].multiSelect){
+      const isMultiSelect = !!this.filters[filterName].multiSelect;
+      if (isMultiSelect){
         if(_.indexOf(currentSelection, ALL_OPTION) > 0){
           currentSelection = [ALL_OPTION];
         } else if(_.indexOf(currentSelection, ALL_OPTION) === 0 && _.size(currentSelection) > 1){
@@ -197,20 +191,23 @@ export default {
   computed: {
     splitsSelectionVal(){
       let val = '';
-      _.forEach(_.get(this.uiConfig, 'pivot'), (v, i) => {
-        const filterName = _.find(_.keys(AVAILABLE_SPLITS), k =>{
-          return AVAILABLE_SPLITS[k].dataName === v
-        });
-        const optionsJoin = Array.isArray(this.filters[filterName].selected)
-          ? _.join(this.filters[filterName].selected.map(v => {
-            return v === ALL_OPTION ? "*" : v;
-          }), ITEMS_SEP)
-          : (
-            this.filters[filterName].selected
-            ? (this.filters[filterName].selected === ALL_OPTION ? '*' : this.filters[filterName].selected)
-            : ''
-          )
-        val += `${val ? '^%' : ''}${v}_._${optionsJoin}`;
+      _.forEach(_.get(this.uiConfig, 'config.splits'), (v, i) => {
+        const filterName = `split${i+1}`;
+        let optionsJoin;
+        if (!this.filters[filterName]){
+          optionsJoin = '*';
+        } else {
+          optionsJoin = Array.isArray(this.filters[filterName].selected)
+            ? _.join(this.filters[filterName].selected.map(v => {
+              return v === ALL_OPTION ? "*" : v;
+            }), ITEMS_SEP)
+            : (
+              this.filters[filterName].selected
+                ? (this.filters[filterName].selected === ALL_OPTION ? '*' : this.filters[filterName].selected)
+                : ''
+            )
+        }
+        val += `${val ? '^%' : ''}${v.dataName}_._${optionsJoin}`;
       });
       return val;
     }
@@ -272,10 +269,11 @@ export default {
         :disabled="isDataLoading"
       />
     </div>
-    <div class="tw-pt-3 tw-min-w-[14%] tw--mb-3">
+
+    <div v-if="lodGet(pageConfig, 'pageConfiguration.filters.qtyGsv.control') === 'dropDown'" class="tw-pt-3 tw-min-w-[14%] tw--mb-3">
       <label for="valvol" class="tw-text-sm">Value (USD) / Volume</label>
       <v-select
-        id="customers"
+        id="qtyGsv"
         :items="filters.valueOrQuantity.items"
         :model-value="filters.valueOrQuantity.selected"
         @update:modelValue="(value) => selectFilterUpdated('valueOrQuantity', value, true)"
@@ -283,7 +281,33 @@ export default {
         :disabled="isDataLoading"
       />
     </div>
-    <div class="tw-pt-3 tw-min-w-[14%] tw--mb-3">
+    <div v-if="lodGet(pageConfig, 'pageConfiguration.filters.qtyGsv.control') === 'switch'" class="tw-flex tw-gap-1.5 tw-pt-3 tw-pl-3 tw--mb-3">
+      <span
+        :class="`tw-pt-10 ${
+          filters.valueOrQuantity.selected === BY_VALUE ? 'tw-font-medium' : ''
+        }`"
+      >
+        Value ({{ lodGet(uiConfig, 'config.currency', '') }})
+      </span>
+      <div class="tw-flex tw-pt-8 tw-text-brand-primary">
+        <v-switch
+          :model-value="filters.valueOrQuantity.selected === BY_QUANTITY"
+          inset
+          density="compact"
+          @click="() => selectFilterUpdated('valueOrQuantity', filters.valueOrQuantity.selected === BY_QUANTITY ? BY_VALUE : BY_QUANTITY, true)"
+          :disabled="isDataLoading"
+        />
+      </div>
+      <span
+        :class="`tw-pt-10 ${
+          filters.valueOrQuantity.selected === BY_QUANTITY ? 'tw-font-medium' : ''
+        }`"
+      >
+        Volume
+      </span>
+    </div>
+
+    <div v-if="filters.split2" class="tw-pt-3 tw-min-w-[14%] tw--mb-3">
       <label :for="filters.split2.filterlabel" class="tw-text-sm">{{ filters.split2.filterlabel }}</label>
       <v-select
         v-if="filters.split2"
@@ -296,7 +320,7 @@ export default {
         multiple
       />
     </div>
-    <div class="tw-pt-3 tw-min-w-[14%] tw--mb-3">
+    <div v-if="filters.split3" class="tw-pt-3 tw-min-w-[14%] tw--mb-3">
       <label :for="filters.split3.filterlabel" class="tw-text-sm">{{ filters.split3.filterlabel }}</label>
       <v-select
         v-if="filters.split3"
@@ -340,4 +364,5 @@ export default {
   --dp-danger-color: #ff6f60;
   --dp-highlight-color: rgba(25, 118, 210, 0.1);
 }
+
 </style>
